@@ -18,7 +18,7 @@ public class App {
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
 
-        String db_url = env.get("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
+        String db_url = env.get("DATABASE_URL");
 
         // Get a fully-configured connection to the database, or exit
         // immediately
@@ -41,6 +41,8 @@ public class App {
         // NB: every time we shut down the server, we will lose all data, and
         // every time we start the server, we'll have an empty dataStore,
         // with IDs starting over from 0.
+
+        Spark.port(getIntFromEnv("PORT", 4567));
 
         // Set up the location for serving static files. If the STATIC_LOCATION
         // environment variable is set, we will serve from it. Otherwise, serve
@@ -144,6 +146,14 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
         });
+    }
+
+    static int getIntFromEnv(String envar, int defaultVal) {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get(envar) != null) {
+            return Integer.parseInt(processBuilder.environment().get(envar));
+        }
+        return defaultVal;
     }
 
 }
