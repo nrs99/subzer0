@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.Map;
+//import java.util.Map;
 
 /**
  * App is our basic admin app.  For now, it is a demonstration of the six key 
@@ -108,15 +108,16 @@ public class App {
      */
     public static void main(String[] argv) {
         // get the Postgres configuration from the environment
-        Map<String, String> env = System.getenv();
-        String ip = env.get("POSTGRES_IP");
-        String port = env.get("POSTGRES_PORT");
-        String user = env.get("POSTGRES_USER");
-        String pass = env.get("POSTGRES_PASS");
+        //Map<String, String> env = System.getenv();
+        // String ip = env.get("POSTGRES_IP");
+        // String port = env.get("POSTGRES_PORT");
+        // String user = env.get("POSTGRES_USER");
+        // String pass = env.get("POSTGRES_PASS");
 
+        //String db_url = env.get("DATABASE_URL"); 
         // Get a fully-configured connection to the database, or exit 
         // immediately
-        Database db = Database.getDatabase(ip, port, user, pass);
+        Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
         if (db == null)
             return;
 
@@ -142,7 +143,7 @@ public class App {
                     continue;
                 Database.RowData res = db.selectOne(id);
                 if (res != null) {
-                    System.out.println("  [" + res.mId + "] " + res.mSubject);
+                    System.out.println("  [" + res.mMsgid + "] " + res.mMessage);
                     System.out.println("  --> " + res.mMessage);
                 }
             } else if (action == '*') {
@@ -152,7 +153,7 @@ public class App {
                 System.out.println("  Current Database Contents");
                 System.out.println("  -------------------------");
                 for (Database.RowData rd : res) {
-                    System.out.println("  [" + rd.mId + "] " + rd.mSubject);
+                    System.out.println("  [" + rd.mMsgid + "] " + rd.mMessage);
                 }
             } else if (action == '-') {
                 int id = getInt(in, "Enter the row ID");
@@ -163,11 +164,12 @@ public class App {
                     continue;
                 System.out.println("  " + res + " rows deleted");
             } else if (action == '+') {
-                String subject = getString(in, "Enter the subject");
+                int id = getInt(in, "Enter the msgid");
+                int likes = getInt(in, "how many likes");
                 String message = getString(in, "Enter the message");
-                if (subject.equals("") || message.equals(""))
+                if (id ==0 || message.equals(""))
                     continue;
-                int res = db.insertRow(subject, message);
+                int res = db.insertRow(id,likes, message);
                 System.out.println(res + " rows added");
             } else if (action == '~') {
                 int id = getInt(in, "Enter the row ID :> ");
