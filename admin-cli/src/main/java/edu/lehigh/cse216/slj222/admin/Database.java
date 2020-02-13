@@ -175,8 +175,8 @@ try {
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM messages WHERE msgid = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("insert into messages (msgid, likes, message) values (?,?,?);");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT msgid, likes FROM messages");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT into messages (msgid, likes, message) values (?,?,?);");
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM messages");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE msgid=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?");
         } catch (SQLException e) {
