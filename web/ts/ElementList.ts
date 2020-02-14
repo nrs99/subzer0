@@ -14,18 +14,29 @@ class ElementList {
     private static isInit = false;
 
     /**
-     * Initialize the ElementList singleton by creating its element in the DOM.
+     * Initialize the ElementList singleton.  
      * This needs to be called from any public static method, to ensure that the 
      * Singleton is initialized before use.
      */
     private static init() {
         if (!ElementList.isInit) {
-            $("body").append('<div id="' + ElementList.NAME +
-                '"><h3>All Messages</h3><button id="' + ElementList.NAME +
-                '-showFormButton">Add Message</button><div id="' +
-                ElementList.NAME + '-messageList"></div></div>');
             ElementList.isInit = true;
         }
+    }
+
+    /**
+     * update() is the private method used by refresh() to update the 
+     * ElementList
+     */
+    private static update(data: any) {
+        // Remove the table of data, if it exists
+        $("#" + ElementList.NAME).remove();
+        // Use a template to re-generate the table, and then insert it
+        $("body").append(Handlebars.templates[ElementList.NAME + ".hb"](data));
+        // Find all of the delete buttons, and set their behavior
+        $("." + ElementList.NAME + "-delbtn").click(ElementList.clickDelete);
+        // Find all of the Edit buttons, and set their behavior
+        $("." + ElementList.NAME + "-editbtn").click(ElementList.clickEdit);
     }
 
     /**
@@ -42,20 +53,6 @@ class ElementList {
             success: ElementList.update
         });
     }
-
-    /**
- * update() is the private method used by refresh() to update the 
- * ElementList
- */
-private static update(data: any) {
-    // Use a template to generate a table from the provided data, and put 
-    // the table into our messageList element.
-    $("#" + ElementList.NAME + "-messageList").html(Handlebars.templates[ElementList.NAME + ".hb"](data));
-    // Find all of the delete buttons, and set their behavior
-    $("." + ElementList.NAME + "-delbtn").click(ElementList.clickDelete);
-    // Find all of the Edit buttons, and set their behavior
-    $("." + ElementList.NAME + "-editbtn").click(ElementList.clickEdit);
-}
 
     /**
      * buttons() creates 'edit' and 'delete' buttons for an id, and puts them in
