@@ -19,20 +19,20 @@ public class Database {
     private Connection mConnection;
 
     /**
-     * A prepared statement for getting all data in the database
-     * Newest messages first
+     * A prepared statement for getting all data in the database Newest messages
+     * first
      */
     private PreparedStatement mSelectAllNewest;
 
     /**
-     * A prepared statement for getting all data in the database
-     * Oldest messages first
+     * A prepared statement for getting all data in the database Oldest messages
+     * first
      */
     private PreparedStatement mSelectAllOldest;
 
     /**
-     * A prepared statement for getting all data in the database
-     * Oldest messages first
+     * A prepared statement for getting all data in the database Oldest messages
+     * first
      */
     private PreparedStatement mSelectAllPopular;
 
@@ -46,7 +46,15 @@ public class Database {
      */
     private PreparedStatement mInsertOne;
 
+    /**
+     * A prepared statement for liking a message in the database
+     */
+    private PreparedStatement mLike;
 
+    /**
+     * A prepared statement for unliking a message in the database
+     */
+    private PreparedStatement mUnlike;
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow direct
@@ -79,7 +87,6 @@ public class Database {
          * The number of likes the message contains
          */
         int numLikes;
-        
 
         /**
          * Construct a RowData object by providing values for its fields
@@ -151,6 +158,8 @@ public class Database {
             db.mSelectAllNewest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated DESC");
             db.mSelectAllOldest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated ASC");
             db.mSelectAllPopular = db.mConnection.prepareStatement("SELECT * from messages ORDER BY likes DESC");
+            db.mLike = db.mConnection.prepareStatement("UPDATE messages SET likes = likes + 1 WHERE id = ?");
+            db.mUnlike = db.mConnection.prepareStatement("UPDATE messages SET likes = likes - 1 WHERE id = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -189,7 +198,7 @@ public class Database {
      * Insert a row into the database
      * 
      * @param message The message body in the new row
-     * @param userId The user ID of the person who is posting the message
+     * @param userId  The user ID of the person who is posting the message
      * 
      * @return The number of rows that were inserted
      */
@@ -221,7 +230,7 @@ public class Database {
             ResultSet rs = mSelectAllNewest.executeQuery();
             while (rs.next()) {
                 res.add(new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
-                rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
+                        rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
             }
             rs.close();
             return res;
@@ -231,7 +240,7 @@ public class Database {
         }
     }
 
-        /**
+    /**
      * Query the database for a list of all rows from oldest to newest
      * 
      * @return All rows, as an ArrayList
@@ -242,7 +251,7 @@ public class Database {
             ResultSet rs = mSelectAllOldest.executeQuery();
             while (rs.next()) {
                 res.add(new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
-                rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
+                        rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
             }
             rs.close();
             return res;
@@ -252,7 +261,7 @@ public class Database {
         }
     }
 
-        /**
+    /**
      * Query the database for a list of all rows from most likes to least likes
      * 
      * @return All rows, as an ArrayList
@@ -263,7 +272,7 @@ public class Database {
             ResultSet rs = mSelectAllPopular.executeQuery();
             while (rs.next()) {
                 res.add(new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
-                rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
+                        rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
             }
             rs.close();
             return res;
@@ -287,12 +296,40 @@ public class Database {
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
                 res = new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
-                rs.getTimestamp("datePosted"), rs.getInt("numLikes"));
+                        rs.getTimestamp("datePosted"), rs.getInt("numLikes"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
+    }
+
+    /**
+     * Add a like to a certain message
+     * 
+     * @param id msgID of message to be liked
+     */
+    void likeOne(int id) {
+        try {
+            mLike.setInt(1, id);
+            mLike.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Remove a like from a certain message
+     * 
+     * @param id msgID of message to be unliked
+     */
+    void unlikeOne(int id) {
+        try {
+            mUnlike.setInt(1, id);
+            mUnlike.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }
