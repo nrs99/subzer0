@@ -309,13 +309,15 @@ public class Database {
      * 
      * @param id msgID of message to be liked
      */
-    void likeOne(int id) {
+    int likeOne(int id) {
+        int res = 0;
         try {
             mLike.setInt(1, id);
-            mLike.executeQuery();
+            res = mLike.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return res;
     }
 
     /**
@@ -323,13 +325,15 @@ public class Database {
      * 
      * @param id msgID of message to be unliked
      */
-    void unlikeOne(int id) {
+    int unlikeOne(int id) {
+        int res = 0;
         try {
             mUnlike.setInt(1, id);
-            mUnlike.executeQuery();
+            res = mUnlike.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return res;
     }
 
 }

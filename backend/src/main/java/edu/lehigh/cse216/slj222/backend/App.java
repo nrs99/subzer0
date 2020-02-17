@@ -128,6 +128,38 @@ public class App {
             }
         });
 
+        Spark.put("/messages/:id/like", (request, response) -> {
+            // If we can't get an ID or can't parse the JSON, Spark will send
+            // a status 500
+            int idx = Integer.parseInt(request.params("id"));
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            int result = db.likeOne(idx);
+            if (result == 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, req));
+            }
+        });
+
+        Spark.put("/messages/:id/unlike", (request, response) -> {
+            // If we can't get an ID or can't parse the JSON, Spark will send
+            // a status 500
+            int idx = Integer.parseInt(request.params("id"));
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            int result = db.unlikeOne(idx);
+            if (result == 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, req));
+            }
+        });
+
         
     }
 
