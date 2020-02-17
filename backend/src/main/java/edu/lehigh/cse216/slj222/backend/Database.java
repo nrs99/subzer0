@@ -20,8 +20,21 @@ public class Database {
 
     /**
      * A prepared statement for getting all data in the database
+     * Newest messages first
      */
-    private PreparedStatement mSelectAll;
+    private PreparedStatement mSelectAllNewest;
+
+    /**
+     * A prepared statement for getting all data in the database
+     * Oldest messages first
+     */
+    private PreparedStatement mSelectAllOldest;
+
+    /**
+     * A prepared statement for getting all data in the database
+     * Oldest messages first
+     */
+    private PreparedStatement mSelectAllPopular;
 
     /**
      * A prepared statement for getting one row from the database
@@ -29,29 +42,11 @@ public class Database {
     private PreparedStatement mSelectOne;
 
     /**
-     * A prepared statement for deleting a row from the database
-     */
-    private PreparedStatement mDeleteOne;
-
-    /**
      * A prepared statement for inserting into the database
      */
     private PreparedStatement mInsertOne;
 
-    /**
-     * A prepared statement for updating a single row in the database
-     */
-    private PreparedStatement mUpdateOne;
 
-    /**
-     * A prepared statement for creating the table in our database
-     */
-    private PreparedStatement mCreateTable;
-
-    /**
-     * A prepared statement for dropping the table in our database
-     */
-    private PreparedStatement mDropTable;
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow direct
@@ -148,25 +143,14 @@ public class Database {
         // Attempt to create all of our prepared statements. If any of these
         // fail, the whole getDatabase() call should fail
         try {
-            // NB: we can easily get ourselves in trouble here by typing the
-            // SQL incorrectly. We really should have things like "tblData"
-            // as constants, and then build the strings for the statements
-            // from those constants.
-
-            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
-            // creation/deletion, so multiple executions will cause an exception
-            db.mCreateTable = db.mConnection
-                    .prepareStatement("CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
-                            + "NOT NULL, message VARCHAR(500) NOT NULL)");
-            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
-            db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?)",
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT id, subject FROM tblData");
-            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
-            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET subject = ?, message = ? WHERE id = ?");
+            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE id=?");
+            db.mSelectAllNewest;
+            db.mSelectAllOldest;
+            db.mSelectAllPopular;
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -266,66 +250,4 @@ public class Database {
         return res;
     }
 
-    /**
-     * Delete a row by ID
-     * 
-     * @param id The id of the row to delete
-     * 
-     * @return The number of rows that were deleted. -1 indicates an error.
-     */
-    int deleteRow(int id) {
-        int res = -1;
-        try {
-            mDeleteOne.setInt(1, id);
-            res = mDeleteOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    /**
-     * Update the message for a row in the database
-     * 
-     * @param id      The id of the row to update
-     * @param title   The new title
-     * @param message The new message contents
-     * 
-     * @return The number of rows that were updated. -1 indicates an error.
-     */
-    int updateOne(int id, String title, String message) {
-        int res = -1;
-        try {
-            mUpdateOne.setString(1, title);
-            mUpdateOne.setString(2, message);
-            mUpdateOne.setInt(3, id);
-            res = mUpdateOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    /**
-     * Create tblData. If it already exists, this will print an error
-     */
-    void createTable() {
-        try {
-            mCreateTable.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Remove tblData from the database. If it does not exist, this will print an
-     * error.
-     */
-    void dropTable() {
-        try {
-            mDropTable.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }
