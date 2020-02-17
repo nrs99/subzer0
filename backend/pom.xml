@@ -81,7 +81,7 @@
             </descriptorRefs>
             <archive>
                 <manifest>
-                    <mainClass>edu.lehigh.cse216.mfs409.backend.App</mainClass>
+                    <mainClass>edu.lehigh.cse216.slj222.backend.App</mainClass>
                 </manifest>
             </archive>
         </configuration>
