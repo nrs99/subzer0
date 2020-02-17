@@ -2,6 +2,7 @@ package edu.lehigh.cse216.slj222.backend;
 
 import java.net.*;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
@@ -66,23 +67,34 @@ public class Database {
         /**
          * The ID of this row of the database
          */
-        int mId;
-        /**
-         * The subject stored in this row
-         */
-        String mSubject;
+        int msgId;
         /**
          * The message stored in this row
          */
-        String mMessage;
+        String message;
+        /**
+         * The ID of the user who posted the message
+         */
+        int userId;
+        /**
+         * The time the message was originally created
+         */
+        Date datePosted;
+        /**
+         * The number of likes the message contains
+         */
+        int numLikes;
+        
 
         /**
          * Construct a RowData object by providing values for its fields
          */
-        public RowData(int id, String subject, String message) {
-            mId = id;
-            mSubject = subject;
-            mMessage = message;
+        public RowData(int msgId, String message, int userId, Date datePosted, int numLikes) {
+            this.msgId = msgId;
+            this.message = message;
+            this.userId = userId;
+            this.datePosted = datePosted;
+            this.numLikes = numLikes;
         }
     }
 
