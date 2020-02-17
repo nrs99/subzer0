@@ -60,15 +60,31 @@ public class App {
             return "";
         });
 
-        // GET route that returns all message titles and Ids. All we do is get
-        // the data, embed it in a StructuredResponse, turn it into JSON, and
-        // return it. If there's no data, we return "[]", so there's no need
-        // for error handling.
+        // GET route that returns all message titles and Ids. 
+        // Standard call will have newest messages first
         Spark.get("/messages", (request, response) -> {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            return gson.toJson(new StructuredResponse("ok", null, db.selectAll()));
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllNewest()));
+        });
+
+        // GET route that returns all message titles and Ids. 
+        // Oldest messages first
+        Spark.get("/messages/oldest", (request, response) -> {
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllOldest()));
+        });
+
+        // GET route that returns all message titles and Ids. 
+        // Most popular messages first
+        Spark.get("/messages/popular", (request, response) -> {
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllPopular()));
         });
 
         // GET route that returns everything for a single row in the DataStore.
@@ -104,7 +120,7 @@ public class App {
             response.status(200);
             response.type("application/json");
             // NB: createEntry checks for null title and message
-            int newId = db.insertRow(req.mTitle, req.mMessage);
+            int newId = db.insertRow(req.message, req.userID);
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
@@ -112,40 +128,7 @@ public class App {
             }
         });
 
-        // PUT route for updating a row in the DataStore. This is almost
-        // exactly the same as POST
-        Spark.put("/messages/:id", (request, response) -> {
-            // If we can't get an ID or can't parse the JSON, Spark will send
-            // a status 500
-            int idx = Integer.parseInt(request.params("id"));
-            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
-            // ensure status 200 OK, with a MIME type of JSON
-            response.status(200);
-            response.type("application/json");
-            int result = db.updateOne(idx, req.mTitle, req.mMessage);
-            if (result == -1 || result == 0) {
-                return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
-            } else {
-                return gson.toJson(new StructuredResponse("ok", null, req));
-            }
-        });
-
-        // DELETE route for removing a row from the DataStore
-        Spark.delete("/messages/:id", (request, response) -> {
-            // If we can't get an ID, Spark will send a status 500
-            int idx = Integer.parseInt(request.params("id"));
-            // ensure status 200 OK, with a MIME type of JSON
-            response.status(200);
-            response.type("application/json");
-            // NB: we won't concern ourselves too much with the quality of the
-            // message sent on a successful delete
-            int result = db.deleteRow(idx);
-            if (result == 0) { // An error occurring causes result to stay 0
-                return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
-            } else {
-                return gson.toJson(new StructuredResponse("ok", null, null));
-            }
-        });
+        
     }
 
     static int getIntFromEnv(String envar, int defaultVal) {
