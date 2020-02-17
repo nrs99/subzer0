@@ -2,9 +2,9 @@ package edu.lehigh.cse216.slj222.backend;
 
 import java.net.*;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -74,7 +74,7 @@ public class Database {
         /**
          * The time the message was originally created
          */
-        Date datePosted;
+        Timestamp datePosted;
         /**
          * The number of likes the message contains
          */
@@ -84,7 +84,7 @@ public class Database {
         /**
          * Construct a RowData object by providing values for its fields
          */
-        public RowData(int msgId, String message, int userId, Date datePosted, int numLikes) {
+        public RowData(int msgId, String message, int userId, Timestamp datePosted, int numLikes) {
             this.msgId = msgId;
             this.message = message;
             this.userId = userId;
@@ -145,12 +145,12 @@ public class Database {
         try {
 
             // Standard CRUD operations
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?)",
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?, 0, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE id=?");
-            db.mSelectAllNewest;
-            db.mSelectAllOldest;
-            db.mSelectAllPopular;
+            db.mSelectAllNewest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated DESC");
+            db.mSelectAllOldest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated ASC");
+            db.mSelectAllPopular = db.mConnection.prepareStatement("SELECT * from messages ORDER BY likes DESC");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -188,16 +188,17 @@ public class Database {
     /**
      * Insert a row into the database
      * 
-     * @param subject The subject for this new row
-     * @param message The message body for this new row
+     * @param message The message body in the new row
+     * @param userId The user ID of the person who is posting the message
      * 
      * @return The number of rows that were inserted
      */
-    int insertRow(String subject, String message) {
+    int insertRow(String message, int userId) {
         int count = 0;
         try {
-            mInsertOne.setString(1, subject);
-            mInsertOne.setString(2, message);
+            mInsertOne.setInt(1, userId);
+            mInsertOne.setTimestamp(2, new Timestamp(System.currentTimeMillis())); // Gets current time of system
+            mInsertOne.setString(3, message);
             mInsertOne.executeUpdate();
             ResultSet rs = mInsertOne.getGeneratedKeys();
             if (rs.next()) {
@@ -210,16 +211,59 @@ public class Database {
     }
 
     /**
-     * Query the database for a list of all subjects and their IDs
+     * Query the database for a list of all rows from newest to oldest
      * 
      * @return All rows, as an ArrayList
      */
-    ArrayList<RowData> selectAll() {
+    ArrayList<RowData> selectAllNewest() {
         ArrayList<RowData> res = new ArrayList<RowData>();
         try {
-            ResultSet rs = mSelectAll.executeQuery();
+            ResultSet rs = mSelectAllNewest.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("id"), rs.getString("subject"), null));
+                res.add(new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
+                rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+        /**
+     * Query the database for a list of all rows from oldest to newest
+     * 
+     * @return All rows, as an ArrayList
+     */
+    ArrayList<RowData> selectAllOldest() {
+        ArrayList<RowData> res = new ArrayList<RowData>();
+        try {
+            ResultSet rs = mSelectAllOldest.executeQuery();
+            while (rs.next()) {
+                res.add(new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
+                rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+        /**
+     * Query the database for a list of all rows from most likes to least likes
+     * 
+     * @return All rows, as an ArrayList
+     */
+    ArrayList<RowData> selectAllPopular() {
+        ArrayList<RowData> res = new ArrayList<RowData>();
+        try {
+            ResultSet rs = mSelectAllPopular.executeQuery();
+            while (rs.next()) {
+                res.add(new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
+                rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
             }
             rs.close();
             return res;
@@ -242,7 +286,8 @@ public class Database {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("id"), rs.getString("subject"), rs.getString("message"));
+                res = new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
+                rs.getTimestamp("datePosted"), rs.getInt("numLikes"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
