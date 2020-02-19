@@ -154,12 +154,12 @@ public class Database {
             // Standard CRUD operations
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?, 0, ?)",
                     Statement.RETURN_GENERATED_KEYS);
-            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE id=?");
+            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE msgid=?");
             db.mSelectAllNewest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated DESC");
             db.mSelectAllOldest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated ASC");
             db.mSelectAllPopular = db.mConnection.prepareStatement("SELECT * from messages ORDER BY likes DESC");
-            db.mLike = db.mConnection.prepareStatement("UPDATE messages SET likes = likes + 1 WHERE id = ?");
-            db.mUnlike = db.mConnection.prepareStatement("UPDATE messages SET likes = likes - 1 WHERE id = ?");
+            db.mLike = db.mConnection.prepareStatement("UPDATE messages SET likes = likes + 1 WHERE msgid = ?");
+            db.mUnlike = db.mConnection.prepareStatement("UPDATE messages SET likes = likes - 1 WHERE msgid = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
