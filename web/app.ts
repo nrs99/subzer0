@@ -11,18 +11,10 @@ let $: any;
 // Prevent compiler errors when using Handlebars
 let Handlebars: any;
 
-// a global for the EditEntryForm of the program.  See newEntryForm for 
-// explanation
-let editEntryForm: EditEntryForm;
-
 // Run some configuration code when the web page loads
 $(document).ready(function () {
     Navbar.refresh();
     NewEntryForm.refresh();
     ElementList.refresh();
-
-    // Create the object that controls the "Edit Entry" form
-    editEntryForm = new EditEntryForm();
-    // set up initial UI state
-    $("#editElement").hide();
+    EditEntryForm.refresh()
 });

@@ -37,6 +37,8 @@ class ElementList {
         $("." + ElementList.NAME + "-delbtn").click(ElementList.clickDelete);
         // Find all of the Edit buttons, and set their behavior
         $("." + ElementList.NAME + "-editbtn").click(ElementList.clickEdit);
+	    // Find all of the Like buttons, and set their behavior
+	    $("." + ElementList.NAME + "-likebtn").click(ElementList.clickLike);
     }
 
     /**
@@ -52,17 +54,6 @@ class ElementList {
             dataType: "json",
             success: ElementList.update
         });
-    }
-
-    /**
-     * buttons() creates 'edit' and 'delete' buttons for an id, and puts them in
-     * a TD
-     */
-    private static buttons(id: string): string {
-        return "<td><button class='" + ElementList.NAME +
-            "-editbtn' data-value='" + id + "'>Edit</button></td>" +
-            "<td><button class='" + ElementList.NAME +
-            "-delbtn' data-value='" + id + "'>Delete</button></td>";
     }
 
     /**
@@ -92,7 +83,21 @@ class ElementList {
             type: "GET",
             url: "/messages/" + id,
             dataType: "json",
-            success: editEntryForm.init
+            success: EditEntryForm.show
         });
     }
+
+    /**
+     * clickLike is the code we run in response to a click of a like button
+     */
+    private static clickLike() {
+    	let id = $(this).data("value");
+	$.ajax({
+		type:"PUT",
+		url: "/messages/" + id + "/like",
+		data: "json",
+		success: ElementList.refresh
+	});
+    }
+
 }
