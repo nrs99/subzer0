@@ -44,14 +44,6 @@ public class App {
 
         Spark.port(getIntFromEnv("PORT", 4567));
 
-        String cors_enabled = env.get("CORS_ENABLED");
-        if (cors_enabled.equals("True")) {
-            final String acceptCrossOriginRequestsFrom = "*";
-            final String acceptedCrossOriginRoutes = "GET,PUT,POST,DELETE,OPTIONS";
-            final String supportedRequestHeaders = "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin";
-            enableCORS(acceptCrossOriginRequestsFrom, acceptedCrossOriginRoutes, supportedRequestHeaders);
-        }
-
         // Set up the location for serving static files. If the STATIC_LOCATION
         // environment variable is set, we will serve from it. Otherwise, serve
         // from "/web"
@@ -60,6 +52,14 @@ public class App {
             Spark.staticFileLocation("/web");
         } else {
             Spark.staticFiles.externalLocation(static_location_override);
+        }
+
+        String cors_enabled = env.get("CORS_ENABLED");
+        if (cors_enabled.equals("True")) {
+            final String acceptCrossOriginRequestsFrom = "*";
+            final String acceptedCrossOriginRoutes = "GET,PUT,POST,DELETE,OPTIONS";
+            final String supportedRequestHeaders = "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin";
+            enableCORS(acceptCrossOriginRequestsFrom, acceptedCrossOriginRoutes, supportedRequestHeaders);
         }
 
         // Set up a route for serving the main page
