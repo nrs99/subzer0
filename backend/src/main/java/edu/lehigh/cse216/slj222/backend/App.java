@@ -44,6 +44,14 @@ public class App {
 
         Spark.port(getIntFromEnv("PORT", 4567));
 
+        String cors_enabled = env.get("CORS_ENABLED");
+        if (cors_enabled.equals("True")) {
+            final String acceptCrossOriginRequestsFrom = "*";
+            final String acceptedCrossOriginRoutes = "GET,PUT,POST,DELETE,OPTIONS";
+            final String supportedRequestHeaders = "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin";
+            enableCORS(acceptCrossOriginRequestsFrom, acceptedCrossOriginRoutes, supportedRequestHeaders);
+        }
+
         // Set up the location for serving static files. If the STATIC_LOCATION
         // environment variable is set, we will serve from it. Otherwise, serve
         // from "/web"
@@ -60,7 +68,7 @@ public class App {
             return "";
         });
 
-        // GET route that returns all message titles and Ids. 
+        // GET route that returns all message titles and Ids.
         // Standard call will have newest messages first
         Spark.get("/messages", (request, response) -> {
             // ensure status 200 OK, with a MIME type of JSON
@@ -69,7 +77,7 @@ public class App {
             return gson.toJson(new StructuredResponse("ok", null, db.selectAllNewest()));
         });
 
-        // GET route that returns all message titles and Ids. 
+        // GET route that returns all message titles and Ids.
         // Oldest messages first
         Spark.get("/messages/oldest", (request, response) -> {
             // ensure status 200 OK, with a MIME type of JSON
@@ -78,7 +86,7 @@ public class App {
             return gson.toJson(new StructuredResponse("ok", null, db.selectAllOldest()));
         });
 
-        // GET route that returns all message titles and Ids. 
+        // GET route that returns all message titles and Ids.
         // Most popular messages first
         Spark.get("/messages/popular", (request, response) -> {
             // ensure status 200 OK, with a MIME type of JSON
@@ -160,7 +168,6 @@ public class App {
             }
         });
 
-        
     }
 
     static int getIntFromEnv(String envar, int defaultVal) {
@@ -169,6 +176,39 @@ public class App {
             return Integer.parseInt(processBuilder.environment().get(envar));
         }
         return defaultVal;
+    }
+
+    /**
+     * Set up CORS headers for the OPTIONS verb, and for every response that the
+     * server sends. This only needs to be called once.
+     * 
+     * @param origin  The server that is allowed to send requests to this server
+     * @param methods The allowed HTTP verbs from the above origin
+     * @param headers The headers that can be sent with a request from the above
+     *                origin
+     */
+    private static void enableCORS(String origin, String methods, String headers) {
+        // Create an OPTIONS route that reports the allowed CORS headers and methods
+        Spark.options("/*", (request, response) -> {
+            String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+            if (accessControlRequestHeaders != null) {
+                response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+            }
+            String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+            if (accessControlRequestMethod != null) {
+                response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+            }
+            return "OK";
+        });
+
+        // 'before' is a decorator, which will run before any
+        // get/post/put/delete. In our case, it will put three extra CORS
+        // headers into the response
+        Spark.before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", origin);
+            response.header("Access-Control-Request-Method", methods);
+            response.header("Access-Control-Allow-Headers", headers);
+        });
     }
 
 }
