@@ -40,7 +40,6 @@ class NewEntryForm {
      * Hide the NewEntryForm.  Be sure to clear its fields first
      */
     private static hide() {
-        $("#" + NewEntryForm.NAME + "-title").val("");
         $("#" + NewEntryForm.NAME + "-message").val("");
         $("#" + NewEntryForm.NAME).modal("hide");
     }
@@ -52,7 +51,6 @@ class NewEntryForm {
      * with those ways of making the modal disappear.
      */
     public static show() {
-        $("#" + NewEntryForm.NAME + "-title").val("");
         $("#" + NewEntryForm.NAME + "-message").val("");
         $("#" + NewEntryForm.NAME).modal("show");
     }
@@ -66,10 +64,9 @@ class NewEntryForm {
     private static submitForm() {
         // get the values of the two fields, force them to be strings, and check 
         // that neither is empty
-        let title = "" + $("#" + NewEntryForm.NAME + "-title").val();
         let msg = "" + $("#" + NewEntryForm.NAME + "-message").val();
-        if (title === "" || msg === "") {
-            window.alert("Error: title or message is not valid");
+        if (msg === "") {
+            window.alert("Error: message is empty");
             return;
         }
         NewEntryForm.hide();
@@ -79,7 +76,7 @@ class NewEntryForm {
             type: "POST",
             url: "/messages",
             dataType: "json",
-            data: JSON.stringify({ mTitle: title, mMessage: msg }),
+            data: JSON.stringify({ mTitle: "TEST_TITLE", mMessage: msg }),
             success: NewEntryForm.onSubmitResponse
         });
     }

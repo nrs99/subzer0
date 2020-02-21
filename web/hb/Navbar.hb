@@ -10,7 +10,7 @@
               <span class="icon-bar"></span>
             </button>
             <!-- Clicking the brand refreshes the page -->
-            <a class="navbar-brand" href="/">My Web Frontend</a>
+            <a class="navbar-brand" href="/">CSE 216</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->

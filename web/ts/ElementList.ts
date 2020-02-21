@@ -92,12 +92,12 @@ class ElementList {
      */
     private static clickLike() {
     	let id = $(this).data("value");
-	$.ajax({
-		type:"PUT",
-		url: "/messages/" + id + "/like",
-		data: "json",
-		success: ElementList.refresh
-	});
+	    $.ajax({
+		    type:"PUT",
+    		url: "/messages/" + id + "/like",
+	    	data: "json",
+		    success: ElementList.refresh
+    	});
     }
 
 }

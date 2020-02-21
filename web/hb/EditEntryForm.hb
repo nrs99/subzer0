@@ -5,8 +5,6 @@
 				<h4 class="modal-title">Edit an Entry</h4>
 			</div>
 			<div class="modal-body">
-				<label for="EditEntryForm-title">Title</label>
-				<input class="form-control" type="text" id="EditEntryForm-title" />
 				<label for="EditEntryForm-message">Message</label>
 				<textarea class="form-control" id-"EditEntryForm-message"></textarea>
 			</div>

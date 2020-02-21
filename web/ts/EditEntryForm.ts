@@ -23,13 +23,11 @@ class EditEntryForm {
     }
 
     public static hide() {
-        $("#" + EditEntryForm.NAME + "-title").val("");
         $("#" + EditEntryForm.NAME + "-message").val("");
         $("#" + EditEntryForm.NAME).modal("hide");
     }
 
     public static show() {
-        $("#" + EditEntryForm.NAME + "-title").val("");
         $("#" + EditEntryForm.NAME + "-message").val("");
         $("#" + EditEntryForm.NAME).modal("show");
     }
@@ -37,10 +35,9 @@ class EditEntryForm {
     public static submitForm() {
     	// get the values of the two fields, force them to be strings, and check 
         // that neither is empty
-        let title = "" + $("#" + EditEntryForm.NAME + "-title").val();
         let msg = "" + $("#" + EditEntryForm.NAME + "-message").val();
-        if (title === "" || msg === "") {
-            window.alert("Error: title or message is not valid");
+        if (msg === "") {
+            window.alert("Error: message is empty");
             return;
         }
         EditEntryForm.hide();
@@ -50,7 +47,7 @@ class EditEntryForm {
             type: "PUT",
             url: "/messages",
             dataType: "json",
-            data: JSON.stringify({ mTitle: title, mMessage: msg }),
+            data: JSON.stringify({ mTitle: "TEST_TITLE", mMessage: msg }),
             success: EditEntryForm.onSubmitResponse
 	    });
     }
