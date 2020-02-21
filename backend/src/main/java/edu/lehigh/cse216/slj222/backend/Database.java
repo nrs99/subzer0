@@ -82,21 +82,21 @@ public class Database {
         /**
          * The time the message was originally created
          */
-        Timestamp datePosted;
+        Timestamp dateCreated;
         /**
          * The number of likes the message contains
          */
-        int numLikes;
+        int likes;
 
         /**
          * Construct a RowData object by providing values for its fields
          */
-        public RowData(int msgId, String message, int userId, Timestamp datePosted, int numLikes) {
+        public RowData(int msgId, String message, int userId, Timestamp dateCreated, int likes) {
             this.msgId = msgId;
             this.message = message;
             this.userId = userId;
-            this.datePosted = datePosted;
-            this.numLikes = numLikes;
+            this.dateCreated = dateCreated;
+            this.likes = likes;
         }
     }
 
@@ -230,7 +230,7 @@ public class Database {
             ResultSet rs = mSelectAllNewest.executeQuery();
             while (rs.next()) {
                 res.add(new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
-                        rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes")));
             }
             rs.close();
             return res;
@@ -251,7 +251,7 @@ public class Database {
             ResultSet rs = mSelectAllOldest.executeQuery();
             while (rs.next()) {
                 res.add(new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
-                        rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes")));
             }
             rs.close();
             return res;
@@ -272,7 +272,7 @@ public class Database {
             ResultSet rs = mSelectAllPopular.executeQuery();
             while (rs.next()) {
                 res.add(new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
-                        rs.getTimestamp("datePosted"), rs.getInt("numLikes")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes")));
             }
             rs.close();
             return res;
@@ -296,7 +296,7 @@ public class Database {
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
                 res = new RowData(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
-                        rs.getTimestamp("datePosted"), rs.getInt("numLikes"));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
