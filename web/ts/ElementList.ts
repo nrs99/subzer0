@@ -95,7 +95,7 @@ class ElementList {
 	    $.ajax({
 		    type:"PUT",
     		url: "/messages/" + id + "/like",
-	    	data: "json",
+            dataType: "json",
 		    success: ElementList.refresh
     	});
     }
