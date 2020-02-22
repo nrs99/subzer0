@@ -152,7 +152,7 @@ public class App {
             }
         });
 
-        Spark.put("/messages/:id/unlike", (request, response) -> {
+        Spark.put("/messages/:id/dislike", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
             int idx = Integer.parseInt(request.params("id"));
@@ -160,7 +160,7 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            int result = db.unlikeOne(idx);
+            int result = db.dislikeOne(idx);
             if (result == 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {
