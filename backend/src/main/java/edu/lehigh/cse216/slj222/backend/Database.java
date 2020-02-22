@@ -115,7 +115,7 @@ public class Database {
             db.mSelectAllOldest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated ASC");
             db.mSelectAllPopular = db.mConnection.prepareStatement("SELECT * from messages ORDER BY (likes - dislikes) DESC");
             db.mLike = db.mConnection.prepareStatement("UPDATE messages SET likes = likes + 1 WHERE msgid = ?");
-            db.mDislike = db.mConnection.prepareStatement("UPDATE messages SET likes = likes - 1 WHERE msgid = ?");
+            db.mDislike = db.mConnection.prepareStatement("UPDATE messages SET dislikes = dislikes - 1 WHERE msgid = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
