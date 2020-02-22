@@ -57,50 +57,6 @@ public class Database {
     private PreparedStatement mDislike;
 
     /**
-     * RowData is like a struct in C: we use it to hold data, and we allow direct
-     * access to its fields. In the context of this Database, RowData represents the
-     * data we'd see in a row.
-     * 
-     * We make RowData a static class of Database because we don't really want to
-     * encourage users to think of RowData as being anything other than an abstract
-     * representation of a row of the database. RowData and the Database are tightly
-     * coupled: if one changes, the other should too.
-     */
-    public static class RowData {
-        /**
-         * The ID of this row of the database
-         */
-        int msgId;
-        /**
-         * The message stored in this row
-         */
-        String message;
-        /**
-         * The ID of the user who posted the message
-         */
-        int userId;
-        /**
-         * The time the message was originally created
-         */
-        Timestamp dateCreated;
-        /**
-         * The number of likes the message contains
-         */
-        int likes;
-
-        /**
-         * Construct a RowData object by providing values for its fields
-         */
-        public RowData(int msgId, String message, int userId, Timestamp dateCreated, int likes) {
-            this.msgId = msgId;
-            this.message = message;
-            this.userId = userId;
-            this.dateCreated = dateCreated;
-            this.likes = likes;
-        }
-    }
-
-    /**
      * The Database constructor is private: we only create Database objects through
      * the getDatabase() method.
      */

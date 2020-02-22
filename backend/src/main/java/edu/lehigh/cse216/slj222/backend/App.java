@@ -136,6 +136,7 @@ public class App {
             }
         });
 
+        // Spark put route to like a message with a given id
         Spark.put("/messages/:id/like", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
@@ -152,6 +153,7 @@ public class App {
             }
         });
 
+        // Spark put route to dislike a message with a given id
         Spark.put("/messages/:id/dislike", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
