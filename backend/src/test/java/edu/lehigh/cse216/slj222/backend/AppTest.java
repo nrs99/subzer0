@@ -4,7 +4,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import java.util.Map;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -43,10 +42,11 @@ public class AppTest
 
     /**
      * Test that a message can be inserted correctly
+     * Hardcoding in database URL
      */
     public void testInsertMessage() {
         Map<String, String> env = System.getenv();
-        Database db = Database.getDatabase(env.get("DATABASE_URL"));
+        Database db = Database.getDatabase(env.get("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct"));
         int insertedRow = db.insertRow("Hello", 1865);
         Message testMessage = db.selectOne(insertedRow);
         assertEquals(testMessage.message, "Hello");
@@ -61,13 +61,14 @@ public class AppTest
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Test that liking and disliking work correctly
+     * Hardcoding in database URL
      */
     public void testLikeDislikeMessage() {
         Map<String, String> env = System.getenv();
-        Database db = Database.getDatabase(env.get("DATABASE_URL"));
+        Database db = Database.getDatabase(env.get("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct"));
         int insertedRow = db.insertRow("Hello", 1865);
         Message testMessage = db.selectOne(insertedRow);
         assertEquals(testMessage.message, "Hello");
