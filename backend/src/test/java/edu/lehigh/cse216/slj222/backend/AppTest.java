@@ -55,7 +55,7 @@ public class AppTest
         try {
             PreparedStatement deleteTest = db.getConnection().prepareStatement("DELETE from messages where msgid=?");
             deleteTest.setInt(1, insertedRow);
-            deleteTest.executeQuery();
+            deleteTest.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             db.disconnect();
@@ -79,12 +79,13 @@ public class AppTest
         db.likeOne(insertedRow);
         db.dislikeOne(insertedRow);
         db.dislikeOne(insertedRow);
+        testMessage = db.selectOne(insertedRow);
         assertEquals(testMessage.likes, 3);
         assertEquals(testMessage.dislikes, 2);
         try {
             PreparedStatement deleteTest = db.getConnection().prepareStatement("DELETE from messages where msgid=?");
             deleteTest.setInt(1, insertedRow);
-            deleteTest.executeQuery();
+            deleteTest.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             db.disconnect();
