@@ -45,7 +45,7 @@ public class AppTest
      * Hardcoding in database URL
      */
     public void testInsertMessage() {
-        Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
+        Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct?sslmode=require");
         int insertedRow = db.insertRow("Hello", 1865);
         Message testMessage = db.selectOne(insertedRow);
         assertEquals(testMessage.message, "Hello");
@@ -66,7 +66,7 @@ public class AppTest
      * Hardcoding in database URL
      */
     public void testLikeDislikeMessage() {
-        Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
+        Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct?sslmode=require");
         int insertedRow = db.insertRow("Hello", 1865);
         Message testMessage = db.selectOne(insertedRow);
         assertEquals(testMessage.message, "Hello");
