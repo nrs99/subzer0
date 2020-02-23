@@ -3,7 +3,6 @@ package edu.lehigh.cse216.slj222.backend;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import java.util.Map;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
