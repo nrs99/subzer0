@@ -35,7 +35,10 @@ public class Database {
      * A prepared statement for inserting into the database
      */
     private PreparedStatement mInsertOne;
-
+    /**
+     * A prepared statemeting for trigger
+     */
+    private PreparedStatmet mTrigger;
     /**
      * A prepared statement for updating a single row in the database
      */
@@ -163,10 +166,14 @@ try {
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM messages WHERE msgid = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT into messages (msgid, likes, message) values (?,?,?);");
+            //create sequence
+            db.mTrigger = db.mConnection.prepareStatement("CREATE SEQUENCE seq_simple");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT into messages (msgid, likes, message) values (seq_simple.nextval,?,?);");
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM messages");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE msgid=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?");
+
+
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -209,10 +216,10 @@ try {
      * 
      * @return The number of rows that were inserted
      */
-    int insertRow(int msgid, int likes,String message) {
+    int insertRow(int likes, String message) {
         int count = 0;
         try {
-            mInsertOne.setInt(1, msgid);
+            //mInsertOne.setInt(1, msgid);
             mInsertOne.setInt(2, likes);
             mInsertOne.setString(3, message);
             count += mInsertOne.executeUpdate();

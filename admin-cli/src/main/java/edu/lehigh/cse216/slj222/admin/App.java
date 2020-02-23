@@ -123,6 +123,7 @@ public class App {
 
         // Start our basic command-line interpreter:
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
         while (true) {
             // Get the user's request, and do it
             //
@@ -166,13 +167,13 @@ public class App {
                     continue;
                 System.out.println("  " + res + " rows deleted");
             } else if (action == '+') {
-                int id = getInt(in, "Enter the msgid");
+                //int id = getInt(in, "Enter the msgid");
                 int likes = getInt(in, "how many likes");
                 String message = getString(in, "Enter the message");
-                if (id == 0 || message.equals(""))
+                if (message.equals(""))
                     continue;
-                int res = db.insertRow(id, likes, message);
-                System.out.println(res + " rows added");
+                int res = db.insertRow(likes, message);
+                System.out.println(res + " row added");
             } else if (action == '~') {
                 int id = getInt(in, "Enter the row ID :> ");
                 if (id == -1)
