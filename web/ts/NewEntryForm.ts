@@ -76,7 +76,7 @@ class NewEntryForm {
             type: "POST",
             url: "/messages",
             dataType: "json",
-            data: JSON.stringify({ mTitle: "TEST_TITLE", mMessage: msg }),
+            data: JSON.stringify({ message: msg }),
             success: NewEntryForm.onSubmitResponse
         });
     }

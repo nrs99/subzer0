@@ -1,4 +1,4 @@
-/// <reference path="ts/EditEntryForm.ts"/>
+
 /// <reference path="ts/NewEntryForm.ts"/>
 /// <reference path="ts/ElementList.ts"/>
 /// <reference path="ts/Navbar.ts"/>
@@ -13,8 +13,7 @@ let Handlebars: any;
 
 // Run some configuration code when the web page loads
 $(document).ready(function () {
+    ElementList.refresh();
     Navbar.refresh();
     NewEntryForm.refresh();
-    ElementList.refresh();
-    EditEntryForm.refresh()
 });

@@ -33,6 +33,7 @@ class EditEntryForm {
     }
 
     public static submitForm() {
+        let id = $(this).data("value");
     	// get the values of the two fields, force them to be strings, and check 
         // that neither is empty
         let msg = "" + $("#" + EditEntryForm.NAME + "-message").val();
@@ -47,7 +48,7 @@ class EditEntryForm {
             type: "PUT",
             url: "/messages",
             dataType: "json",
-            data: JSON.stringify({ mTitle: "TEST_TITLE", mMessage: msg }),
+            data: JSON.stringify({ msgID: id, message: msg }),
             success: EditEntryForm.onSubmitResponse
 	    });
     }
