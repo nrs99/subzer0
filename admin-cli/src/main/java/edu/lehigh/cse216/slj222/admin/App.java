@@ -128,6 +128,8 @@ public class App {
             //
             // NB: for better testability, each action should be a separate
             //     function call
+            try {
+                
             char action = prompt(in);
             if (action == '?') {
                 menu();
@@ -153,7 +155,7 @@ public class App {
                 System.out.println("  Current Database Contents");
                 System.out.println("  -------------------------");
                 for (Database.RowData rd : res) {
-                    System.out.println("  [" + rd.mMsgid + "] " + rd.mMessage);
+                    System.out.println("  [" + rd.mMsgid + "] " + "message: " + rd.mMessage + " date: " + rd.mDatecreated + " user id: " + rd.mUserid + " likes: " +  rd.mLikes + " dislikes: " +  rd.mLikes);
                 }
             } else if (action == '-') {
                 int id = getInt(in, "Enter the row ID");
@@ -167,9 +169,9 @@ public class App {
                 int id = getInt(in, "Enter the msgid");
                 int likes = getInt(in, "how many likes");
                 String message = getString(in, "Enter the message");
-                if (id ==0 || message.equals(""))
+                if (id == 0 || message.equals(""))
                     continue;
-                int res = db.insertRow(id,likes, message);
+                int res = db.insertRow(id, likes, message);
                 System.out.println(res + " rows added");
             } else if (action == '~') {
                 int id = getInt(in, "Enter the row ID :> ");
@@ -181,6 +183,9 @@ public class App {
                     continue;
                 System.out.println("  " + res + " rows updated");
             }
+        } catch (Exception e ) {
+            System.out.println(e);
+        }
         }
         // Always remember to disconnect from the database when the program 
         // exits

@@ -79,6 +79,10 @@ public class Database {
          */
         int mLikes;
         /**
+         * The number of dislikes
+         */
+        int mDislikes;
+        /**
          * The message stored in this row
          */
         String  mMessage;
@@ -86,11 +90,12 @@ public class Database {
         /**
          * Construct a RowData object by providing values for its fields
          */
-        public RowData(int msgid, int userid, String datecreated, int likes, String message ) {
+        public RowData(int msgid, int userid, String datecreated, int likes, int dislikes, String message ) {
             mMsgid = msgid;
             mUserid = userid;
             mDatecreated = datecreated;
             mLikes = likes;
+            mDislikes = dislikes;
             mMessage = message;
         }
     }
@@ -144,23 +149,6 @@ try {
     System.out.println("URI Syntax Error");
     return null;
 }
-
-        // // Give the Database object a connection, fail if we cannot get one
-        // try {
-        //     Connection conn = DriverManager.getConnection("jdbc:postgresql://" + ip + ":" + port + "/", user, pass);
-        //     if (conn == null) {
-        //         System.err.println("Error: DriverManager.getConnection() returned a null object");
-        //         return null;
-        //     }
-        //     db.mConnection = conn;
-        // } catch (SQLException e) {
-        //     System.err.println("Error: DriverManager.getConnection() threw a SQLException");
-        //     e.printStackTrace();
-        //     return null;
-        // }
-
-        // Attempt to create all of our prepared statements.  If any of these 
-        // fail, the whole getDatabase() call should fail
         try {
             // NB: we can easily get ourselves in trouble here by typing the
             //     SQL incorrectly.  We really should have things like "tblData"
@@ -170,7 +158,7 @@ try {
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE messages(msgid int primary key, userid int, datecreated timestamp, likes int, message varchar(250));");
+                    "CREATE TABLE messages(msgid serial primary key, userid int, datecreated timestamp, likes int, dislikes int, message varchar(250));");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE messages;");
 
             // Standard CRUD operations
@@ -244,7 +232,7 @@ try {
         try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getString("datecreated"), rs.getInt("likes"), rs.getString("message")));
+                res.add(new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getString("datecreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getString("message")));
             }
             rs.close();
             return res;
@@ -267,7 +255,7 @@ try {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getString("datecreated"), rs.getInt("likes"), rs.getString("message"));
+                res = new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getString("datecreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getString("message"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
