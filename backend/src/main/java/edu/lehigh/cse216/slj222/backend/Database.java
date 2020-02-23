@@ -125,6 +125,10 @@ public class Database {
         return db;
     }
 
+    Connection getConnection() {
+        return mConnection;
+    }
+
     /**
      * Close the current connection to the database, if one exists.
      * 
