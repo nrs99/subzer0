@@ -132,6 +132,7 @@ try {
     String username = dbUri.getUserInfo().split(":")[0];
     String password = dbUri.getUserInfo().split(":")[1];
     String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
+    //String hardDbUrl = "jdbc:postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct";
     Connection conn = DriverManager.getConnection(dbUrl, username, password);
     if (conn == null) {
         System.err.println("Error: DriverManager.getConnection() returned a null object");
@@ -163,10 +164,15 @@ try {
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM messages WHERE msgid = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT into messages (msgid, likes, message) values (?,?,?);");
+            //create sequence
+            //db.mTrigger = db.mConnection.prepareStatement("CREATE SEQUENCE seq_simple"); seq simple sequence might exist
+            //db.mInsertOne = db.mConnection.prepareStatement("INSERT into messages (msgid, likes, message) values (,?,?);");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages (msgid, userid, datecreated, likes, dislikes, message) VALUES (default, ?, default, ?, ?, ?)");
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM messages");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE msgid=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?");
+
+
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -209,12 +215,15 @@ try {
      * 
      * @return The number of rows that were inserted
      */
-    int insertRow(int msgid, int likes,String message) {
+    int insertRow(int userid, int likes, int dislikes, String message) {
         int count = 0;
         try {
-            mInsertOne.setInt(1, msgid);
+            //mInsertOne.setInt(1, msgid);
+            //mInsertOne.setInt(1, seq_simple.nextval);
+            mInsertOne.setInt(1, userid);
             mInsertOne.setInt(2, likes);
-            mInsertOne.setString(3, message);
+            mInsertOne.setInt(3, dislikes);
+            mInsertOne.setString(4, message);
             count += mInsertOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
