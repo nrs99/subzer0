@@ -40,4 +40,13 @@ public class Message {
             this.dislikes = dislikes;
         }
 
+        /**
+         * String for testing purposes
+         */
+        public String toString() {
+            String str;
+            str = "ID: " + msgId + ", Message: " + message;
+            return str;
+        }
+
 }
