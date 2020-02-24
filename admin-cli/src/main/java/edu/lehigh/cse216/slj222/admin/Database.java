@@ -134,8 +134,9 @@ try {
     URI dbUri = new URI(db_url);
     String username = dbUri.getUserInfo().split(":")[0];
     String password = dbUri.getUserInfo().split(":")[1];
-    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
-    Connection conn = DriverManager.getConnection(dbUrl, username, password);
+    //String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
+    String hardDbUrl = "jdbc:postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct";
+    Connection conn = DriverManager.getConnection(hardDbUrl, username, password);
     if (conn == null) {
         System.err.println("Error: DriverManager.getConnection() returned a null object");
         return null;
@@ -167,8 +168,8 @@ try {
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM messages WHERE msgid = ?");
             //create sequence
-            db.mTrigger = db.mConnection.prepareStatement("CREATE SEQUENCE seq_simple");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT into messages (msgid, likes, message) values (seq_simple.nextval,?,?);");
+            //db.mTrigger = db.mConnection.prepareStatement("CREATE SEQUENCE seq_simple");
+            //db.mInsertOne = db.mConnection.prepareStatement("INSERT into messages (msgid, likes, message) values (seq_simple.nextval,?,?);");
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM messages");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE msgid=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?");
