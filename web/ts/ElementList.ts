@@ -33,13 +33,7 @@ class ElementList {
         $("#" + ElementList.NAME).remove();
         // Use a template to re-generate the table, and then insert it
         $("body").append(Handlebars.templates[ElementList.NAME + ".hb"](data));
-        // Find all of the delete buttons, and set their behavior
-        /*
-        $("." + ElementList.NAME + "-delbtn").click(ElementList.clickDelete);
-        // Find all of the Edit buttons, and set their behavior
-        $("." + ElementList.NAME + "-editbtn").click(ElementList.clickEdit);
-	    // Find all of the Like buttons, and set their behavior
-        */
+        // Find all of the Like buttons, and set their behavior
         $("." + ElementList.NAME + "-likebtn").click(ElementList.clickLike);
         // Find all of the Dislike buttons, and set their behavior
         $("." + ElementList.NAME + "-dislikebtn").click(ElementList.clickDislike);
@@ -60,40 +54,6 @@ class ElementList {
         });
     }
 
-    
-    /**
-     * clickDelete is the code we run in response to a click of a delete button
-     */
-    /*
-    private static clickDelete() {
-        // for now, just print the ID that goes along with the data in the row
-        // whose "delete" button was clicked
-        let id = $(this).data("value");
-        $.ajax({
-            type: "DELETE",
-            url: "/messages/" + id,
-            dataType: "json",
-            // TODO: we should really have a function that looks at the return
-            //       value and possibly prints an error message.
-            success: ElementList.refresh
-        });
-    }
-    */
-    /**
-     * clickEdit is the code we run in response to a click of a delete button
-     */
-    /*
-    private static clickEdit() {
-        // as in clickDelete, we need the ID of the row
-        let id = $(this).data("value");
-            $.ajax({
-            type: "GET",
-            url: "/messages/" + id,
-            dataType: "json",
-            success: EditEntryForm.show
-        });
-    }
-    */
     /**
      * clickLike is the code we run in response to a click of a like button
      */
