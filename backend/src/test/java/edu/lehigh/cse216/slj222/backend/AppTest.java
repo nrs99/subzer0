@@ -3,8 +3,11 @@ package edu.lehigh.cse216.slj222.backend;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import java.util.ArrayList;
 
 
 /**
@@ -57,6 +60,7 @@ public class AppTest
             deleteTest.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
             db.disconnect();
         }
     }
@@ -87,6 +91,59 @@ public class AppTest
             deleteTest.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            db.disconnect();
+        }
+    }
+
+    /**
+     * Test to see if newer messages come first
+     */
+    public void testNewestFirst() {
+        Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
+        int firstInsert = db.insertRow("Hello", 1865);
+        int secondInsert = db.insertRow("Goodbye", 1432);
+        Message firstMessage = db.selectOne(firstInsert);
+        Message secondMessage = db.selectOne(secondInsert);
+        ArrayList<Message> messages = db.selectAllNewest();
+        int firstIndex = messages.indexOf(firstMessage);
+        int secondIndex = messages.indexOf(secondMessage);
+        assertTrue(firstIndex > secondIndex);
+        try {
+            PreparedStatement deleteTest = db.getConnection().prepareStatement("DELETE from messages where msgid=?");
+            deleteTest.setInt(1, firstInsert);
+            deleteTest.executeUpdate();
+            deleteTest.setInt(1, secondInsert);
+            deleteTest.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            db.disconnect();
+        }
+    }
+
+    /**
+     * Test to see if older messages come first
+     */
+    public void testOldestFirst() {
+        Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
+        int firstInsert = db.insertRow("Hello", 1865);
+        int secondInsert = db.insertRow("Goodbye", 1432);
+        Message firstMessage = db.selectOne(firstInsert);
+        Message secondMessage = db.selectOne(secondInsert);
+        ArrayList<Message> messages = db.selectAllNewest();
+        int firstIndex = messages.indexOf(firstMessage);
+        int secondIndex = messages.indexOf(secondMessage);
+        assertTrue(firstIndex < secondIndex);
+        try {
+            PreparedStatement deleteTest = db.getConnection().prepareStatement("DELETE from messages where msgid=?");
+            deleteTest.setInt(1, firstInsert);
+            deleteTest.executeUpdate();
+            deleteTest.setInt(1, secondInsert);
+            deleteTest.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
             db.disconnect();
         }
     }
