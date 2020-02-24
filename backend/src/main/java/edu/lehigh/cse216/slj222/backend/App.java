@@ -7,11 +7,24 @@ import spark.Spark;
 // Import Google's JSON library
 import com.google.gson.*;
 
+import java.util.Map;
+
 /**
  * For now, our app creates an HTTP server that can only get and add data.
  */
 public class App {
     public static void main(String[] args) {
+
+        // get the Postgres configuration from the environment
+        Map<String, String> env = System.getenv();
+
+        String db_url = env.get("DATABASE_URL");
+
+        // Get a fully-configured connection to the database, or exit
+        // immediately
+        Database db = Database.getDatabase(db_url);
+        if (db == null)
+            return;
 
         // gson provides us with a way to turn JSON into objects, and objects
         // into JSON.
@@ -28,7 +41,8 @@ public class App {
         // NB: every time we shut down the server, we will lose all data, and
         // every time we start the server, we'll have an empty dataStore,
         // with IDs starting over from 0.
-        final DataStore dataStore = new DataStore();
+
+        Spark.port(getIntFromEnv("PORT", 4567));
 
         // Set up the location for serving static files. If the STATIC_LOCATION
         // environment variable is set, we will serve from it. Otherwise, serve
@@ -40,21 +54,45 @@ public class App {
             Spark.staticFiles.externalLocation(static_location_override);
         }
 
+        String cors_enabled = env.get("CORS_ENABLED");
+        if (cors_enabled.equals("True")) {
+            final String acceptCrossOriginRequestsFrom = "*";
+            final String acceptedCrossOriginRoutes = "GET,PUT,POST,DELETE,OPTIONS";
+            final String supportedRequestHeaders = "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin";
+            enableCORS(acceptCrossOriginRequestsFrom, acceptedCrossOriginRoutes, supportedRequestHeaders);
+        }
+
         // Set up a route for serving the main page
         Spark.get("/", (req, res) -> {
             res.redirect("/index.html");
             return "";
         });
 
-        // GET route that returns all message titles and Ids. All we do is get
-        // the data, embed it in a StructuredResponse, turn it into JSON, and
-        // return it. If there's no data, we return "[]", so there's no need
-        // for error handling.
+        // GET route that returns all message titles and Ids.
+        // Standard call will have newest messages first
         Spark.get("/messages", (request, response) -> {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            return gson.toJson(new StructuredResponse("ok", null, dataStore.readAll()));
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllNewest()));
+        });
+
+        // GET route that returns all message titles and Ids.
+        // Oldest messages first
+        Spark.get("/messages/oldest", (request, response) -> {
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllOldest()));
+        });
+
+        // GET route that returns all message titles and Ids.
+        // Most popular messages first
+        Spark.get("/messages/popular", (request, response) -> {
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllPopular()));
         });
 
         // GET route that returns everything for a single row in the DataStore.
@@ -68,7 +106,7 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            DataRow data = dataStore.readOne(idx);
+            Object data = db.selectOne(idx);
             if (data == null) {
                 return gson.toJson(new StructuredResponse("error", idx + " not found", null));
             } else {
@@ -90,7 +128,7 @@ public class App {
             response.status(200);
             response.type("application/json");
             // NB: createEntry checks for null title and message
-            int newId = dataStore.createEntry(req.mTitle, req.mMessage);
+            int newId = db.insertRow(req.message, req.userID);
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
@@ -98,9 +136,8 @@ public class App {
             }
         });
 
-        // PUT route for updating a row in the DataStore. This is almost
-        // exactly the same as POST
-        Spark.put("/messages/:id", (request, response) -> {
+        // Spark put route to like a message with a given id
+        Spark.put("/messages/:id/like", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
             int idx = Integer.parseInt(request.params("id"));
@@ -108,29 +145,72 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            DataRow result = dataStore.updateOne(idx, req.mTitle, req.mMessage);
-            if (result == null) {
+            int result = db.likeOne(idx);
+            if (result == 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", null, result));
+                return gson.toJson(new StructuredResponse("ok", null, req));
             }
         });
 
-        // DELETE route for removing a row from the DataStore
-        Spark.delete("/messages/:id", (request, response) -> {
-            // If we can't get an ID, Spark will send a status 500
+        // Spark put route to dislike a message with a given id
+        Spark.put("/messages/:id/dislike", (request, response) -> {
+            // If we can't get an ID or can't parse the JSON, Spark will send
+            // a status 500
             int idx = Integer.parseInt(request.params("id"));
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            // NB: we won't concern ourselves too much with the quality of the
-            // message sent on a successful delete
-            boolean result = dataStore.deleteOne(idx);
-            if (!result) {
-                return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
+            int result = db.dislikeOne(idx);
+            if (result == 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", null, null));
+                return gson.toJson(new StructuredResponse("ok", null, req));
             }
         });
+
     }
+
+    static int getIntFromEnv(String envar, int defaultVal) {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get(envar) != null) {
+            return Integer.parseInt(processBuilder.environment().get(envar));
+        }
+        return defaultVal;
+    }
+
+    /**
+     * Set up CORS headers for the OPTIONS verb, and for every response that the
+     * server sends. This only needs to be called once.
+     * 
+     * @param origin  The server that is allowed to send requests to this server
+     * @param methods The allowed HTTP verbs from the above origin
+     * @param headers The headers that can be sent with a request from the above
+     *                origin
+     */
+    private static void enableCORS(String origin, String methods, String headers) {
+        // Create an OPTIONS route that reports the allowed CORS headers and methods
+        Spark.options("/*", (request, response) -> {
+            String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+            if (accessControlRequestHeaders != null) {
+                response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+            }
+            String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+            if (accessControlRequestMethod != null) {
+                response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+            }
+            return "OK";
+        });
+
+        // 'before' is a decorator, which will run before any
+        // get/post/put/delete. In our case, it will put three extra CORS
+        // headers into the response
+        Spark.before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", origin);
+            response.header("Access-Control-Request-Method", methods);
+            response.header("Access-Control-Allow-Headers", headers);
+        });
+    }
+
 }
