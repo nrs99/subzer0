@@ -1,24 +1,56 @@
 package edu.lehigh.cse216.slj222;
 
-class Datum {
-    /**
-     * An integer index for this piece of data
-     */
-    int mIndex;
+public class Datum {
+    private String message;
+    private String title;
+    private int ID;
 
     /**
-     * The string contents that comprise this piece of data
+     * Constructor
+     * @param theMessage
+     * @param theTitle
      */
-    String mText;
-
-    /**
-     * Construct a Datum by setting its index and text
-     *
-     * @param idx The index of this piece of data
-     * @param txt The string contents for this piece of data
-     */
-    Datum(int idx, String txt) {
-        mIndex = idx;
-        mText = txt;
+    public Datum (String theMessage, String theTitle, int theID) {
+        this.message = theMessage;
+        this.title = theTitle;
+        this.ID = theID;
     }
+
+
+    /**
+     * set message
+     * @param newMessage
+     */
+    public void setMessage(String newMessage) {
+        this.message = newMessage;
+    }
+
+    /**
+     * set title
+     * @param newTitle
+     */
+    public void setTitle (String newTitle) {
+        this.title = newTitle;
+    }
+
+    public void setID (int newID) {
+        this.ID = newID;
+    }
+
+    /**
+     * get message
+     * @return the message
+     */
+    public String getMessage () {
+        return this.message;
+    }
+
+    /**
+     * get title
+     * @return the title
+     */
+    public String getTitle () {
+        return this.title;
+    }
+
 }
