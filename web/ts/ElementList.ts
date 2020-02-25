@@ -37,6 +37,8 @@ class ElementList {
         $("." + ElementList.NAME + "-likebtn").click(ElementList.clickLike);
         // Find all of the Dislike buttons, and set their behavior
         $("." + ElementList.NAME + "-dislikebtn").click(ElementList.clickDislike);
+        // Refresh ElementList after the sort is updated
+        $("#" + ElementList.NAME + "-sort").change(ElementList.refresh);
     }
 
     /**
@@ -46,12 +48,14 @@ class ElementList {
         // Make sure the singleton is initialized
         ElementList.init();
         // Issue a GET, and then pass the result to update()
+        let sort = "" + $("#" + ElementList.NAME + "-sort").val();
+        if(sort == "undefined") sort = "";
         $.ajax({
             type: "GET",
-            url: "/messages",
+            url: "/messages" + sort,
             dataType: "json",
             success: ElementList.update
-        });
+        });    
     }
 
     /**

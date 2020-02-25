@@ -68,6 +68,8 @@ class NewEntryForm {
         if (msg === "") {
             window.alert("Error: message is empty");
             return;
+        } else if (msg.length > 250) {
+            window.alert("Error: message longer than 250 characters");
         }
         NewEntryForm.hide();
         // set up an AJAX post.  When the server replies, the result will go to

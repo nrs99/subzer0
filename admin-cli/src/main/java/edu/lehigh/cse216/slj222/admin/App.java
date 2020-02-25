@@ -18,8 +18,8 @@ public class App {
      */
     static void menu() {
         System.out.println("Main Menu");
-        System.out.println("  [T] Create tblData");
-        System.out.println("  [D] Drop tblData");
+        System.out.println("  [T] Create message table");
+        System.out.println("  [D] Drop table is inactive");
         System.out.println("  [1] Query for a specific row");
         System.out.println("  [*] Query for all rows");
         System.out.println("  [-] Delete a row");
@@ -104,7 +104,7 @@ public class App {
      * The main routine runs a loop that gets a request from the user and
      * processes it
      * 
-     * @param argv Command-line options.  Ignored by this program.
+     * @param argv Command-line options.  Ignored by this program.tryna smashyes should we leavr car at my house
      */
     public static void main(String[] argv) {
         // get the Postgres configuration from the environment
@@ -122,7 +122,9 @@ public class App {
             return;
 
         // Start our basic command-line interpreter:
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in)); 
+try {
+
 
         while (true) {
             // Get the user's request, and do it
@@ -139,7 +141,7 @@ public class App {
             } else if (action == 'T') {
                 db.createTable();
             } else if (action == 'D') {
-                db.dropTable();
+                //db.dropTable();
             } else if (action == '1') {
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
@@ -167,12 +169,13 @@ public class App {
                     continue;
                 System.out.println("  " + res + " rows deleted");
             } else if (action == '+') {
-                //int id = getInt(in, "Enter the msgid");
+                int id = getInt(in, "Enter the userid");
                 int likes = getInt(in, "how many likes");
+                int dislikes = getInt(in, "how many dislikes ");
                 String message = getString(in, "Enter the message");
                 if (message.equals(""))
                     continue;
-                int res = db.insertRow(likes, message);
+                int res = db.insertRow(id, likes,dislikes,  message);
                 System.out.println(res + " row added");
             } else if (action == '~') {
                 int id = getInt(in, "Enter the row ID :> ");
@@ -184,12 +187,20 @@ public class App {
                     continue;
                 System.out.println("  " + res + " rows updated");
             }
+            else  {
+                System.out.println("Invalid");
+            }
         } catch (Exception e ) {
             System.out.println(e);
         }
         }
+
         // Always remember to disconnect from the database when the program 
         // exits
         db.disconnect();
+    } catch(Exception e) {
+    System.out.println(e);
     }
+}
+
 }
