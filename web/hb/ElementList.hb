@@ -1,7 +1,13 @@
 <div class="panel panel-default" id="ElementList">
     <div class="panel-heading">
-        <h3 class="panel-title">All Data</h3>
+        <h3 class="panel-title">Messages</h3>
     </div>
+    <label for="ElementList-sort">Sort by:</label>
+    <select id="ElementList-sort">
+        <option value="">Newest</option>
+        <option value="/oldest">Oldest</option>
+        <option value="/popular">Popular</popular>
+    </select>
     <table class="table">
         <tbody>
             {{#each mData}}
