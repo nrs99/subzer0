@@ -104,7 +104,7 @@ public class App {
      * The main routine runs a loop that gets a request from the user and
      * processes it
      * 
-     * @param argv Command-line options.  Ignored by this program.
+     * @param argv Command-line options.  Ignored by this program.tryna smashyes should we leavr car at my house
      */
     public static void main(String[] argv) {
         // get the Postgres configuration from the environment
@@ -122,12 +122,10 @@ public class App {
             return;
 
         // Start our basic command-line interpreter:
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
-<<<<<<< HEAD
-=======
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in)); 
 try {
->>>>>>> admin-hotfix
+
+
         while (true) {
             // Get the user's request, and do it
             //
@@ -171,24 +169,13 @@ try {
                     continue;
                 System.out.println("  " + res + " rows deleted");
             } else if (action == '+') {
-                //int id = getInt(in, "Enter the msgid");
-<<<<<<< HEAD
-=======
-                int userid = getInt(in, "user id");
->>>>>>> admin-hotfix
+                int id = getInt(in, "Enter the userid");
                 int likes = getInt(in, "how many likes");
                 int dislikes = getInt(in, "how many dislikes ");
                 String message = getString(in, "Enter the message");
-<<<<<<< HEAD
                 if (message.equals(""))
                     continue;
-                int res = db.insertRow(likes, message);
-=======
-
-                if (message.equals(""))
-                    continue;
-                int res = db.insertRow(userid, likes, dislikes, message);
->>>>>>> admin-hotfix
+                int res = db.insertRow(id, likes,dislikes,  message);
                 System.out.println(res + " row added");
             } else if (action == '~') {
                 int id = getInt(in, "Enter the row ID :> ");

@@ -34,7 +34,6 @@ public class AppTest
     public void testApp()
     {
         //test insert
-<<<<<<< HEAD
         //int count = 7;
         //Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
         //int c = db.insertRow(count, 1, "mama");
@@ -43,7 +42,6 @@ public class AppTest
         //assertEquals("mama", res.mMessage);
         //test update
         //assertEquals(count , 1);
-=======
         //int count = 0;
         Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
         //int c = db.insertRow(count, 1, "mama");
@@ -56,7 +54,6 @@ public class AppTest
 
 
         //test update
->>>>>>> admin-hotfix
        //count ++;
 
     }
