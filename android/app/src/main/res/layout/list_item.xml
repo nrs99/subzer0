@@ -1,16 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/listItemIndex"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
+    android:id="@+id/llCardBack"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:animateLayoutChanges="true"
+    android:padding="4dp"
+    android:orientation="vertical">
+
 
     <TextView
         android:id="@+id/listItemText"
-        android:layout_width="match_parent"
+        android:layout_width="403dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center|fill_horizontal"
+        android:background="@android:color/holo_red_light"
+        android:padding="6dp"
+        android:textColor="@android:color/black"
+        android:textSize="14sp" />
+
+
+    <LinearLayout
+        android:id="@+id/LinearLayout02"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true">
+
+        <ImageButton
+            android:id="@+id/like_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="right"
+            android:background="@drawable/ic_unlikebutton"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="338dp" />
+
+        <ImageButton
+            android:id="@+id/dislike_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="right"
+            android:background="@drawable/ic_no_thumbdown"
+            android:layout_alignParentRight="true"/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/llExpandArea"
+        android:visibility="gone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:text="Item One" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:text="Item Two" />
+
+    </LinearLayout>
 </LinearLayout>

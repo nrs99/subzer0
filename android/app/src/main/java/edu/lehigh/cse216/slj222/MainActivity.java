@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -15,6 +16,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -25,8 +28,13 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.*;
 
@@ -36,35 +44,52 @@ public class MainActivity extends AppCompatActivity {
      * mData holds the data we get from Volley
      */
     ArrayList<Datum> mData = new ArrayList<>();
+    String message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Log.d("slj222", "Debug Message from onCreate");
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://www.cse.lehigh.edu/~spear/5k.json";
+        String url = "https://subzer0.herokuapp.com/messages";
+        JSONObject request = new JSONObject();
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        populateListFromVolley(response);
-                    }
-                }, new Response.ErrorListener() {
+
+        Button postButton = findViewById(R.id.post_button);
+        final EditText textToSend = findViewById(R.id.textView);
+        postButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("slj222", "That didn't work!");
-                Log.e("slj222", error.toString());
+            public void onClick(View view) {
+                if (!textToSend.getText().toString().equals("")) {
+                    message = textToSend.getText().toString();
+                    postMessage();
+                }
             }
         });
 
-// Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        // Request a string response from the provided URL.
+        JsonObjectRequest getResponse = new JsonObjectRequest(Request.Method.GET, url, request,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        populateListFromVolley(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }) {
+        };
+        // Add the request to the RequestQueue.
+        queue.add(getResponse);
+
+
     }
 
     @Override
@@ -74,7 +99,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /*
     @Override
+
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -90,33 +117,97 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
-    private void populateListFromVolley(String response){
+    private void populateListFromVolley(JSONObject response){
         try {
-            JSONArray json= new JSONArray(response);
+            JSONArray json= response.getJSONArray("mData");
             for (int i = 0; i < json.length(); ++i) {
-                int num = json.getJSONObject(i).getInt("num");
-                String str = json.getJSONObject(i).getString("str");
-                mData.add(new Datum(num, str));
+                int id = json.getJSONObject(i).getInt("userId");
+                String message = json.getJSONObject(i).getString("message");
+                String title = "title";          //json.getJSONObject(i).getString("dateCreated");
+                mData.add(new Datum(message, title, id));
             }
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
             return;
         }
         Log.d("slj222", "Successfully parsed JSON file.");
-        RecyclerView rv = (RecyclerView) findViewById(R.id.datum_list_view);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView rv = (RecyclerView) findViewById(R.id.Subzer0);
+        rv.setLayoutManager(layoutManager);
         rv.setHasFixedSize(true);
         ItemListAdapter adapter = new ItemListAdapter(this, mData);
         rv.setAdapter(adapter);
 
-        adapter.setClickListener(new ItemListAdapter.ClickListener() {
-            @Override
-            public void onClick(Datum d) {
-                Toast.makeText(MainActivity.this, d.mIndex + " --> " + d.mText, Toast.LENGTH_LONG).show();
-            }
-        });
+    }
+
+    public void postMessage() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://subzer0.herokuapp.com/messages";
+        Map<String, String> params = new HashMap<>();
+        EditText theBox = findViewById(R.id.textView);
+        params.put("message", message);
+        //params.put("title", "cse216");
+        JSONObject request = new JSONObject(params);
+
+        // Request a string response from the provided URL.
+        JsonObjectRequest getReq = new JsonObjectRequest(Request.Method.POST, url, request,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            response.getString("mStatus");  //if its working or not
+                            RecyclerView display = findViewById(R.id.datum_list_view);
+
+                            mData.clear();
+
+                            getMessage();
+                        } catch (final JSONException e) {
+                            Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // if there's an error
+                        Log.d("slj222", "error:" + error.getMessage());
+                        error.printStackTrace();
+                    }
+                }) {
+        };
+        // Add the request to the RequestQueue.
+        queue.add(getReq);
+    }
+
+
+
+
+    public void getMessage() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://subzer0.herokuapp.com/messages";
+        JSONObject request = new JSONObject();
+
+        // Request a string response from the provided URL.
+        JsonObjectRequest getReq = new JsonObjectRequest(Request.Method.GET, url, request,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        populateListFromVolley(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // if there is an error, show it
+                        Log.d("slj222", "error:" + error.getMessage());
+                        error.printStackTrace();
+                    }
+                }) {
+        };
+        queue.add(getReq);
     }
 
     @Override
