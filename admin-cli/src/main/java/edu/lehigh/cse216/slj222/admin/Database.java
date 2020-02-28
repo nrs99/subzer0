@@ -1,4 +1,5 @@
 package edu.lehigh.cse216.slj222.admin;
+import java.sql.Timestamp;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -168,8 +169,8 @@ try {
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM messages WHERE msgid = ?");
             //create sequence
             //db.mTrigger = db.mConnection.prepareStatement("CREATE SEQUENCE seq_simple");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages(msgid, userid, datecreated, likes, dislikes, message) VALUES (default, ?, default, ?, ?, ?);");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM messages");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages(msgid, userid, datecreated, likes, dislikes, message) VALUES (default, ?, ?, ?, ?, ?)");
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM messages order by datecreated asc");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE msgid=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?");
 
@@ -218,11 +219,16 @@ try {
      */
     int insertRow(int userid, int likes, int dislikes, String message) {
         int count = 0;
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
         try {
             mInsertOne.setInt(1, userid);
-            mInsertOne.setInt(2, likes);
-            mInsertOne.setInt(3, dislikes);
-            mInsertOne.setString(4, message);
+
+            //mInsertOne.setTimestamp(2, ts.getTime());
+            mInsertOne.setTimestamp(2, ts);
+
+            mInsertOne.setInt(3, likes);
+            mInsertOne.setInt(4, dislikes);
+            mInsertOne.setString(5, message);
             count += mInsertOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

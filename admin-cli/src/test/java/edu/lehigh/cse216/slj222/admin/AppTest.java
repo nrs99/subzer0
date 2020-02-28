@@ -49,7 +49,7 @@ public class AppTest
         assertEquals("override check", res.mMessage);
         assertEquals(0, res.mUserid);
         assertEquals(0, res.mLikes);
-        assertEquals(0, res.mDislikes);
+        assertEquals(6, res.mDislikes);
         assertEquals("2020-02-23 21:17:36.039", res.mDatecreated);
 
 
