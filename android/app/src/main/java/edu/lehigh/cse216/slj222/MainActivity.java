@@ -119,10 +119,8 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://subzer0.herokuapp.com/messages";
         Map<String, String> params = new HashMap<>();
-        EditText theBox = findViewById(R.id.textView);
         params.put("message", message);
-        //params.put("title", "cse216");
-
+        
         JSONObject request = new JSONObject(params);
 
         // Request a string response from the provided URL.

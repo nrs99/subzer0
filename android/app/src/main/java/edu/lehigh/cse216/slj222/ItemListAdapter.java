@@ -34,6 +34,8 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         ImageButton thumbdown;
         Button postButton;
         EditText textToSend;
+        TextView likeCount;
+        TextView dislikeCount;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -42,6 +44,8 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             thumbdown = itemView.findViewById(R.id.dislike_button);
             postButton = itemView.findViewById(R.id.post_button);
             textToSend = itemView.findViewById(R.id.textView);
+            likeCount = itemView.findViewById(R.id.likeCount);
+            dislikeCount = itemView.findViewById(R.id.dislikeCount);
         }
     }
 
@@ -62,31 +66,28 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         final Message d = myData.get(position);
         viewHolder.mText.setText(d.message);
+        viewHolder.likeCount.setText(String.valueOf(d.likes));
+        viewHolder.dislikeCount.setText(String.valueOf(d.dislikes));
+
 
         viewHolder.thumbup.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View b)
-            {
+            public void onClick(View b) {
                 //if the post is already liked
-                if(b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_unlikebutton).getConstantState())
-                {
+                if (b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_unlikebutton).getConstantState()) {
                     b.setBackgroundResource(R.drawable.ic_likebutton);
-                }
-                else{
+                } else {
                     b.setBackgroundResource(R.drawable.ic_unlikebutton);
                 }
             }
         });
         viewHolder.thumbdown.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View b)
-            {
+            public void onClick(View b) {
                 //if the post is already liked
-                if(b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_no_thumbdown).getConstantState())
-                {
+                if (b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_no_thumbdown).getConstantState()) {
                     b.setBackgroundResource(R.drawable.ic_thumbdown);
-                }
-                else{
+                } else {
                     b.setBackgroundResource(R.drawable.ic_no_thumbdown);
                 }
             }
@@ -94,11 +95,17 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
     }
 
-    interface ClickListener{
+    interface ClickListener {
         void onClick(Message d);
     }
 
     private ClickListener mClickListener;
-    ClickListener getClickListener() {return mClickListener;}
-    void setClickListener(ClickListener c) { mClickListener = c;}
+
+    ClickListener getClickListener() {
+        return mClickListener;
+    }
+
+    void setClickListener(ClickListener c) {
+        mClickListener = c;
+    }
 }

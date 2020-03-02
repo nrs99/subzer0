@@ -30,6 +30,7 @@ public class Message {
      * The number of dislikes the message contains
      */
     int dislikes;
+
     /**
      * Construct a Message object by providing values for its fields
      */
