@@ -33,6 +33,28 @@ public class AppTest
      */
     public void testApp()
     {
-        assertTrue( true );
+        //test insert
+        //int count = 7;
+        //Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
+        //int c = db.insertRow(count, 1, "mama");
+        //Database.RowData res = db.selectOne(1);
+        // String x = db.selectOne(1)
+        //assertEquals("mama", res.mMessage);
+        //test update
+        //assertEquals(count , 1);
+        //int count = 0;
+        Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
+        //int c = db.insertRow(count, 1, "mama");
+        Database.RowData res = db.selectOne(77);
+        assertEquals("override check", res.mMessage);
+        assertEquals(0, res.mUserid);
+        assertEquals(0, res.mLikes);
+        assertEquals(6, res.mDislikes);
+        assertEquals("2020-02-23 21:17:36.039", res.mDatecreated);
+
+
+        //test update
+       //count ++;
+
     }
 }
