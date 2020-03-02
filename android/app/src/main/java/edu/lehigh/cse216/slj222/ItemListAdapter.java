@@ -18,11 +18,11 @@ import java.util.ArrayList;
 
 class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     private Context context;
-    private ArrayList<Datum> myData;
+    private ArrayList<Message> myData;
     //private LayoutInflater mLayoutInflater;
 
 
-    ItemListAdapter(Context context, ArrayList<Datum> data) {
+    ItemListAdapter(Context context, ArrayList<Message> data) {
         this.myData = data;
         this.context = context;
         //mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -67,8 +67,8 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        final Datum d = myData.get(position);
-        viewHolder.mText.setText(d.getMessage());
+        final Message d = myData.get(position);
+        viewHolder.mText.setText(d.message);
 
         viewHolder.thumbup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +102,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     }
 
     interface ClickListener{
-        void onClick(Datum d);
+        void onClick(Message d);
     }
 
     private ClickListener mClickListener;

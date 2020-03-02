@@ -13,7 +13,7 @@ local.properties
 .externalNativeBuild
 .cxx
 .idea
-app/
+app/build
 .project
 .settings/
 

@@ -27,9 +27,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import java.sql.Timestamp;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * mData holds the data we get from Volley
      */
-    ArrayList<Datum> mData = new ArrayList<>();
+    ArrayList<Message> mData = new ArrayList<>();
     String message;
 
     @Override
@@ -53,11 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://subzer0.herokuapp.com/messages";
-        JSONObject request = new JSONObject();
 
+        getMessages(); // Run the script to get messages
 
         Button postButton = findViewById(R.id.post_button);
         final EditText textToSend = findViewById(R.id.textView);
@@ -67,28 +69,10 @@ public class MainActivity extends AppCompatActivity {
                 if (!textToSend.getText().toString().equals("")) {
                     message = textToSend.getText().toString();
                     postMessage();
+                    textToSend.getText().clear(); //Remove whatever's in there
                 }
             }
         });
-
-        // Request a string response from the provided URL.
-        JsonObjectRequest getResponse = new JsonObjectRequest(Request.Method.GET, url, request,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        populateListFromVolley(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                }) {
-        };
-        // Add the request to the RequestQueue.
-        queue.add(getResponse);
-
 
     }
 
@@ -99,37 +83,25 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    /*
-    @Override
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent i = new Intent(getApplicationContext(), SecondActivity.class);
-            i.putExtra("label_contents", "CSE216 is the best");
-            startActivityForResult(i, 789); // 789 is the number that will come back to us
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
-
-    private void populateListFromVolley(JSONObject response){
+    private void populateListFromVolley(String response) {
         try {
-            JSONArray json= response.getJSONArray("mData");
-            for (int i = 0; i < json.length(); ++i) {
-                int id = json.getJSONObject(i).getInt("userId");
+            JSONObject responseObj = new JSONObject(response);
+            JSONArray json = responseObj.getJSONArray("mData");
+            for (int i = 0; i < json.length(); i++) {
+                int msgId = json.getJSONObject(i).getInt("msgId");
+                int userId = json.getJSONObject(i).getInt("userId");
                 String message = json.getJSONObject(i).getString("message");
-                String title = "title";          //json.getJSONObject(i).getString("dateCreated");
-                mData.add(new Datum(message, title, id));
+                /*String dateStr = json.getJSONObject(i).getString("dateCreated");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Timestamp dateCreated = (Timestamp) sdf.parse(dateStr);
+                 */
+                int likes = json.getJSONObject(i).getInt("likes");
+                int dislikes = json.getJSONObject(i).getInt("dislikes");
+                mData.add(new Message(msgId, message, userId, likes, dislikes));
             }
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
+            e.printStackTrace();
             return;
         }
         Log.d("slj222", "Successfully parsed JSON file.");
@@ -150,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         EditText theBox = findViewById(R.id.textView);
         params.put("message", message);
         //params.put("title", "cse216");
+
         JSONObject request = new JSONObject(params);
 
         // Request a string response from the provided URL.
@@ -162,8 +135,7 @@ public class MainActivity extends AppCompatActivity {
                             RecyclerView display = findViewById(R.id.datum_list_view);
 
                             mData.clear();
-
-                            getMessage();
+                            getMessages();
                         } catch (final JSONException e) {
                             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
                         }
@@ -178,48 +150,25 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }) {
         };
-        // Add the request to the RequestQueue.
-        queue.add(getReq);
+        VolleySingleton.getInstance(this).addToRequestQueue(getReq);
     }
 
 
-
-
-    public void getMessage() {
-        RequestQueue queue = Volley.newRequestQueue(this);
+    public void getMessages() {
         String url = "https://subzer0.herokuapp.com/messages";
-        JSONObject request = new JSONObject();
-
-        // Request a string response from the provided URL.
-        JsonObjectRequest getReq = new JsonObjectRequest(Request.Method.GET, url, request,
-                new Response.Listener<JSONObject>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(String response) {
                         populateListFromVolley(response);
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // if there is an error, show it
-                        Log.d("slj222", "error:" + error.getMessage());
-                        error.printStackTrace();
-                    }
-                }) {
-        };
-        queue.add(getReq);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 789) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                // Get the "extra" string of data
-                Toast.makeText(MainActivity.this, data.getStringExtra("result"), Toast.LENGTH_LONG).show();
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("slj222", "That didn't work!");
+                Log.e("slj222", error.toString());
             }
-        }
+        });
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 }
