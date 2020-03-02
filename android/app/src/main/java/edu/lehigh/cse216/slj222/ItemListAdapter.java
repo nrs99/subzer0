@@ -19,13 +19,11 @@ import java.util.ArrayList;
 class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     private Context context;
     private ArrayList<Message> myData;
-    //private LayoutInflater mLayoutInflater;
 
 
     ItemListAdapter(Context context, ArrayList<Message> data) {
         this.myData = data;
         this.context = context;
-        //mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
 
@@ -39,7 +37,6 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
         ViewHolder(View itemView) {
             super(itemView);
-            //this.mIndex = (TextView) itemView.findViewById(R.id.listTitle);
             this.mText = (TextView) itemView.findViewById(R.id.listItemText);         //need to change textview
             thumbup = itemView.findViewById(R.id.like_button);
             thumbdown = itemView.findViewById(R.id.dislike_button);
@@ -56,10 +53,6 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        /*
-        View view = mLayoutInflater.inflate(R.layout.list_item, null);
-        return new ViewHolder(view);
-        */
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.list_item, parent, false);
         return new ViewHolder(view);

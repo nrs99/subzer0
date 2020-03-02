@@ -14,7 +14,7 @@
         android:layout_width="403dp"
         android:layout_height="60dp"
         android:layout_gravity="center|fill_horizontal"
-        android:background="@android:color/holo_red_light"
+        android:background="@android:color/transparent"
         android:padding="6dp"
         android:textColor="@android:color/black"
         android:textSize="14sp" />
@@ -22,28 +22,27 @@
 
     <LinearLayout
         android:id="@+id/LinearLayout02"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="true">
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/like_button"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="right"
-            android:background="@drawable/ic_unlikebutton"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="338dp" />
+            android:layout_gravity="right"
+            android:layout_marginLeft="338dp"
+            android:background="@drawable/ic_unlikebutton" />
 
         <ImageButton
             android:id="@+id/dislike_button"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_alignParentRight="true"
             android:layout_gravity="right"
-            android:background="@drawable/ic_no_thumbdown"
-            android:layout_alignParentRight="true"/>
+            android:background="@drawable/ic_no_thumbdown" />
 
     </LinearLayout>
 

@@ -23,10 +23,9 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="729dp"
+        android:layout_height="784dp"
         android:orientation="vertical"
         tools:context=".MainActivity">
 
@@ -56,10 +55,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/Subzer0"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="65dp"
-            android:layout_marginTop="0dp"/>
-
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="30dp" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
