@@ -70,26 +70,44 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         viewHolder.dislikeCount.setText(String.valueOf(d.dislikes));
 
 
-        viewHolder.thumbup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View b) {
-                //if the post is already liked
-                if (b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_unlikebutton).getConstantState()) {
-                    b.setBackgroundResource(R.drawable.ic_likebutton);
-                } else {
-                    b.setBackgroundResource(R.drawable.ic_unlikebutton);
+        viewHolder.thumbup.setOnClickListener(b -> {
+            //Change the image if clicked
+            if (b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_unlikebutton).getConstantState()) {
+                b.setBackgroundResource(R.drawable.ic_likebutton);
+                if (viewHolder.thumbdown.getBackground().getConstantState()== viewHolder.thumbdown.getResources().getDrawable(R.drawable.ic_thumbdown).getConstantState()) {
+                    // Decrease dislikes by 1
+                    viewHolder.thumbdown.setBackgroundResource(R.drawable.ic_no_thumbdown);
+                    int oldDislikes = Integer.parseInt(viewHolder.dislikeCount.getText().toString());
+                    viewHolder.dislikeCount.setText(String.valueOf(oldDislikes - 1));
                 }
+                // Increase likes by 1
+                int oldLikes = Integer.parseInt(viewHolder.likeCount.getText().toString());
+                viewHolder.likeCount.setText(String.valueOf(oldLikes + 1));
+            } else {
+                b.setBackgroundResource(R.drawable.ic_unlikebutton);
+                // Decrease likes by 1
+                int oldLikes = Integer.parseInt(viewHolder.likeCount.getText().toString());
+                viewHolder.likeCount.setText(String.valueOf(oldLikes - 1));
             }
         });
-        viewHolder.thumbdown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View b) {
-                //if the post is already liked
-                if (b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_no_thumbdown).getConstantState()) {
-                    b.setBackgroundResource(R.drawable.ic_thumbdown);
-                } else {
-                    b.setBackgroundResource(R.drawable.ic_no_thumbdown);
+        viewHolder.thumbdown.setOnClickListener(b -> {
+            // Change the image if clicked
+            if (b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_no_thumbdown).getConstantState()) {
+                b.setBackgroundResource(R.drawable.ic_thumbdown);
+                if (viewHolder.thumbup.getBackground().getConstantState()== viewHolder.thumbup.getResources().getDrawable(R.drawable.ic_likebutton).getConstantState()) {
+                    // Decrease likes by 1
+                    viewHolder.thumbup.setBackgroundResource(R.drawable.ic_unlikebutton);
+                    int oldLikes = Integer.parseInt(viewHolder.likeCount.getText().toString());
+                    viewHolder.likeCount.setText(String.valueOf(oldLikes - 1));
                 }
+                // Increase dislikes by 1
+                int oldDislikes = Integer.parseInt(viewHolder.dislikeCount.getText().toString());
+                viewHolder.dislikeCount.setText(String.valueOf(oldDislikes + 1));
+            } else {
+                b.setBackgroundResource(R.drawable.ic_no_thumbdown);
+                // Decrease dislikes by 1
+                int oldDislikes = Integer.parseInt(viewHolder.dislikeCount.getText().toString());
+                viewHolder.dislikeCount.setText(String.valueOf(oldDislikes - 1));
             }
         });
 

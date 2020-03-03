@@ -42,6 +42,7 @@ import org.json.JSONObject;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.*;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
                     textToSend.getText().clear(); //Remove whatever's in there
                 }
             }
+        });
+
+        final SwipeRefreshLayout swipeContainer = findViewById(R.id.RefreshLayout);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(() -> {
+            mData.clear();
+            getMessages();
+            swipeContainer.setRefreshing(false);
         });
 
     }
@@ -120,32 +129,24 @@ public class MainActivity extends AppCompatActivity {
         String url = "https://subzer0.herokuapp.com/messages";
         Map<String, String> params = new HashMap<>();
         params.put("message", message);
-        
+
         JSONObject request = new JSONObject(params);
 
         // Request a string response from the provided URL.
         JsonObjectRequest getReq = new JsonObjectRequest(Request.Method.POST, url, request,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            response.getString("mStatus");  //if its working or not
-                            RecyclerView display = findViewById(R.id.datum_list_view);
-
-                            mData.clear();
-                            getMessages();
-                        } catch (final JSONException e) {
-                            Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
-                        }
+                response -> {
+                    try {
+                        response.getString("mStatus");  //if its working or not
+                        mData.clear();
+                        getMessages();
+                    } catch (final JSONException e) {
+                        Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // if there's an error
-                        Log.d("slj222", "error:" + error.getMessage());
-                        error.printStackTrace();
-                    }
+                error -> {
+                    // if there's an error
+                    Log.d("slj222", "error:" + error.getMessage());
+                    error.printStackTrace();
                 }) {
         };
         VolleySingleton.getInstance(this).addToRequestQueue(getReq);
@@ -155,17 +156,9 @@ public class MainActivity extends AppCompatActivity {
     public void getMessages() {
         String url = "https://subzer0.herokuapp.com/messages";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        populateListFromVolley(response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("slj222", "That didn't work!");
-                Log.e("slj222", error.toString());
-            }
+                response -> populateListFromVolley(response), error -> {
+            Log.e("slj222", "That didn't work!");
+            Log.e("slj222", error.toString());
         });
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
