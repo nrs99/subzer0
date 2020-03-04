@@ -1,5 +1,7 @@
 package edu.lehigh.cse216.slj222;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     message = textToSend.getText().toString();
                     postMessage();
                     textToSend.getText().clear(); //Remove whatever's in there
+                    hideKeyboardFrom(getBaseContext(), view); // Hides the keyboard if clicked
                 }
             }
         });
@@ -160,6 +164,11 @@ public class MainActivity extends AppCompatActivity {
             Log.e("slj222", error.toString());
         });
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+    }
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 }

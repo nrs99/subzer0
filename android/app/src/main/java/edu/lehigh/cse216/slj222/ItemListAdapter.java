@@ -38,10 +38,12 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         TextView mText;
         ImageButton thumbup;
         ImageButton thumbdown;
+        ImageButton profilePic;
         Button postButton;
         EditText textToSend;
         TextView likeCount;
         TextView dislikeCount;
+        TextView commentCount;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -51,7 +53,9 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             postButton = itemView.findViewById(R.id.post_button);
             textToSend = itemView.findViewById(R.id.textView);
             likeCount = itemView.findViewById(R.id.likeCount);
+            profilePic = itemView.findViewById(R.id.profilePic);
             dislikeCount = itemView.findViewById(R.id.dislikeCount);
+            commentCount = itemView.findViewById(R.id.commentCount);
         }
     }
 
@@ -74,6 +78,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         viewHolder.mText.setText(d.message);
         viewHolder.likeCount.setText(String.valueOf(d.likes));
         viewHolder.dislikeCount.setText(String.valueOf(d.dislikes));
+        viewHolder.profilePic.setBackgroundResource(R.drawable.blank_profile); // Replace later with Google pic
         int likeStatus = d.myLike;
         if (likeStatus == 1) {
             viewHolder.thumbup.setBackgroundResource(R.drawable.ic_likebutton);
@@ -138,6 +143,10 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
                 int oldDislikes = Integer.parseInt(viewHolder.dislikeCount.getText().toString());
                 viewHolder.dislikeCount.setText(String.valueOf(oldDislikes - 1));
             }
+        });
+
+        viewHolder.commentCount.setOnClickListener(b -> {
+            // Go to individual message activity
         });
 
     }
