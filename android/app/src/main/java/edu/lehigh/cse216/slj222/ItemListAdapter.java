@@ -148,14 +148,10 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
     private ClickListener mClickListener;
 
-    ClickListener getClickListener() {
-        return mClickListener;
-    }
-
-    void setClickListener(ClickListener c) {
-        mClickListener = c;
-    }
-
+    /**
+     * Send an HTTP PUT request to like message with given ID
+     * @param msgId
+     */
     public void likeMessage(int msgId) {
         JSONObject request = new JSONObject();
 
@@ -177,6 +173,11 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         };
         VolleySingleton.getInstance(context).addToRequestQueue(getReq);
     }
+
+    /**
+     * Send an HTTP PUT request to dislike message with given ID
+     * @param msgId
+     */
 
     public void dislikeMessage(int msgId) {
         JSONObject request = new JSONObject();
