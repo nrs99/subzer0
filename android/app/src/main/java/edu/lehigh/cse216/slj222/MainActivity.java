@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postMessage() {
-        RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://subzer0.herokuapp.com/messages";
         Map<String, String> params = new HashMap<>();
         params.put("message", message);
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void getMessages() {
-        String url = "https://subzer0.herokuapp.com/messages";
+        String url = "http://subzer0.herokuapp.com/messages";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> populateListFromVolley(response), error -> {
             Log.e("slj222", "That didn't work!");
@@ -162,4 +161,5 @@ public class MainActivity extends AppCompatActivity {
         });
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
+
 }

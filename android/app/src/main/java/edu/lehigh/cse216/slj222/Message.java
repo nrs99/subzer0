@@ -30,6 +30,12 @@ public class Message {
      * The number of dislikes the message contains
      */
     int dislikes;
+    /**
+     * 1 - Like
+     * -1 - Dislike
+     * 0 - No status
+     */
+    int myLike;
 
     /**
      * Construct a Message object by providing values for its fields
@@ -41,6 +47,7 @@ public class Message {
         this.dateCreated = null;
         this.likes = likes;
         this.dislikes = dislikes;
+        myLike = 0; // Set it to not be on creation, change later once route is updated
     }
 
 }

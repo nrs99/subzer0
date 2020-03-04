@@ -14,6 +14,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
@@ -39,7 +45,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
         ViewHolder(View itemView) {
             super(itemView);
-            this.mText = (TextView) itemView.findViewById(R.id.listItemText);         //need to change textview
+            this.mText = (TextView) itemView.findViewById(R.id.listItemText);
             thumbup = itemView.findViewById(R.id.like_button);
             thumbdown = itemView.findViewById(R.id.dislike_button);
             postButton = itemView.findViewById(R.id.post_button);
@@ -68,44 +74,67 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         viewHolder.mText.setText(d.message);
         viewHolder.likeCount.setText(String.valueOf(d.likes));
         viewHolder.dislikeCount.setText(String.valueOf(d.dislikes));
-
+        int likeStatus = d.myLike;
+        if (likeStatus == 1) {
+            viewHolder.thumbup.setBackgroundResource(R.drawable.ic_likebutton);
+            viewHolder.thumbdown.setBackgroundResource(R.drawable.ic_no_thumbdown);
+        } else if (likeStatus == -1) {
+            viewHolder.thumbup.setBackgroundResource(R.drawable.ic_unlikebutton);
+            viewHolder.thumbdown.setBackgroundResource(R.drawable.ic_thumbdown);
+        } else {
+            viewHolder.thumbup.setBackgroundResource(R.drawable.ic_unlikebutton);
+            viewHolder.thumbdown.setBackgroundResource(R.drawable.ic_no_thumbdown);
+        }
 
         viewHolder.thumbup.setOnClickListener(b -> {
             //Change the image if clicked
             if (b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_unlikebutton).getConstantState()) {
                 b.setBackgroundResource(R.drawable.ic_likebutton);
+                d.myLike = 1;
+                likeMessage(d.msgId); // Send the HTTP request
                 if (viewHolder.thumbdown.getBackground().getConstantState()== viewHolder.thumbdown.getResources().getDrawable(R.drawable.ic_thumbdown).getConstantState()) {
                     // Decrease dislikes by 1
+                    d.dislikes--;
                     viewHolder.thumbdown.setBackgroundResource(R.drawable.ic_no_thumbdown);
                     int oldDislikes = Integer.parseInt(viewHolder.dislikeCount.getText().toString());
                     viewHolder.dislikeCount.setText(String.valueOf(oldDislikes - 1));
                 }
                 // Increase likes by 1
+                d.likes++;
                 int oldLikes = Integer.parseInt(viewHolder.likeCount.getText().toString());
                 viewHolder.likeCount.setText(String.valueOf(oldLikes + 1));
             } else {
+                d.myLike = 0;
                 b.setBackgroundResource(R.drawable.ic_unlikebutton);
                 // Decrease likes by 1
+                d.likes--;
                 int oldLikes = Integer.parseInt(viewHolder.likeCount.getText().toString());
                 viewHolder.likeCount.setText(String.valueOf(oldLikes - 1));
             }
         });
+
         viewHolder.thumbdown.setOnClickListener(b -> {
             // Change the image if clicked
             if (b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_no_thumbdown).getConstantState()) {
                 b.setBackgroundResource(R.drawable.ic_thumbdown);
+                d.myLike = -1;
+                dislikeMessage(d.msgId); // Send the HTTP request
                 if (viewHolder.thumbup.getBackground().getConstantState()== viewHolder.thumbup.getResources().getDrawable(R.drawable.ic_likebutton).getConstantState()) {
                     // Decrease likes by 1
+                    d.likes--;
                     viewHolder.thumbup.setBackgroundResource(R.drawable.ic_unlikebutton);
                     int oldLikes = Integer.parseInt(viewHolder.likeCount.getText().toString());
                     viewHolder.likeCount.setText(String.valueOf(oldLikes - 1));
                 }
                 // Increase dislikes by 1
+                d.dislikes++;
                 int oldDislikes = Integer.parseInt(viewHolder.dislikeCount.getText().toString());
                 viewHolder.dislikeCount.setText(String.valueOf(oldDislikes + 1));
             } else {
+                d.myLike = 0;
                 b.setBackgroundResource(R.drawable.ic_no_thumbdown);
                 // Decrease dislikes by 1
+                d.dislikes--;
                 int oldDislikes = Integer.parseInt(viewHolder.dislikeCount.getText().toString());
                 viewHolder.dislikeCount.setText(String.valueOf(oldDislikes - 1));
             }
@@ -126,4 +155,50 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     void setClickListener(ClickListener c) {
         mClickListener = c;
     }
+
+    public void likeMessage(int msgId) {
+        JSONObject request = new JSONObject();
+
+        String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/like";
+
+        JsonObjectRequest getReq = new JsonObjectRequest(Request.Method.PUT, url, request,
+                response -> {
+                    try {
+                        response.getString("mStatus");  //if its working or not
+                    } catch (final JSONException e) {
+                        Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
+                    }
+                },
+                error -> {
+                    // if there's an error
+                    Log.d("slj222", "error:" + error.getMessage());
+                    error.printStackTrace();
+                }) {
+        };
+        VolleySingleton.getInstance(context).addToRequestQueue(getReq);
+    }
+
+    public void dislikeMessage(int msgId) {
+        JSONObject request = new JSONObject();
+
+        String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/dislike";
+
+        JsonObjectRequest getReq = new JsonObjectRequest(Request.Method.PUT, url, request,
+                response -> {
+                    try {
+                        response.getString("mStatus");  //if its working or not
+                    } catch (final JSONException e) {
+                        Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
+                    }
+                },
+                error -> {
+                    // if there's an error
+                    Log.d("slj222", "error:" + error.getMessage());
+                    error.printStackTrace();
+                }) {
+        };
+        VolleySingleton.getInstance(context).addToRequestQueue(getReq);
+
+    }
+
 }
