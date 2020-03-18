@@ -1,17 +1,15 @@
 package edu.lehigh.cse216.slj222;
 
-import android.util.Log;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -34,7 +32,6 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        //TextView mIndex;
         TextView mText;
         ImageButton thumbup;
         ImageButton thumbdown;
@@ -44,10 +41,11 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         TextView likeCount;
         TextView dislikeCount;
         TextView commentCount;
+        TextView postedBy;
 
         ViewHolder(View itemView) {
             super(itemView);
-            this.mText = (TextView) itemView.findViewById(R.id.listItemText);
+            this.mText = itemView.findViewById(R.id.listItemText);
             thumbup = itemView.findViewById(R.id.like_button);
             thumbdown = itemView.findViewById(R.id.dislike_button);
             postButton = itemView.findViewById(R.id.post_button);
@@ -56,6 +54,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             profilePic = itemView.findViewById(R.id.profilePic);
             dislikeCount = itemView.findViewById(R.id.dislikeCount);
             commentCount = itemView.findViewById(R.id.commentCount);
+            postedBy = itemView.findViewById(R.id.posted_by);
         }
     }
 
@@ -147,15 +146,20 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
         viewHolder.commentCount.setOnClickListener(b -> {
             // Go to individual message activity
+            // Add extra for userID
+        });
+
+        viewHolder.profilePic.setOnClickListener(b -> {
+           // Go to individual profile
+            // Add extra for profiledID + logged in ID
+        });
+
+        viewHolder.postedBy.setOnClickListener(b -> {
+            // Go to individual profile
+            // Add extra for profiledID + logged in ID
         });
 
     }
-
-    interface ClickListener {
-        void onClick(Message d);
-    }
-
-    private ClickListener mClickListener;
 
     /**
      * Send an HTTP PUT request to like message with given ID

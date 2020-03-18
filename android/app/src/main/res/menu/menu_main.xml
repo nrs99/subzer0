@@ -6,4 +6,12 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    <item android:id = "@+id/myName"
+        android:title="Default"
+        app:showAsAction="always"
+        />
+    <item android:id = "@+id/logout"
+        android:title="Sign out"
+        app:showAsAction="always"
+        />
 </menu>

@@ -2,9 +2,11 @@ package edu.lehigh.cse216.slj222;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -19,6 +21,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
      */
     ArrayList<Message> mData = new ArrayList<>();
     String message;
+    GoogleSignInAccount currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,19 +48,19 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        currentUser = getIntent().getExtras().getParcelable("Account"); // Retrieve account passed
+        // from login activity
+
         getMessages(); // Run the script to get messages
 
         Button postButton = findViewById(R.id.post_button);
         final EditText textToSend = findViewById(R.id.textView);
-        postButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!textToSend.getText().toString().equals("")) {
-                    message = textToSend.getText().toString();
-                    postMessage();
-                    textToSend.getText().clear(); //Remove whatever's in there
-                    hideKeyboardFrom(getBaseContext(), view); // Hides the keyboard if clicked
-                }
+        postButton.setOnClickListener(view -> {
+            if (!textToSend.getText().toString().equals("")) {
+                message = textToSend.getText().toString();
+                postMessage();
+                textToSend.getText().clear(); //Remove whatever's in there
+                hideKeyboardFrom(getBaseContext(), view); // Hides the keyboard if clicked
             }
         });
 
@@ -74,7 +78,22 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem item = menu.findItem(R.id.myName);
+        item.setTitle(currentUser.getGivenName());
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.logout:
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void populateListFromVolley(String response) {
@@ -101,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("slj222", "Successfully parsed JSON file.");
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        RecyclerView rv = (RecyclerView) findViewById(R.id.Subzer0);
+        RecyclerView rv = findViewById(R.id.Recycler);
         rv.setLayoutManager(layoutManager);
         rv.setHasFixedSize(true);
         ItemListAdapter adapter = new ItemListAdapter(this, mData);
