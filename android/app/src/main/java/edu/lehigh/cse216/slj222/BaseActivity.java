@@ -16,6 +16,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currentUser = getIntent().getExtras().getParcelable("Account"); // Retrieve account passed
     }
 
     @Override
@@ -23,9 +24,8 @@ public class BaseActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem item = menu.findItem(R.id.myName);
-        if (currentUser != null) {
-            item.setTitle(currentUser.getGivenName());
-        }
+        item.setTitle(currentUser.getGivenName());
+
         return true;
     }
 
@@ -40,7 +40,7 @@ public class BaseActivity extends AppCompatActivity {
                 return true;
             case R.id.myName:
                 intent = new Intent(this, Profile.class);
-                intent.putExtra("account", currentUser);
+                intent.putExtra("Account", currentUser);
                 startActivity(intent);
                 return true;
             case R.id.goBack:

@@ -1,6 +1,13 @@
 package edu.lehigh.cse216.slj222;
 
 import android.os.Bundle;
+import android.util.Log;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
 
 import java.util.ArrayList;
 
@@ -13,12 +20,11 @@ public class Profile extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        currentUser = getIntent().getExtras().getParcelable("Account");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Get messages for current user
+        currentUser = getIntent().getExtras().getParcelable("Account");
 
     }
+
 }

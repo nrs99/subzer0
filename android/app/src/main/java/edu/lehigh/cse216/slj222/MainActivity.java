@@ -2,17 +2,13 @@ package edu.lehigh.cse216.slj222;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +17,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +42,6 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        currentUser = getIntent().getExtras().getParcelable("Account"); // Retrieve account passed
         // from login activity
 
         Log.d("slj222", currentUser.getId());
@@ -75,7 +69,7 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void populateListFromVolley(String response) {
+    private void populateListFromVolley(String response, RecyclerView rv) {
         try {
             JSONObject responseObj = new JSONObject(response);
             JSONArray json = responseObj.getJSONArray("mData");
@@ -99,7 +93,6 @@ public class MainActivity extends BaseActivity {
         Log.d("slj222", "Successfully parsed JSON file.");
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        RecyclerView rv = findViewById(R.id.Recycler);
         rv.setLayoutManager(layoutManager);
         rv.setHasFixedSize(true);
         ItemListAdapter adapter = new ItemListAdapter(this, mData);
@@ -111,7 +104,7 @@ public class MainActivity extends BaseActivity {
         String url = "https://subzer0.herokuapp.com/messages";
         Map<String, String> params = new HashMap<>();
         params.put("message", message);
-        params.put("userID", "37");
+        params.put("userID", "37"); // TODO: Replace with actual user ID
 
         JSONObject request = new JSONObject(params);
 
@@ -139,7 +132,7 @@ public class MainActivity extends BaseActivity {
     public void getMessages() {
         String url = "http://subzer0.herokuapp.com/messages";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                response -> populateListFromVolley(response), error -> {
+                response -> populateListFromVolley(response, findViewById(R.id.Recycler)), error -> {
             Log.e("slj222", "That didn't work!");
             Log.e("slj222", error.toString());
         });
