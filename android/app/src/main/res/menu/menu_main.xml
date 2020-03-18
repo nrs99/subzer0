@@ -1,17 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="edu.lehigh.cse216.slj222.MainActivity" >
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-    <item android:id = "@+id/myName"
+    tools:context="edu.lehigh.cse216.slj222.MainActivity">
+    <item
+        android:id="@+id/goBack"
+        android:title="GO BACK"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/myName"
         android:title="Default"
-        app:showAsAction="always"
-        />
-    <item android:id = "@+id/logout"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/logout"
         android:title="Sign out"
-        app:showAsAction="always"
-        />
+        app:showAsAction="always" />
 </menu>

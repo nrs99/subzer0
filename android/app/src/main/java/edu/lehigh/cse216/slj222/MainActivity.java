@@ -31,14 +31,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     /**
      * mData holds the data we get from Volley
      */
     ArrayList<Message> mData = new ArrayList<>();
     String message;
-    GoogleSignInAccount currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
         currentUser = getIntent().getExtras().getParcelable("Account"); // Retrieve account passed
         // from login activity
+
+        Log.d("slj222", currentUser.getId());
 
         getMessages(); // Run the script to get messages
 
@@ -72,28 +73,6 @@ public class MainActivity extends AppCompatActivity {
             swipeContainer.setRefreshing(false);
         });
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem item = menu.findItem(R.id.myName);
-        item.setTitle(currentUser.getGivenName());
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.logout:
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private void populateListFromVolley(String response) {
@@ -132,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         String url = "https://subzer0.herokuapp.com/messages";
         Map<String, String> params = new HashMap<>();
         params.put("message", message);
+        params.put("userID", "37");
 
         JSONObject request = new JSONObject(params);
 
