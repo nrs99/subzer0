@@ -56,6 +56,14 @@ public class Database {
      */
     private PreparedStatement mDislike;
 
+    private PreparedStatement mInsertVote;
+
+    private PreparedStatement mRemoveVote;
+
+    private PreparedStatement mInsertComment;
+
+    private PreparedStatement mEditComment;
+
     /**
      * The Database constructor is private: we only create Database objects through
      * the getDatabase() method.
@@ -114,8 +122,13 @@ public class Database {
             db.mSelectAllNewest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated DESC");
             db.mSelectAllOldest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated ASC");
             db.mSelectAllPopular = db.mConnection.prepareStatement("SELECT * from messages ORDER BY (likes - dislikes) DESC");
-            db.mLike = db.mConnection.prepareStatement("UPDATE messages SET likes = likes + 1 WHERE msgid = ?");
-            db.mDislike = db.mConnection.prepareStatement("UPDATE messages SET dislikes = dislikes + 1 WHERE msgid = ?");
+            db.mLike = db.mConnection.prepareStatement("UPDATE votes SET vote = 1 WHERE msgid = ?");
+            db.mDislike = db.mConnection.prepareStatement("UPDATE votes SET vote = -1 WHERE msgid = ?");
+            db.mInsertVote = db.mConnection.prepareStatement("INSERT INTO votes VALUES(?, ?, 0)");
+            db.mRemoveVote = db.mConnection.prepareStatement("DELETE FROM votes where msgid = ? and userid = ?");
+            db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO comments VALUES (default, ?, ?, ?, ?)", 
+                    Statement.RETURN_GENERATED_KEYS);
+            db.mEditComment = db.mConnection.prepareStatement("UPDATE comments SET comment = ? WHERE commentid = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -294,6 +307,62 @@ public class Database {
             e.printStackTrace();
         }
         return res;
+    }
+
+    int insertVote(int msgid, int userid) {
+        int count = 0;
+        try {
+            mInsertVote.setInt(1, msgid);
+            mInsertVote.setInt(2, userid);
+            mInsertVote.executeUpdate();
+            ResultSet rs = mInsertVote.getGeneratedKeys();
+            if (rs.next()) {
+                count += rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    int removeVote(int msgid, int userid) {
+        try {
+            mRemoveVote.setInt(1, msgid);
+            mRemoveVote.setInt(2, userid);
+            mRemoveVote.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    int insertComment(int msgid, String comment, int userid) {
+        int count = 0;
+        try {
+            mInsertComment.setInt(1, msgid);
+            mInsertComment.setInt(2, userid);
+            mInsertComment.setString(3, comment);
+            mInsertComment.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+            mInsertComment.executeUpdate();
+            ResultSet rs = mInsertOne.getGeneratedKeys();
+            if (rs.next()) {
+                count += rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    int editComment(int commentid, String comment) {
+        try {
+            mEditComment.setInt(1, commentid);
+            mEditComment.setString(2, comment);
+            mEditComment.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
 }
