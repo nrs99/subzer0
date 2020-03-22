@@ -25,6 +25,8 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
         tools:context=".MainActivity">
 
@@ -54,7 +56,9 @@
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/RefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusableInTouchMode="true">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/Recycler"

@@ -1,6 +1,8 @@
 package edu.lehigh.cse216.slj222;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -31,14 +33,32 @@ public class LoginActivity extends AppCompatActivity {
         // Build a GoogleSignInClient with the options specified by gso.
         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        if (GoogleSignIn.getLastSignedInAccount(this) != null) { //Sign out a user if they were already signed in
+        // Created SharedPreferences object
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+
+        // Check if this was called (as in sign out), if so sign out
+
+        Bundle b = getIntent().getExtras();
+
+        if (b != null) { // Only true if this was called by clicking sign out
             mGoogleSignInClient.signOut();
         }
 
+        // Go forward with the last session key if not logged out
+        String sessionKey = sharedPref.getString("sessionKey", "logout");
+
+        if (!sessionKey.equals("logout")) {
+            String givenName = sharedPref.getString("givenName", "Joe");
+            String userId = sharedPref.getString("userId", "123");
+            Intent intent = new Intent(this, MainActivity.class);
+            BaseActivity.passInfo(intent, sessionKey, givenName, userId);
+            startActivity(intent);
+        }
+
         findViewById(R.id.sign_in_button).setOnClickListener(view -> {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                signInIntent.putExtra("userID", mGoogleSignInClient.getInstanceId());
-                startActivityForResult(signInIntent, 1);
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            signInIntent.putExtra("userID", mGoogleSignInClient.getInstanceId());
+            startActivityForResult(signInIntent, 1);
         });
 
     }
@@ -60,9 +80,21 @@ public class LoginActivity extends AppCompatActivity {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
+            // Send to login backend route
+            account.getId();
+            account.getIdToken(); // This is a post, backend responds that it is valid
+
+            // Write session key to SharedPreferences
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("sessionKey", "bla");
+            editor.putString("givenName", account.getGivenName());
+            editor.putString("userId", account.getId());
+            editor.commit();
+
             // Signed in successfully, show authenticated UI.
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("Account", account);
+            BaseActivity.passInfo(intent, "bla", account.getGivenName(), account.getId());
             startActivity(intent);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -70,10 +102,6 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
             Log.w("slj222", "signInResult:failed code=" + e.getStatusCode());
         }
-    }
-
-    public void signOut() {
-
     }
 
 }

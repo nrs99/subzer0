@@ -1,6 +1,7 @@
 package edu.lehigh.cse216.slj222;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,10 +26,17 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     private Context context;
     private ArrayList<Message> myData;
 
+    private String sessionKey;
+    private String givenName;
+    private String userId;
 
-    ItemListAdapter(Context context, ArrayList<Message> data) {
+
+    ItemListAdapter(Context context, ArrayList<Message> data, String sessionKey, String givenName, String userId) {
         this.myData = data;
         this.context = context;
+        this.sessionKey = sessionKey;
+        this.givenName = givenName;
+        this.userId = userId;
     }
 
 
@@ -96,7 +105,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
                 b.setBackgroundResource(R.drawable.ic_likebutton);
                 d.myLike = 1;
                 likeMessage(d.msgId); // Send the HTTP request
-                if (viewHolder.thumbdown.getBackground().getConstantState()== viewHolder.thumbdown.getResources().getDrawable(R.drawable.ic_thumbdown).getConstantState()) {
+                if (viewHolder.thumbdown.getBackground().getConstantState() == viewHolder.thumbdown.getResources().getDrawable(R.drawable.ic_thumbdown).getConstantState()) {
                     // Decrease dislikes by 1
                     d.dislikes--;
                     viewHolder.thumbdown.setBackgroundResource(R.drawable.ic_no_thumbdown);
@@ -123,7 +132,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
                 b.setBackgroundResource(R.drawable.ic_thumbdown);
                 d.myLike = -1;
                 dislikeMessage(d.msgId); // Send the HTTP request
-                if (viewHolder.thumbup.getBackground().getConstantState()== viewHolder.thumbup.getResources().getDrawable(R.drawable.ic_likebutton).getConstantState()) {
+                if (viewHolder.thumbup.getBackground().getConstantState() == viewHolder.thumbup.getResources().getDrawable(R.drawable.ic_likebutton).getConstantState()) {
                     // Decrease likes by 1
                     d.likes--;
                     viewHolder.thumbup.setBackgroundResource(R.drawable.ic_unlikebutton);
@@ -146,23 +155,36 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
         viewHolder.commentCount.setOnClickListener(b -> {
             // Go to individual message activity
-            // Add extra for userID
+            Intent intent = new Intent(b.getContext(), MessageComments.class);
+            // Add extra for account + whichever message
+            BaseActivity.passInfo(intent, sessionKey, givenName, userId);
+            intent.putExtra("msgid", d.msgId);
+            context.startActivity(intent);
         });
 
         viewHolder.profilePic.setOnClickListener(b -> {
-           // Go to individual profile
+            // Go to individual profile
+            Intent intent = new Intent(b.getContext(), Profile.class);
             // Add extra for profiledID + logged in ID
+            intent.putExtra("profiledUser", 0);
+            BaseActivity.passInfo(intent, sessionKey, givenName, userId);
+            context.startActivity(intent);
         });
 
         viewHolder.postedBy.setOnClickListener(b -> {
             // Go to individual profile
+            Intent intent = new Intent(b.getContext(), Profile.class);
             // Add extra for profiledID + logged in ID
+            intent.putExtra("profiledUser", 0);
+            BaseActivity.passInfo(intent, sessionKey, givenName, userId);
+            context.startActivity(intent);
         });
 
     }
 
     /**
      * Send an HTTP PUT request to like message with given ID
+     *
      * @param msgId
      */
     public void likeMessage(int msgId) {
@@ -189,6 +211,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
     /**
      * Send an HTTP PUT request to dislike message with given ID
+     *
      * @param msgId
      */
 

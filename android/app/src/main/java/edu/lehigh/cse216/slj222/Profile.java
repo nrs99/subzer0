@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Profile extends BaseActivity {
 
     ArrayList<Message> mData = new ArrayList<>();
-    int profiledUserID;
+    String profiledUserID;
 
 
 
@@ -23,7 +23,30 @@ public class Profile extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        currentUser = getIntent().getExtras().getParcelable("Account");
+        getMessages();
+
+    }
+
+    private void getMessages() {
+        String url = "http://subzer0.herokuapp.com/messages";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    mData = MainActivity.getMData(response);
+                    populateListFromVolley(findViewById(R.id.Recycler2));
+                }, error -> {
+            Log.e("slj222", "That didn't work!");
+            Log.e("slj222", error.toString());
+        });
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+    }
+
+    private void populateListFromVolley(RecyclerView rv) {
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rv.setLayoutManager(layoutManager);
+        rv.setHasFixedSize(true);
+        ItemListAdapter adapter = new ItemListAdapter(this, mData, sessionKey, givenName, userId);
+        rv.setAdapter(adapter);
 
     }
 
