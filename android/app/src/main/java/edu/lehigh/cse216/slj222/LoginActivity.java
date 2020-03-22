@@ -42,6 +42,9 @@ public class LoginActivity extends AppCompatActivity {
 
         if (b != null) { // Only true if this was called by clicking sign out
             mGoogleSignInClient.signOut();
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("sessionKey", "logout"); // Get rid of stored session key, set to default
+            editor.commit();
         }
 
         // Go forward with the last session key if not logged out
