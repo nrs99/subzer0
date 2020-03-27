@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,9 +29,10 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sessionKey = getIntent().getExtras().getString("sessionKey");
-        givenName = getIntent().getExtras().getString("givenName");
-        userId = getIntent().getExtras().getString("userId");
+        SharedPreferences sharedPref = this.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        sessionKey = sharedPref.getString("sessionKey", "logout");
+        givenName = sharedPref.getString("givenName", "Joe");
+        userId = sharedPref.getString("userId", "0");
         Log.d("slj222", "Session key: " + sessionKey);
         Log.d("slj222", givenName);
         Log.d("slj222", userId);
@@ -51,12 +53,13 @@ public class BaseActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         Intent intent;
+        SharedPreferences sharedPref = this.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         switch (item.getItemId()) {
             case R.id.logout:
                 intent = new Intent(this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Get rid of activity stack
                 intent.putExtra("logout", true);
-                SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("sessionKey", "logout");
                 editor.commit();
@@ -64,7 +67,8 @@ public class BaseActivity extends AppCompatActivity {
                 return true;
             case R.id.myName:
                 intent = new Intent(this, Profile.class);
-                passInfo(intent, sessionKey, givenName, userId);
+                // Pass my userID
+                intent.putExtra("profiledUser", userId);
                 startActivity(intent);
                 return true;
             case R.id.goBack:
@@ -91,12 +95,6 @@ public class BaseActivity extends AppCompatActivity {
                 hideKeyboard(this);
         }
         return super.dispatchTouchEvent(ev);
-    }
-
-    public static void passInfo(Intent intent, String sessionKey, String givenName, String userId) {
-        intent.putExtra("sessionKey", sessionKey);
-        intent.putExtra("givenName", givenName);
-        intent.putExtra("userId", userId);
     }
 
 }

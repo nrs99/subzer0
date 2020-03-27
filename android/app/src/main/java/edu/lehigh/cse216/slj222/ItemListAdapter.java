@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +30,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     private String userId;
 
 
-    ItemListAdapter(Context context, ArrayList<Message> data, String sessionKey, String givenName, String userId) {
+    ItemListAdapter(Context context, ArrayList<Message> data) {
         this.myData = data;
         this.context = context;
         this.sessionKey = sessionKey;
@@ -157,7 +156,6 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             // Go to individual message activity
             Intent intent = new Intent(b.getContext(), MessageComments.class);
             // Add extra for account + whichever message
-            BaseActivity.passInfo(intent, sessionKey, givenName, userId);
             intent.putExtra("msgid", d.msgId);
             context.startActivity(intent);
         });
@@ -167,7 +165,6 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             Intent intent = new Intent(b.getContext(), Profile.class);
             // Add extra for profiledID + logged in ID
             intent.putExtra("profiledUser", 0);
-            BaseActivity.passInfo(intent, sessionKey, givenName, userId);
             context.startActivity(intent);
         });
 
@@ -176,7 +173,6 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             Intent intent = new Intent(b.getContext(), Profile.class);
             // Add extra for profiledID + logged in ID
             intent.putExtra("profiledUser", 0);
-            BaseActivity.passInfo(intent, sessionKey, givenName, userId);
             context.startActivity(intent);
         });
 

@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // Created SharedPreferences object
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.getSharedPreferences("Shared", Context.MODE_PRIVATE);
 
         // Check if this was called (as in sign out), if so sign out
 
@@ -51,10 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         String sessionKey = sharedPref.getString("sessionKey", "logout");
 
         if (!sessionKey.equals("logout")) {
-            String givenName = sharedPref.getString("givenName", "Joe");
-            String userId = sharedPref.getString("userId", "123");
             Intent intent = new Intent(this, MainActivity.class);
-            BaseActivity.passInfo(intent, sessionKey, givenName, userId);
             startActivity(intent);
         }
 
@@ -88,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
             account.getIdToken(); // This is a post, backend responds that it is valid
 
             // Write session key to SharedPreferences
-            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences sharedPref = this.getSharedPreferences("Shared", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString("sessionKey", "bla");
             editor.putString("givenName", account.getGivenName());
@@ -97,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
 
             // Signed in successfully, show authenticated UI.
             Intent intent = new Intent(this, MainActivity.class);
-            BaseActivity.passInfo(intent, "bla", account.getGivenName(), account.getId());
             startActivity(intent);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.

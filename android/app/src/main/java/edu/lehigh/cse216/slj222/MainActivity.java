@@ -1,7 +1,6 @@
 package edu.lehigh.cse216.slj222;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -117,7 +116,7 @@ public class MainActivity extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(layoutManager);
         rv.setHasFixedSize(true);
-        ItemListAdapter adapter = new ItemListAdapter(this, mData, sessionKey, givenName, userId);
+        ItemListAdapter adapter = new ItemListAdapter(this, mData);
         rv.setAdapter(adapter);
 
     }

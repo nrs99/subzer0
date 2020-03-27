@@ -35,7 +35,6 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="CSE 216"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />

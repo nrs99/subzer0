@@ -45,7 +45,7 @@ public class MessageComments extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(layoutManager);
         rv.setHasFixedSize(true);
-        ItemListAdapter adapter = new ItemListAdapter(this, mData, sessionKey, givenName, userId);
+        ItemListAdapter adapter = new ItemListAdapter(this, mData);
         rv.setAdapter(adapter);
 
     }
