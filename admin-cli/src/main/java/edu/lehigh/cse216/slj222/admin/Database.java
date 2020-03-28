@@ -170,7 +170,7 @@ try {
             //create sequence
             //db.mTrigger = db.mConnection.prepareStatement("CREATE SEQUENCE seq_simple");
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages(msgid, userid, datecreated, likes, dislikes, message) VALUES (default, ?, ?, ?, ?, ?)");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM messages order by datecreated asc");
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM messages order by datecreated");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE msgid=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?");
 
