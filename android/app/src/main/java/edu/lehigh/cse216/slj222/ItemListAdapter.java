@@ -25,17 +25,10 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     private Context context;
     private ArrayList<Message> myData;
 
-    private String sessionKey;
-    private String givenName;
-    private String userId;
-
 
     ItemListAdapter(Context context, ArrayList<Message> data) {
         this.myData = data;
         this.context = context;
-        this.sessionKey = sessionKey;
-        this.givenName = givenName;
-        this.userId = userId;
     }
 
 
@@ -53,7 +46,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
         ViewHolder(View itemView) {
             super(itemView);
-            this.mText = itemView.findViewById(R.id.listItemText);
+            mText = itemView.findViewById(R.id.listItemText);
             thumbup = itemView.findViewById(R.id.like_button);
             thumbdown = itemView.findViewById(R.id.dislike_button);
             postButton = itemView.findViewById(R.id.post_button);

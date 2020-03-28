@@ -6,15 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
-
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import static edu.lehigh.cse216.slj222.MainActivity.hideKeyboard;
 
@@ -33,6 +30,7 @@ public class BaseActivity extends AppCompatActivity {
         sessionKey = sharedPref.getString("sessionKey", "logout");
         givenName = sharedPref.getString("givenName", "Joe");
         userId = sharedPref.getString("userId", "0");
+
         Log.d("slj222", "Session key: " + sessionKey);
         Log.d("slj222", givenName);
         Log.d("slj222", userId);

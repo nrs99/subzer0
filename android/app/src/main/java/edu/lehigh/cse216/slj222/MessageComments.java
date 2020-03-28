@@ -3,6 +3,7 @@ package edu.lehigh.cse216.slj222;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +28,8 @@ public class MessageComments extends BaseActivity {
 
         int msgId = getIntent().getExtras().getInt("msgid");
 
+        final EditText textToSend = findViewById(R.id.newComment);
+
         String url = "http://subzer0.herokuapp.com/messages/" + msgId;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
@@ -37,6 +40,8 @@ public class MessageComments extends BaseActivity {
             Log.e("slj222", error.toString());
         });
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+        // TODO: Next request based on comments
 
     }
 
@@ -71,5 +76,11 @@ public class MessageComments extends BaseActivity {
         Log.d("slj222", "Successfully parsed JSON file.");
 
         return mData;
+    }
+
+    public static ArrayList<Comment> getComments(String response) {
+        ArrayList<Comment> cData = new ArrayList<>();
+
+        return null;
     }
 }
