@@ -1,6 +1,8 @@
 package edu.lehigh.cse216.slj222;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -124,8 +126,9 @@ public class MainActivity extends BaseActivity {
     public void postMessage() {
         String url = "https://subzer0.herokuapp.com/messages";
         Map<String, String> params = new HashMap<>();
+
         params.put("message", message);
-        params.put("userID", "37"); // TODO: Replace with actual user ID
+        params.put("userID", userId);
 
         JSONObject request = new JSONObject(params);
 
