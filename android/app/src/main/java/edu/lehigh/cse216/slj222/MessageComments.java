@@ -49,7 +49,6 @@ public class MessageComments extends BaseActivity {
         });
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
 
-        // TODO: Next request based on comments
         getComments();
 
 

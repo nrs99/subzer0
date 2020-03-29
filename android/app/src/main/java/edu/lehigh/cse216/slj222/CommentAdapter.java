@@ -51,23 +51,22 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
         final Comment d = myData.get(position);
-        holder.cText.setText(d.userId); // TODO: Fix this once Vinny fixes that
+        holder.cText.setText(d.comment);
         holder.profilePic.setBackgroundResource(R.drawable.blank_profile); // Replace later with Google pic
 
         SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         String userId = sharedPref.getString("userId", "0");
 
 
-        if (d.comment.equals(userId)) { // TODO: Change this when Vinny fixes
+        if (d.userId.equals(userId)) {
             holder.editButton.setVisibility(View.VISIBLE);
         } else {
             holder.editButton.setVisibility(View.INVISIBLE);
         }
 
         holder.editButton.setOnClickListener(b -> {
-            // TODO: Create an editing activity, take user there, then HTTP put
             Intent intent = new Intent(b.getContext(), EditActivity.class);
-            intent.putExtra("comment", d.userId); // TODO: Change on Vinny fix
+            intent.putExtra("comment", d.comment);
             intent.putExtra("cId", d.commentId);
             context.startActivity(intent);
             if (context instanceof MessageComments) {
@@ -78,7 +77,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         holder.profilePic.setOnClickListener(b -> {
             Intent intent = new Intent(b.getContext(), Profile.class);
             // Add extra for profiledID + logged in ID
-            intent.putExtra("profiledUser", d.comment); // TODO: Change when Vinny fixes
+            intent.putExtra("profiledUser", d.userId);
             context.startActivity(intent);
         });
     }
