@@ -29,6 +29,10 @@ public class Message {
          */
         int dislikes;
         /**
+         * 
+         */
+        //int comments;
+        /**
          * Construct a Message object by providing values for its fields
          */
         public Message(int msgId, String message, String userId, Timestamp dateCreated, int likes, int dislikes) {
@@ -38,6 +42,7 @@ public class Message {
             this.dateCreated = dateCreated;
             this.likes = likes;
             this.dislikes = dislikes;
+            //this.comments = comments;
         }
 
         /**
