@@ -363,8 +363,8 @@ public class Database {
     int editComment(int commentid, String comment) {
         int count = 0;
         try {
-            mEditComment.setInt(1, commentid);
-            mEditComment.setString(2, comment);
+            mEditComment.setInt(2, commentid);
+            mEditComment.setString(1, comment);
             count = mEditComment.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
