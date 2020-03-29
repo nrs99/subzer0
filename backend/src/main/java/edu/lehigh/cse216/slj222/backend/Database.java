@@ -65,7 +65,9 @@ public class Database {
     private PreparedStatement mEditComment;
  
     private PreparedStatement mGetComments;
-
+ 
+    private PreparedStatement mMessagesByUser;
+ 
     /**
      * The Database constructor is private: we only create Database objects through
      * the getDatabase() method.
@@ -128,10 +130,11 @@ public class Database {
             db.mDislike = db.mConnection.prepareStatement("UPDATE votes SET vote = -1 WHERE msgid = ?");
             db.mInsertVote = db.mConnection.prepareStatement("INSERT INTO votes VALUES(?, ?, 0)");
             db.mRemoveVote = db.mConnection.prepareStatement("DELETE FROM votes where msgid = ? and userid = ?");
-            db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO comments VALUES (default, ?, ?, ?, ?)",
+            db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO comments VALUES (?, default, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             db.mEditComment = db.mConnection.prepareStatement("UPDATE comments SET comment = ? WHERE commentid = ?");
-            db.mGetComments = db.mConnection.prepareStatement("SELECT * from comments WHERE msgid=?");
+            db.mGetComments = db.mConnection.prepareStatement("SELECT * from comments WHERE mid=?");
+            db.mMessagesByUser = db.mConnection.prepareStatement("SELECT * from messages WHERE userid = ? ORDER BY datecreated DESC");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -344,9 +347,9 @@ public class Database {
         try {
             mInsertComment.setInt(1, msgid);
             mInsertComment.setString(2, userid);
-            mInsertComment.setString(3, comment);
-            mInsertComment.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-            mInsertComment.executeUpdate();
+            mInsertComment.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+            mInsertComment.setString(4, comment);
+        mInsertComment.executeUpdate();
             ResultSet rs = mInsertOne.getGeneratedKeys();
             if (rs.next()) {
                 count += rs.getInt(1);
@@ -362,25 +365,21 @@ public class Database {
         try {
             mEditComment.setInt(1, commentid);
             mEditComment.setString(2, comment);
-            mEditComment.executeUpdate();
-            ResultSet rs = mInsertOne.getGeneratedKeys();
-            if (rs.next()) {
-                count += rs.getInt(1);
-            }
+            count = mEditComment.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return count;
     }
-    
+   
     ArrayList<Comment> getComments(int msgId) {
         ArrayList<Comment> comments = new ArrayList<Comment>();
         try {
             mGetComments.setInt(1, msgId);
             ResultSet rs = mGetComments.executeQuery();
             while(rs.next()) {
-                comments.add(new Comment(rs.getInt("commentId"), rs.getInt("msgId"), 
-                    rs.getString("userId"), rs.getString("comment"), rs.getTimestamp("datecreated")));
+                comments.add(new Comment(rs.getInt("commentId"), rs.getInt("msgId"),
+                    rs.getString("comment"), rs.getString("userId"), rs.getTimestamp("dateCreated")));
             }
             rs.close();
             return comments;
@@ -388,15 +387,14 @@ public class Database {
             e.printStackTrace();
             return null;
         }
-
+ 
     }
-}
-
-/**
- * 
+ 
+    ArrayList<Message> selectAllByUser(String userID) {
         ArrayList<Message> res = new ArrayList<Message>();
         try {
-            ResultSet rs = mSelectAllNewest.executeQuery();
+            mMessagesByUser.setString(1, userID);
+            ResultSet rs = mMessagesByUser.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
                         rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes")));
@@ -408,4 +406,4 @@ public class Database {
             return null;
         }
     }
- */
+}

@@ -179,15 +179,15 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, req));
             }
         });
-
+ 
         Spark.get("/messages/:id/comments", (request, response) -> {
-            int idx = Integer.parseInt(request.params("id")); 
+            int idx = Integer.parseInt(request.params("id"));
             response.status(200);
             response.type("application/json");
             return gson.toJson(new StructuredResponse("ok", null, db.getComments(idx)));
         });
-
-        Spark.post("/comments/:id", (request, response) -> {
+ 
+        Spark.post("/comments", (request, response) -> {
             // NB: if gson.Json fails, Spark will reply with status 500 Internal
             // Server Error
             NewCommentRequest req = gson.fromJson(request.body(), NewCommentRequest.class);
@@ -205,24 +205,30 @@ public class App {
             }
         });
  
-        Spark.put("/comments/:id/edit", (request, response) -> {
-            int idx = Integer.parseInt(request.params("id"));
-            
+        Spark.put("/comments/edit", (request, response) -> {
+           
             EditCommentRequest req = gson.fromJson(request.body(), EditCommentRequest.class);
-
+ 
             response.status(200);
             response.type("application/json");
-            
+           
             int result = db.editComment(req.cid, req.comment);
-
+ 
             if (result == 1) {
                 return gson.toJson(new StructuredResponse("ok", null, result));
             } else {
                 return gson.toJson(new StructuredResponse("error", "error updating comment", null));
             }
-
+ 
         });
-        
+ 
+        Spark.get("/messages/user/:id", (request, response) -> {
+            String userID = request.params("id");
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllByUser(userID)));
+        });
+       
         Spark.post("/login/:token", (request, response) -> {
             final String CLIENT_ID = "363085709256-vl89523mj1pv792ngp4sin2e717motg7.apps.googleusercontent.com";
             // final String CLIENT_SECRET = "zXSIfOxfMUoHugSkfaPKdBtk";
