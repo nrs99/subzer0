@@ -18,16 +18,29 @@ public class App {
      */
     static void menu() {
         System.out.println("Main Menu");
-        System.out.println("  [T] Create message table");
+        System.out.println("  [M] Create message table");
+        System.out.println("  [L] Create like table");
+        System.out.println("  [C] Create comments table");
         System.out.println("  [D] Drop table is inactive");
-        System.out.println("  [1] Query for a specific row");
-        System.out.println("  [*] Query for all rows");
-        System.out.println("  [-] Delete a row");
-        System.out.println("  [+] Insert a new row");
-        System.out.println("  [~] Update a row");
+        System.out.println("  [1] Query for a specific row from Messages");
+        System.out.println("  [2] Query for a specific row from Likes");
+        System.out.println("  [3] Query for a specific row from Comments");
+        System.out.println("  [*] Query for all message rows");
+        System.out.println("  [&] Query for all like rows");
+        System.out.println("  [$] Query for all comment rows");
+        System.out.println("  [-] Delete a message row");
+        System.out.println("  [#] Delete a like row");
+        System.out.println("  [^] Delete a Comment row");
+        System.out.println("  [+] Insert a new message row");
+        System.out.println("  [@] Insert a new like row");
+        System.out.println("  [!] Insert a new comment row");
+        System.out.println("  [~] Update a message row");
+        System.out.println("  [X] Update a like row");
+        System.out.println("  [Z] Update a comment row");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }
+    
 
     /**
      * Ask the user to enter a menu option; repeat until we get a valid option
@@ -38,7 +51,7 @@ public class App {
      */
     static char prompt(BufferedReader in) {
         // The valid actions:
-        String actions = "TD1*-+~q?";
+        String actions = "MLCD123&*&$-#^+@!~XZq?";
 
         // We repeat until a valid single-character option is selected        
         while (true) {
@@ -58,6 +71,7 @@ public class App {
             System.out.println("Invalid Command");
         }
     }
+
 
     /**
      * Ask the user to enter a String message
@@ -123,10 +137,13 @@ public class App {
 
         // Start our basic command-line interpreter:
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in)); 
-try {
+//messages
+        try {
 
 
         while (true) {
+
+
             // Get the user's request, and do it
             //
             // NB: for better testability, each action should be a separate
@@ -138,51 +155,148 @@ try {
                 menu();
             } else if (action == 'q') {
                 break;
-            } else if (action == 'T') {
-                db.createTable();
-            } else if (action == 'D') {
+            } else if (action == 'M') {
+                db.createTableMessages();
+            } else if (action == 'L') {
+                db.createTableLikes();
+            } else if (action == 'C') {
+                db.createTableComments();
+            }else if (action == 'D') {
                 //db.dropTable();
             } else if (action == '1') {
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
-                Database.RowData res = db.selectOne(id);
+                Database.RowData res = db.selectOneMessages(id);
                 if (res != null) {
                     System.out.println("  [" + res.mMsgid + "] " + res.mMessage);
                     System.out.println("  --> " + res.mMessage);
                 }
+            } else if (action == '2') {
+                int id = getInt(in, "Enter the row ID");
+                if (id == -1)
+                    continue;
+                Database.RowData res = db.selectOneLikes(id);
+                if (res != null) {
+                    System.out.println("  [" + res.lMsgid + "] " + res.lLike);
+                    System.out.println("  --> " + res.lLike);
+                }
+            } else if (action == '3') {
+                int id = getInt(in, "Enter the row ID");
+                if (id == -1)
+                    continue;
+                Database.RowData res = db.selectOneComments(id);
+                if (res != null) {
+                    System.out.println("  [" + res.cMsgid + "] " + res.cComment);
+                    System.out.println("  --> " + res.cComment);
+                }
             } else if (action == '*') {
-                ArrayList<Database.RowData> res = db.selectAll();
+                //another if statement here to see which table????????????????????????????????????????
+                ArrayList<Database.RowData> res = db.selectAllMessgaes();
                 if (res == null)
                     continue;
                 System.out.println("  Current Database Contents");
                 System.out.println("  -------------------------");
                 for (Database.RowData rd : res) {
-                    System.out.println("  [" + rd.mMsgid + "] " + "message: " + rd.mMessage + " date: " + rd.mDatecreated + " user id: " + rd.mUserid + " likes: " +  rd.mLikes + " dislikes: " +  rd.mLikes);
+                    System.out.println("  [" + rd.mMsgid + "] " + "message: " + rd.mMessage + " date: " + rd.mDatecreated + " user id: " + rd.mUserid + " likes: " +  rd.mLike);
+                }
+            }else if (action == '&') {
+                ArrayList<Database.RowData> res = db.selectAllLikes();
+                if (res == null)
+                    continue;
+                System.out.println("  Current Database Contents");
+                System.out.println("  -------------------------");
+                for (Database.RowData rd : res) {
+                    System.out.println("  [" + rd.lMsgid + "] " +  "user id: " + rd.lUserid + " like: " + rd.lLike);
+                }
+            }else if (action == '$') {
+                //another if statement here to see which table????????????????????????????????????????
+                ArrayList<Database.RowData> res = db.selectAllComments();
+                if (res == null)
+                    continue;
+                System.out.println("  Current Database Contents");
+                System.out.println("  -------------------------");
+                for (Database.RowData rd : res) {
+                    System.out.println("  [" + rd.cMsgid + "] " + "comment: " + rd.cComment + " date: " + rd.cDatecreated + " user id: " + rd.cUserid);
                 }
             } else if (action == '-') {
+                //...same here 
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
-                int res = db.deleteRow(id);
+                int res = db.deleteRowMessages(id);
+                if (res == -1)
+                    continue;
+                System.out.println("  " + res + " rows deleted");
+            } else if (action == '#') {
+                //...same here 
+                int id = getInt(in, "Enter the row ID");
+                if (id == -1)
+                    continue;
+                int res = db.deleteRowLikes(id);
+                if (res == -1)
+                    continue;
+                System.out.println("  " + res + " rows deleted");
+            } else if (action == '^') {
+                //...same here 
+                int id = getInt(in, "Enter the row ID");
+                if (id == -1)
+                    continue;
+                int res = db.deleteRowComments(id);
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows deleted");
             } else if (action == '+') {
+                //...and here..
                 int id = getInt(in, "Enter the userid");
-                int likes = getInt(in, "how many likes");
-                int dislikes = getInt(in, "how many dislikes ");
+                int like = getInt(in, " like or dislike(0 or 1)");
                 String message = getString(in, "Enter the message");
                 if (message.equals(""))
                     continue;
-                int res = db.insertRow(id, likes,dislikes,  message);
+                int res = db.insertRowMessages(id, like, message);
+                System.out.println(res + " row added");
+            }else if (action == '@') {
+                //...and here..
+                int id = getInt(in, "Enter the userid");
+                int like = getInt(in, "Enter like or dislike? (0 or 1)");
+                // int mid = getInt(in, "Enter Msg id");
+                int res = db.insertRowLikes(id,like);
+                System.out.println(res + " row added");
+            }else if (action == '!') {
+                //...and here..
+                int id = getInt(in, "Enter the userid");
+                String comment = getString(in, " Enter the Comment");
+                if (comment.equals(""))
+                    continue;
+                int res = db.insertRowComments(id ,comment);
                 System.out.println(res + " row added");
             } else if (action == '~') {
+                //...and here.
                 int id = getInt(in, "Enter the row ID :> ");
                 if (id == -1)
                     continue;
                 String newMessage = getString(in, "Enter the new message");
-                int res = db.updateOne(id, newMessage);
+                int res = db.updateOneMessages(id, newMessage);
+                if (res == -1)
+                    continue;
+                System.out.println("  " + res + " rows updated");
+            }else if (action == 'X') {
+                //...and here.
+                int id = getInt(in, "Enter the row ID :> ");
+                if (id == -1)
+                    continue;
+                int newLike = getInt(in, "Enter the new like");
+                int res = db.updateOneLikes(id, newLike);
+                if (res == -1)
+                    continue;
+                System.out.println("  " + res + " rows updated");
+            }else if (action == 'Z') {
+                //...and here.
+                int id = getInt(in, "Enter the row ID :> ");
+                if (id == -1)
+                    continue;
+                String newComment = getString(in, "Enter the new comment");
+                int res = db.updateOneComments(newComment, id);
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows updated");
@@ -201,6 +315,7 @@ try {
     } catch(Exception e) {
     System.out.println(e);
     }
+
 }
 
 }

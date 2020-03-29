@@ -5,16 +5,18 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.net.*;
 
 import java.util.ArrayList;
 
 public class Database {
+    //messages
     /**
      * The connection to the database.  When there is no connection, it should
      * be null.  Otherwise, there is a valid open connection
      */
-    private Connection mConnection;
+    private Connection Connection;
 
     /**
      * A prepared statement for getting all data in the database
@@ -54,6 +56,94 @@ public class Database {
      */
     private PreparedStatement mDropTable;
 
+    
+
+
+
+//likes
+        /**
+     * A prepared statement for getting all data in the database
+     */
+    private PreparedStatement lSelectAll;
+
+    /**
+     * A prepared statement for getting one row from the database
+     */
+    private PreparedStatement lSelectOne;
+
+    /**
+     * A prepared statement for deleting a row from the database
+     */
+    private PreparedStatement lDeleteOne;
+
+    /**
+     * A prepared statement for inserting into the database
+     */
+    private PreparedStatement lInsertOne;
+    /**
+     * A prepared statemeting for trigger
+     */
+    //private PreparedStatmet mTrigger;
+    /**
+     * A prepared statement for updating a single row in the database
+     */
+    private PreparedStatement lUpdateOne;
+
+    /**
+     * A prepared statement for creating the table in our database
+     */
+    private PreparedStatement lCreateTable;
+
+    /**
+     * A prepared statement for dropping the table in our database
+     */
+    private PreparedStatement lDropTable;
+
+
+//Comments
+        /**
+     * A prepared statement for getting all data in the database
+     */
+    private PreparedStatement cSelectAll;
+
+    /**
+     * A prepared statement for getting one row from the database
+     */
+    private PreparedStatement cSelectOne;
+
+    /**
+     * A prepared statement for deleting a row from the database
+     */
+    private PreparedStatement cDeleteOne;
+
+    /**
+     * A prepared statement for inserting into the database
+     */
+    private PreparedStatement cInsertOne;
+    /**
+     * A prepared statemeting for trigger
+     */
+    //private PreparedStatmet mTrigger;
+    /**
+     * A prepared statement for updating a single row in the database
+     */
+    private PreparedStatement cUpdateOne;
+
+    /**
+     * A prepared statement for creating the table in our database
+     */
+    private PreparedStatement cCreateTable;
+
+    /**
+     * A prepared statement for dropping the table in our database
+     */
+    private PreparedStatement cDropTable;
+
+
+
+
+
+
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
      * direct access to its fields.  In the context of this Database, RowData 
@@ -64,45 +154,103 @@ public class Database {
      * abstract representation of a row of the database.  RowData and the 
      * Database are tightly coupled: if one changes, the other should too.
      */
-    public static class RowData {
+    public static class RowData{
         /**
          * The msgid of this row of the database
          */
         int mMsgid;
+         /**
+         * The msgid of this row of the database
+         */       
+        int lMsgid;
+        /**
+         * The msgid of this row of the database
+         */
+        int cMsgid;
         /**
          * The userid of this row of the database
          */
         int mUserid;
+        
+        /**
+         * The userid of this row of the database
+         */
+        int lUserid;
+         /**
+         * The userid of this row of the database
+         */
+        int cUserid;
         /**
          * The datecreated
          */
         String mDatecreated;
         /**
-         * The number of likes 
+         * The datecreated
          */
-        int mLikes;
+        String cDatecreated;
         /**
-         * The number of dislikes
+         * The number of likes/dislikes
          */
-        int mDislikes;
+        int mLike;
+
+
+        int lLike;
         /**
          * The message stored in this row
          */
         String  mMessage;
+        /**
+         * The Comment id 
+         */
+        int cCommentID;
+        /**
+         * The message stored in this row
+         */
+        String  cComment;
         
         /**
          * Construct a RowData object by providing values for its fields
+         * messages---
          */
-        public RowData(int msgid, int userid, String datecreated, int likes, int dislikes, String message ) {
+        public RowData(int msgid, int userid, String datecreated, int like, String message) {
             mMsgid = msgid;
             mUserid = userid;
             mDatecreated = datecreated;
-            mLikes = likes;
-            mDislikes = dislikes;
+            mLike = like;
             mMessage = message;
         }
+        /**
+         * Construct a RowData object by providing values for its fields
+         * likes---
+         */
+        public RowData( int msgid, int userid, int like) {
+            lMsgid = msgid;//not sure about this
+            lUserid = userid;
+            lLike = like;
+        }
+
+        //COMMENTS LATER
+
+        public RowData(int msgid, int commentid, int userid, String datecreated, String comment) {
+            cMsgid = msgid;
+            cCommentID = commentid;
+            cUserid = userid;
+            cDatecreated = datecreated;
+            cComment = comment;
+        }
+
     }
 
+       /**
+     * RowData is like a struct in C: we use it to hold data, and we allow 
+     * direct access to its fields.  In the context of this Database, RowData 
+     * represents the data we'd see in a row.
+     * 
+     * We make RowData a static class of Database because we don't really want
+     * to encourage users to think of RowData as being anything other than an
+     * abstract representation of a row of the database.  RowData and the 
+     * Database are tightly coupled: if one changes, the other should too.
+     */
     /**
      * The Database constructor is private: we only create Database objects 
      * through the getDatabase() method.
@@ -140,7 +288,7 @@ try {
         System.err.println("Error: DriverManager.getConnection() returned a null object");
         return null;
     }
-    db.mConnection = conn;
+    db.Connection = conn;
 } catch (SQLException e) {
     System.err.println("Error: DriverManager.getConnection() threw a SQLException");
     e.printStackTrace();
@@ -160,18 +308,70 @@ try {
 
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
-            db.mCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE messages(msgid serial primary key, userid int, datecreated timestamp, likes int, dislikes int, message varchar(250));");
-            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE messages;");
+            db.mCreateTable = db.Connection.prepareStatement("CREATE TABLE messages(msgid SERIAL PRIMARY KEY, userid integer, datecreated TIMESTAMP, likes integer, message VARCHAR(30));");
+            // db.mDropTable = db.Connection.prepareStatement("DROP TABLE messages;");
 
             // Standard CRUD operations
-            db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM messages WHERE msgid = ?");
+            db.mDeleteOne = db.Connection.prepareStatement("DELETE FROM messages WHERE msgid = ?;");
             //create sequence
-            //db.mTrigger = db.mConnection.prepareStatement("CREATE SEQUENCE seq_simple");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages(msgid, userid, datecreated, likes, dislikes, message) VALUES (default, ?, default, ?, ?, ?);");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM messages");
-            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE msgid=?");
-            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?");
+            //db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
+            db.mInsertOne = db.Connection.prepareStatement("INSERT INTO messages(msgid, userid, datecreated, likes, message) VALUES (default, ?, ?, ?, ?);");
+            db.mSelectAll = db.Connection.prepareStatement("SELECT * FROM messages;");
+            db.mSelectOne = db.Connection.prepareStatement("SELECT * from messages WHERE msgid=?;");
+            db.mUpdateOne = db.Connection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?;");
+
+
+             // NB: we can easily get ourselves in trouble here by typing the
+            //     SQL incorrectly.  We really should have things like "tblData"
+            //     as constants, and then build the strings for the statements
+            //     from those constants.
+            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
+            // creation/deletion, so multiple executions will cause an exception
+
+
+            //LIKES
+            db.lCreateTable = db.Connection.prepareStatement("CREATE TABLE likes(userid INT, likes INT);"
+            +"ALTER TABLE likes ADD COLUMN mid INT;"
+            +" ALTER TABLE likes ADD CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES messages(msgid);");
+            // db.mDropTable = db.Connection.prepareStatement("DROP TABLE like;");
+
+            // Standard CRUD operations
+            db.lDeleteOne = db.Connection.prepareStatement("DELETE FROM likes WHERE msgid = ?");
+            //create sequence
+            //db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
+
+            db.lInsertOne = db.Connection.prepareStatement("INSERT INTO likes(userid, likes, mid) VALUES (?, ?, default);");
+            db.lSelectAll = db.Connection.prepareStatement("SELECT * FROM likes");
+            db.lSelectOne = db.Connection.prepareStatement("SELECT * from likes WHERE msgid=?");
+            db.lUpdateOne = db.Connection.prepareStatement("UPDATE likes SET like = ? WHERE msgid = ?");
+
+
+        // //Comments
+            // NB: we can easily get ourselves in trouble here by typing the
+            //     SQL incorrectly.  We really should have things like "tblData"
+            //     as constants, and then build the strings for the statements
+            //     from those constants.
+
+            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
+            // creation/deletion, so multiple executions will cause an exception
+            db.cCreateTable = db.Connection.prepareStatement("CREATE TABLE comments();"
+            +"ALTER TABLE comments ADD COLUMN mid INT;"
+            +"ALTER TABLE comments ADD CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES messages(msgid);"
+            +"ALTER TABLE comments ADD COLUMN commentID SERIAL PRIMARY KEY;"
+            +"ALTER TABLE comments ADD COLUMN userID INT;"
+            +"ALTER TABLE comments ADD COLUMN datecreated TIMESTAMP;"
+            +"ALTER TABLE comments ADD COLUMN comment VARCHAR(30);");
+            // db.mDropTable = db.Connection.prepareStatement("DROP TABLE messages;");
+
+            // Standard CRUD operations
+            db.cDeleteOne = db.Connection.prepareStatement("DELETE FROM comments WHERE commentID = ?");
+            //create sequence
+            //db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
+            db.cInsertOne = db.Connection.prepareStatement("INSERT INTO comments(mid, commentID, userID, datecreated, comment) VALUES (default, default, ?, ?, ?);");
+            db.cSelectAll = db.Connection.prepareStatement("SELECT * FROM comments");
+            db.cSelectOne = db.Connection.prepareStatement("SELECT * from comments WHERE commentID=?");
+            db.cUpdateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentID = ?");
+        
 
 
         } catch (SQLException e) {
@@ -184,7 +384,7 @@ try {
     }
 
     /**
-     * Close the current connection to the database, if one exists.
+     * Close the current connection to the database, if one exists.1
      * 
      * NB: The connection will always be null after this call, even if an 
      *     error occurred during the closing operation.
@@ -192,19 +392,19 @@ try {
      * @return True if the connection was cleanly closed, false otherwise
      */
     boolean disconnect() {
-        if (mConnection == null) {
+        if (Connection == null) {
             System.err.println("Unable to close connection: Connection was null");
             return false;
         }
         try {
-            mConnection.close();
+            Connection.close();
         } catch (SQLException e) {
             System.err.println("Error: Connection.close() threw a SQLException");
             e.printStackTrace();
-            mConnection = null;
+            Connection = null;
             return false;
         }
-        mConnection = null;
+        Connection = null;
         return true;
     }
 
@@ -216,14 +416,67 @@ try {
      * 
      * @return The number of rows that were inserted
      */
-    int insertRow(int userid, int likes, int dislikes, String message) {
+    int insertRowMessages(int userid, int like, String message) {
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
         int count = 0;
         try {
             mInsertOne.setInt(1, userid);
-            mInsertOne.setInt(2, likes);
-            mInsertOne.setInt(3, dislikes);
+
+            mInsertOne.setTimestamp(2, ts);
+
+            mInsertOne.setInt(3, like);
+
             mInsertOne.setString(4, message);
             count += mInsertOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+     /**
+     * Insert a row into the database
+     * 
+     * @param subject The subject for this new row
+     * @param like the value of the boolean like 
+     * 
+     * 
+     * 
+     * @return The number of rows that were inserted
+     */
+    // int insertRowLikes(int userid, int like,int mid) {//unsure!
+        int insertRowLikes(int userid, int like) {//unsure!
+        int count = 0;
+        try {
+            lInsertOne.setInt(1, userid);
+            lInsertOne.setInt(2, like);
+            // lInsertOne.setInt(3,mid);
+            count += lInsertOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+
+     /**
+     * Insert a row into the database
+     * 
+     * @param subject The subject for this new row
+     * @param like the value of the boolean like 
+     * 
+     * 
+     * 
+     * @return The number of rows that were inserted
+     */
+    int insertRowComments(int userid, String comment) {
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        int count = 0;
+        try {
+            cInsertOne.setInt(1, userid);
+            cInsertOne.setTimestamp(2, ts);
+            cInsertOne.setString(3, comment);
+            count += cInsertOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -235,12 +488,48 @@ try {
      * 
      * @return All rows, as an ArrayList
      */
-    ArrayList<RowData> selectAll() {
+    ArrayList<RowData> selectAllMessgaes() {
         ArrayList<RowData> res = new ArrayList<RowData>();
         try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getString("datecreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getString("message")));
+                res.add(new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getString("datecreated"), rs.getInt("like"),rs.getString("message")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    //LIKES
+    /**
+     * Query the database for a list of all subjects and their IDs
+     * 
+     * @return All rows, as an ArrayList
+     */
+    ArrayList<RowData> selectAllLikes() {
+        ArrayList<RowData> res = new ArrayList<RowData>();
+        try {
+            ResultSet rs = lSelectAll.executeQuery();
+            while (rs.next()) {
+                res.add(new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getInt("like")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    ArrayList<RowData> selectAllComments() {
+        ArrayList<RowData> res = new ArrayList<RowData>();
+        try {
+            ResultSet rs = cSelectAll.executeQuery();
+            while (rs.next()) {
+                res.add(new RowData(rs.getInt("msgid"), rs.getInt("commentID"),rs.getInt("userid"),rs.getString("datecreated"),rs.getString("comment")));
             }
             rs.close();
             return res;
@@ -257,13 +546,57 @@ try {
      * 
      * @return The data for the requested row, or null if the ID was invalid
      */
-    RowData selectOne(int id) {
+    RowData selectOneMessages(int id) {
         RowData res = null;
         try {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getString("datecreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getString("message"));
+                res = new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getString("datecreated"), rs.getInt("like"), rs.getString("message"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
+    /**
+     * Get all data for a specific row, by ID
+     * 
+     * @param id The id of the row being requested
+     * 
+     * @return The data for the requested row, or null if the ID was invalid
+     */
+    RowData selectOneLikes(int id) {
+        RowData res = null;
+        try {
+            lSelectOne.setInt(1, id);
+            ResultSet rs = lSelectOne.executeQuery();
+            if (rs.next()) {
+                res = new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getInt("like"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
+    /**
+     * Get all data for a specific row, by ID
+     * 
+     * @param id The id of the row being requested
+     * 
+     * @return The data for the requested row, or null if the ID was invalid
+     */
+    RowData selectOneComments(int id) {
+        RowData res = null;
+        try {
+            cSelectOne.setInt(1, id);
+            ResultSet rs = cSelectOne.executeQuery();
+            if (rs.next()) {
+                res = new RowData(rs.getInt("msgid"), rs.getInt("commentID"),rs.getInt("userid"),rs.getString("datecreated"),rs.getString("comment"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -278,7 +611,7 @@ try {
      * 
      * @return The number of rows that were deleted.  -1 indicates an error.
      */
-    int deleteRow(int id) {
+    int deleteRowMessages(int id) {
         int res = -1;
         try {
             mDeleteOne.setInt(1, id);
@@ -290,6 +623,44 @@ try {
     }
 
     /**
+     * Delete a row by ID
+     * 
+     * @param id The id of the row to delete
+     * 
+     * @return The number of rows that were deleted.  -1 indicates an error.
+     */
+    int deleteRowLikes(int id) {
+        int res = -1;
+        try {
+            lDeleteOne.setInt(1, id);
+            res = lDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+        /**
+     * Delete a row by ID
+     * 
+     * @param id The id of the row to delete
+     * 
+     * @return The number of rows that were deleted.  -1 indicates an error.
+     */
+    int deleteRowComments(int id) {
+        int res = -1;
+        try {
+            cDeleteOne.setInt(1, id);
+            res = cDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    
+
+    /**
      * Update the message for a row in the database
      * 
      * @param id The id of the row to update
@@ -297,7 +668,7 @@ try {
      * 
      * @return The number of rows that were updated.  -1 indicates an error.
      */
-    int updateOne(int id, String message) {
+    int updateOneMessages(int id, String message) {
         int res = -1;
         try {
             mUpdateOne.setString(1, message);
@@ -309,10 +680,51 @@ try {
         return res;
     }
 
+        /**
+     * Update the Like for a row in the database
+     * 
+     * @param id The id of the row to update
+     * @param message The new message contents
+     * 
+     * @return The number of rows that were updated.  -1 indicates an error.
+     */
+    int updateOneLikes(int like, int id) {
+        int res = -1;
+        try {
+            lUpdateOne.setInt(1, like);
+            lUpdateOne.setInt(2, id);
+            res = lUpdateOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+        /**
+     * Update the Comments for a row in the database
+     * 
+     * @param id The id of the row to update
+     * @param message The new message contents
+     * 
+     * @return The number of rows that were updated.  -1 indicates an error.
+     */
+    int updateOneComments(String comment, int id) {
+        int res = -1;
+        try {
+            cUpdateOne.setString(1, comment);
+            cUpdateOne.setInt(2, id);
+            res = lUpdateOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
     /**
      * Create tblData.  If it already exists, this will print an error
      */
-    void createTable() {
+    void createTableMessages() {
         try {
             mCreateTable.execute();
         } catch (SQLException e) {
@@ -320,15 +732,39 @@ try {
         }
     }
 
-    /**
-     * Remove tblData from the database.  If it does not exist, this will print
-     * an error.
+        /**
+     * Create tblData.  If it already exists, this will print an error
      */
-    void dropTable() {
+    void createTableLikes() {
         try {
-            mDropTable.execute();
+            lCreateTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+        /**
+     * Create tblData.  If it already exists, this will print an error
+     */
+    void createTableComments() {
+        try {
+            cCreateTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Remove tblData from the database.  If it does not exist, this will print
+     * an error.
+     */
+    // void dropTable() {
+    //     try {
+    //         mDropTable.execute();
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 }
+
