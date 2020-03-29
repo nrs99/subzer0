@@ -46,7 +46,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
         final Comment d = myData.get(position);
-        holder.cText.setText(d.comment);
+        holder.cText.setText(d.userId); // TODO: Fix this once Vinny fixes that
         holder.profilePic.setBackgroundResource(R.drawable.blank_profile); // Replace later with Google pic
     }
 

@@ -14,21 +14,21 @@ import java.util.ArrayList;
 public class Profile extends BaseActivity {
 
     ArrayList<Message> mData = new ArrayList<>();
-    String profiledUserID;
-
-
+    private String profiledUserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        profiledUserID = getIntent().getExtras().getString("profiledUser");
+
         getMessages();
 
     }
 
     private void getMessages() {
-        String url = "http://subzer0.herokuapp.com/messages";
+        String url = "http://subzer0.herokuapp.com/messages/user/" + profiledUserID;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     mData = MainActivity.getMData(response);
