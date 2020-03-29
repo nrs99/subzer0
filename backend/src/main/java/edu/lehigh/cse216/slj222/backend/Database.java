@@ -175,10 +175,10 @@ public class Database {
      * 
      * @return The number of rows that were inserted
      */
-    int insertRow(String message, int userId) {
+    int insertRow(String message, String userId) {
         int count = 0;
         try {
-            mInsertOne.setInt(1, userId);
+            mInsertOne.setString(1, userId);
             mInsertOne.setTimestamp(2, new Timestamp(System.currentTimeMillis())); // Gets current time of system
             mInsertOne.setString(3, message);
             mInsertOne.executeUpdate();
@@ -202,7 +202,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAllNewest.executeQuery();
             while (rs.next()) {
-                res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
+                res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
                         rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes")));
             }
             rs.close();
@@ -223,7 +223,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAllOldest.executeQuery();
             while (rs.next()) {
-                res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
+                res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
                         rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes")));
             }
             rs.close();
@@ -244,7 +244,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAllPopular.executeQuery();
             while (rs.next()) {
-                res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
+                res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
                         rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes")));
             }
             rs.close();
@@ -268,7 +268,7 @@ public class Database {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
-                res = new Message(rs.getInt("msgId"), rs.getString("message"), rs.getInt("userId"),
+                res = new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
                         rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"));
             }
         } catch (SQLException e) {
@@ -309,11 +309,11 @@ public class Database {
         return res;
     }
 
-    int insertVote(int msgid, int userid) {
+    int insertVote(int msgid, String userid) {
         int count = 0;
         try {
             mInsertVote.setInt(1, msgid);
-            mInsertVote.setInt(2, userid);
+            mInsertVote.setString(2, userid);
             mInsertVote.executeUpdate();
             ResultSet rs = mInsertVote.getGeneratedKeys();
             if (rs.next()) {
@@ -325,10 +325,10 @@ public class Database {
         return count;
     }
 
-    int removeVote(int msgid, int userid) {
+    int removeVote(int msgid, String userid) {
         try {
             mRemoveVote.setInt(1, msgid);
-            mRemoveVote.setInt(2, userid);
+            mRemoveVote.setString(2, userid);
             mRemoveVote.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -336,11 +336,11 @@ public class Database {
         return 0;
     }
 
-    int insertComment(int msgid, String comment, int userid) {
+    int insertComment(int msgid, String comment, String userid) {
         int count = 0;
         try {
             mInsertComment.setInt(1, msgid);
-            mInsertComment.setInt(2, userid);
+            mInsertComment.setString(2, userid);
             mInsertComment.setString(3, comment);
             mInsertComment.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
             mInsertComment.executeUpdate();

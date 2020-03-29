@@ -7,7 +7,12 @@ import spark.Spark;
 // Import Google's JSON library
 import com.google.gson.*;
 
-import java.util.Map;
+// Google OAuth Imports
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+
+import java.util.*;
 
 /**
  * For now, our app creates an HTTP server that can only get and add data.
@@ -19,6 +24,8 @@ public class App {
         Map<String, String> env = System.getenv();
 
         String db_url = env.get("DATABASE_URL");
+
+        Hashtable ht = new Hashtable();
 
         // Get a fully-configured connection to the database, or exit
         // immediately
@@ -170,7 +177,43 @@ public class App {
             }
         });
 
+        Spark.post("/login/:token", (request, response) -> {
+            final String CLIENT_ID = "363085709256-vl89523mj1pv792ngp4sin2e717motg7.apps.googleusercontent.com";
+            final String CLIENT_SECRET = "zXSIfOxfMUoHugSkfaPKdBtk";
+
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+            // Specify the CLIENT_ID of the app that accesses the backend:
+            .setAudience(Collections.singletonList(CLIENT_ID))
+            // Or, if multiple clients access the backend:
+            //.setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
+            .build();
+
+            String idTokenString = request.params("token");
+
+            GoogleIdToken idToken = verifier.verify(idTokenString);
+            if (idToken != null) {
+                Payload payload = idToken.getPayload();
+            }
+            if (payload.getHostedDomain().equals("lehigh.edu")) {
+                // Print user identifier
+                String userID = payload.getSubject();
+
+                UUID sessionKey = UUID.randomUUID();
+
+                if (ht.contains(userID)) {
+                    ht.put(sessionKey, userID);
+                } else {
+                    ht.put(sessionKey, userID);
+                }
+            } else {
+                System.out.println("Invalid domain");
+                return null;
+            }
+        });
+
     }
+
+
 
     static int getIntFromEnv(String envar, int defaultVal) {
         ProcessBuilder processBuilder = new ProcessBuilder();
