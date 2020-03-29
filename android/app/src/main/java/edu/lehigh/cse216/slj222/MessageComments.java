@@ -146,7 +146,7 @@ public class MessageComments extends BaseActivity {
 
         params.put("msgId", msgId);
         params.put("comment", comment);
-        params.put("userID", userId);
+        params.put("userId", userId);
 
         JSONObject request = new JSONObject(params);
 
