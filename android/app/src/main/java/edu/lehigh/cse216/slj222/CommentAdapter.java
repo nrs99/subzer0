@@ -66,6 +66,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         holder.editButton.setOnClickListener(b -> {
             // TODO: Create an editing activity, take user there, then HTTP put
+            Intent intent = new Intent(b.getContext(), EditActivity.class);
+            intent.putExtra("comment", d.userId); // TODO: Change on Vinny fix
+            intent.putExtra("cId", d.commentId);
+            context.startActivity(intent);
+            if (context instanceof MessageComments) {
+                ((MessageComments) context).getComments();
+            }
         });
 
         holder.profilePic.setOnClickListener(b -> {

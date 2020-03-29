@@ -128,7 +128,7 @@ public class MessageComments extends BaseActivity {
         return cData;
     }
 
-    private void getComments() {
+    void getComments() {
         String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/comments";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
             cData = getComments(response);
