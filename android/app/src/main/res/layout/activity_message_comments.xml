@@ -35,7 +35,7 @@
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Type a comment..." />
+                android:hint="Add a comment..." />
 
             <Button
                 android:id="@+id/button"

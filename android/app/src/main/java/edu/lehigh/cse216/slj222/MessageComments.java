@@ -2,9 +2,8 @@ package edu.lehigh.cse216.slj222;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static edu.lehigh.cse216.slj222.MainActivity.hideKeyboard;
 
 public class MessageComments extends BaseActivity {
 
@@ -29,6 +30,7 @@ public class MessageComments extends BaseActivity {
         int msgId = getIntent().getExtras().getInt("msgid");
 
         final EditText textToSend = findViewById(R.id.newComment);
+        final Button sendComment = findViewById(R.id.button);
 
         String url = "http://subzer0.herokuapp.com/messages/" + msgId;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -42,6 +44,15 @@ public class MessageComments extends BaseActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
 
         // TODO: Next request based on comments
+
+        sendComment.setOnClickListener(b -> {
+            if (!textToSend.getText().toString().equals("")) {
+                String message = textToSend.getText().toString().trim();
+                // TODO: Send the POST request
+                textToSend.getText().clear(); //Remove whatever's in there
+                hideKeyboard(this); // Hides the keyboard if clicked
+            }
+        });
 
     }
 
