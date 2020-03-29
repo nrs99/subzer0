@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity {
             JSONArray json = responseObj.getJSONArray("mData");
             for (int i = 0; i < json.length(); i++) {
                 int msgId = json.getJSONObject(i).getInt("msgId");
-                int userId = json.getJSONObject(i).getInt("userId");
+                String userId = json.getJSONObject(i).getString("userId");
                 String message = json.getJSONObject(i).getString("message");
                 int likes = json.getJSONObject(i).getInt("likes");
                 int dislikes = json.getJSONObject(i).getInt("dislikes");

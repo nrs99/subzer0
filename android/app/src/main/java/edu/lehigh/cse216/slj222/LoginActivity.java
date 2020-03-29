@@ -9,12 +9,18 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.auth.api.credentials.IdToken;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -81,8 +87,29 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
             // Send to login backend route
-            account.getId();
-            account.getIdToken(); // This is a post, backend responds that it is valid
+            String myToken = account.getIdToken(); // This is a post, backend responds that it is valid
+
+            String url = "http://subzer0.herokuapp.com/login/" + myToken;
+
+            JSONObject request = new JSONObject();
+
+            // Request a string response from the provided URL.
+            JsonObjectRequest loginReq = new JsonObjectRequest(Request.Method.POST, url, request,
+                    response -> {
+                        //try {
+                            Log.d("slj222", "Token: " + myToken);
+                            Log.d("slj222", "Response: " + response.toString());
+                        /*} catch (final JSONException e) {
+                            Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
+                        }*/
+                    },
+                    error -> {
+                        // if there's an error
+                        Log.d("slj222", "error:" + error.getMessage());
+                        error.printStackTrace();
+                    }) {
+            };
+            VolleySingleton.getInstance(this).addToRequestQueue(loginReq);
 
             // Write session key to SharedPreferences
             SharedPreferences sharedPref = this.getSharedPreferences("Shared", Context.MODE_PRIVATE);

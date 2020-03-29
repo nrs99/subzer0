@@ -17,7 +17,7 @@ public class Message {
     /**
      * The ID of the user who posted the message
      */
-    int userId;
+    String userId;
     /**
      * The time the message was originally created
      */
@@ -40,7 +40,7 @@ public class Message {
     /**
      * Construct a Message object by providing values for its fields
      */
-    public Message(int msgId, String message, int userId, int likes, int dislikes) {
+    public Message(int msgId, String message, String userId, int likes, int dislikes) {
         this.msgId = msgId;
         this.message = message;
         this.userId = userId;
