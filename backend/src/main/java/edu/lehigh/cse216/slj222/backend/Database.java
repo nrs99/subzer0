@@ -133,7 +133,7 @@ public class Database {
             db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO comments VALUES (?, default, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             db.mEditComment = db.mConnection.prepareStatement("UPDATE comments SET comment = ? WHERE commentid = ?");
-            db.mGetComments = db.mConnection.prepareStatement("SELECT * from comments WHERE mid=?");
+            db.mGetComments = db.mConnection.prepareStatement("SELECT * from comments WHERE mid=? ORDER BY datecreated DESC");
             db.mMessagesByUser = db.mConnection.prepareStatement("SELECT * from messages WHERE userid = ? ORDER BY datecreated DESC");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
