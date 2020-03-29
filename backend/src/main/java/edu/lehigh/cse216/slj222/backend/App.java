@@ -1,38 +1,41 @@
 package edu.lehigh.cse216.slj222.backend;
-
-// Import the Spark package, so that we can make use of the "get" function to 
+ 
+// Import the Spark package, so that we can make use of the "get" function to
 // create an HTTP GET route
 import spark.Spark;
-
+ 
 // Import Google's JSON library
 import com.google.gson.*;
-
+ 
 // Google OAuth Imports
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+ 
+ 
 import java.util.*;
-
+ 
 /**
  * For now, our app creates an HTTP server that can only get and add data.
  */
 public class App {
     public static void main(String[] args) {
-
+ 
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
-
+ 
         String db_url = env.get("DATABASE_URL");
-
-        Hashtable ht = new Hashtable();
-
+ 
+        Hashtable <UUID, String> ht = new Hashtable<>();
+ 
         // Get a fully-configured connection to the database, or exit
         // immediately
         Database db = Database.getDatabase(db_url);
         if (db == null)
             return;
-
+ 
         // gson provides us with a way to turn JSON into objects, and objects
         // into JSON.
         //
@@ -41,16 +44,16 @@ public class App {
         // NB: Gson is thread-safe. See
         // https://stackoverflow.com/questions/10380835/is-it-ok-to-use-gson-instance-as-a-static-field-in-a-model-bean-reuse
         final Gson gson = new Gson();
-
+ 
         // dataStore holds all of the data that has been provided via HTTP
         // requests
         //
         // NB: every time we shut down the server, we will lose all data, and
         // every time we start the server, we'll have an empty dataStore,
         // with IDs starting over from 0.
-
+ 
         Spark.port(getIntFromEnv("PORT", 4567));
-
+ 
         // Set up the location for serving static files. If the STATIC_LOCATION
         // environment variable is set, we will serve from it. Otherwise, serve
         // from "/web"
@@ -60,7 +63,7 @@ public class App {
         } else {
             Spark.staticFiles.externalLocation(static_location_override);
         }
-
+ 
         String cors_enabled = env.get("CORS_ENABLED");
         if (cors_enabled.equals("True")) {
             final String acceptCrossOriginRequestsFrom = "*";
@@ -68,13 +71,13 @@ public class App {
             final String supportedRequestHeaders = "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin";
             enableCORS(acceptCrossOriginRequestsFrom, acceptedCrossOriginRoutes, supportedRequestHeaders);
         }
-
+ 
         // Set up a route for serving the main page
         Spark.get("/", (req, res) -> {
             res.redirect("/index.html");
             return "";
         });
-
+ 
         // GET route that returns all message titles and Ids.
         // Standard call will have newest messages first
         Spark.get("/messages", (request, response) -> {
@@ -83,7 +86,7 @@ public class App {
             response.type("application/json");
             return gson.toJson(new StructuredResponse("ok", null, db.selectAllNewest()));
         });
-
+ 
         // GET route that returns all message titles and Ids.
         // Oldest messages first
         Spark.get("/messages/oldest", (request, response) -> {
@@ -92,7 +95,7 @@ public class App {
             response.type("application/json");
             return gson.toJson(new StructuredResponse("ok", null, db.selectAllOldest()));
         });
-
+ 
         // GET route that returns all message titles and Ids.
         // Most popular messages first
         Spark.get("/messages/popular", (request, response) -> {
@@ -101,7 +104,7 @@ public class App {
             response.type("application/json");
             return gson.toJson(new StructuredResponse("ok", null, db.selectAllPopular()));
         });
-
+ 
         // GET route that returns everything for a single row in the DataStore.
         // The ":id" suffix in the first parameter to get() becomes
         // request.params("id"), so that we can get the requested row ID. If
@@ -120,7 +123,7 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, data));
             }
         });
-
+ 
         // POST route for adding a new element to the DataStore. This will read
         // JSON from the body of the request, turn it into a SimpleRequest
         // object, extract the title and message, insert them, and return the
@@ -142,7 +145,7 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
             }
         });
-
+ 
         // Spark put route to like a message with a given id
         Spark.put("/messages/:id/like", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
@@ -159,7 +162,7 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, req));
             }
         });
-
+ 
         // Spark put route to dislike a message with a given id
         Spark.put("/messages/:id/dislike", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
@@ -177,49 +180,90 @@ public class App {
             }
         });
 
+        Spark.get("/messages/:id/comments", (request, response) -> {
+            int idx = Integer.parseInt(request.params("id")); 
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.getComments(idx)));
+        });
+
+        Spark.post("/comments/:id", (request, response) -> {
+            // NB: if gson.Json fails, Spark will reply with status 500 Internal
+            // Server Error
+            NewCommentRequest req = gson.fromJson(request.body(), NewCommentRequest.class);
+            // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
+            // NB: createEntry checks for null title and message
+            int newId = db.insertComment(req.msgId, req.comment, req.userId);
+            if (newId == -1) {
+                return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+            }
+        });
+ 
+        Spark.put("/comments/:id/edit", (request, response) -> {
+            int idx = Integer.parseInt(request.params("id"));
+            
+            EditCommentRequest req = gson.fromJson(request.body(), EditCommentRequest.class);
+
+            response.status(200);
+            response.type("application/json");
+            
+            int result = db.editComment(req.cid, req.comment);
+
+            if (result == 1) {
+                return gson.toJson(new StructuredResponse("ok", null, result));
+            } else {
+                return gson.toJson(new StructuredResponse("error", "error updating comment", null));
+            }
+
+        });
+        
         Spark.post("/login/:token", (request, response) -> {
             final String CLIENT_ID = "363085709256-vl89523mj1pv792ngp4sin2e717motg7.apps.googleusercontent.com";
-            final String CLIENT_SECRET = "zXSIfOxfMUoHugSkfaPKdBtk";
-            
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+            // final String CLIENT_SECRET = "zXSIfOxfMUoHugSkfaPKdBtk";
+           
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
             // Specify the CLIENT_ID of the app that accesses the backend:
             .setAudience(Collections.singletonList(CLIENT_ID))
-            // Or, if multiple clients access the backend:
-            //.setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
             .build();
-
+ 
             String idTokenString = request.params("token");
-
+ 
             GoogleIdToken idToken = verifier.verify(idTokenString);
-
-            Payload payload;
-
+ 
+            Payload payload = new Payload();
+ 
             if (idToken != null) {
                 payload = idToken.getPayload();
             }
             if (payload.getHostedDomain().equals("lehigh.edu")) {
                 // Print user identifier
-                String userID = payload.getUserId();
-
+                String userID = payload.getSubject();
+ 
                 UUID sessionKey = UUID.randomUUID();
-
+ 
                 if (ht.contains(userID)) {
                     ht.put(sessionKey, userID);
                 } else {
                     ht.put(sessionKey, userID);
                 }
-
-                return sessionKey;
+ 
+                return gson.toJson(new StructuredResponse("ok", null, sessionKey));
             } else {
                 System.out.println("Invalid domain");
-                return null;
+                return gson.toJson(new StructuredResponse("error", "login error", null));
             }
         });
-
+ 
     }
-
-
-
+ 
+ 
+ 
     static int getIntFromEnv(String envar, int defaultVal) {
         ProcessBuilder processBuilder = new ProcessBuilder();
         if (processBuilder.environment().get(envar) != null) {
@@ -227,11 +271,11 @@ public class App {
         }
         return defaultVal;
     }
-
+ 
     /**
      * Set up CORS headers for the OPTIONS verb, and for every response that the
      * server sends. This only needs to be called once.
-     * 
+     *
      * @param origin  The server that is allowed to send requests to this server
      * @param methods The allowed HTTP verbs from the above origin
      * @param headers The headers that can be sent with a request from the above
@@ -250,7 +294,7 @@ public class App {
             }
             return "OK";
         });
-
+ 
         // 'before' is a decorator, which will run before any
         // get/post/put/delete. In our case, it will put three extra CORS
         // headers into the response
@@ -260,5 +304,5 @@ public class App {
             response.header("Access-Control-Allow-Headers", headers);
         });
     }
-
+ 
 }
