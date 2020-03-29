@@ -349,8 +349,8 @@ public class Database {
             mInsertComment.setString(2, userid);
             mInsertComment.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
             mInsertComment.setString(4, comment);
-        mInsertComment.executeUpdate();
-            ResultSet rs = mInsertOne.getGeneratedKeys();
+            mInsertComment.executeUpdate();
+            ResultSet rs = mInsertComment.getGeneratedKeys();
             if (rs.next()) {
                 count += rs.getInt(1);
             }
@@ -378,7 +378,7 @@ public class Database {
             mGetComments.setInt(1, msgId);
             ResultSet rs = mGetComments.executeQuery();
             while(rs.next()) {
-                comments.add(new Comment(rs.getInt("commentId"), rs.getInt("msgId"),
+                comments.add(new Comment(rs.getInt("commentId"), rs.getInt("mid"),
                     rs.getString("comment"), rs.getString("userId"), rs.getTimestamp("dateCreated")));
             }
             rs.close();
