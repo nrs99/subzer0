@@ -180,7 +180,7 @@ public class App {
         Spark.post("/login/:token", (request, response) -> {
             final String CLIENT_ID = "363085709256-vl89523mj1pv792ngp4sin2e717motg7.apps.googleusercontent.com";
             final String CLIENT_SECRET = "zXSIfOxfMUoHugSkfaPKdBtk";
-
+            
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
             // Specify the CLIENT_ID of the app that accesses the backend:
             .setAudience(Collections.singletonList(CLIENT_ID))
@@ -191,12 +191,15 @@ public class App {
             String idTokenString = request.params("token");
 
             GoogleIdToken idToken = verifier.verify(idTokenString);
+
+            Payload payload;
+
             if (idToken != null) {
-                Payload payload = idToken.getPayload();
+                payload = idToken.getPayload();
             }
             if (payload.getHostedDomain().equals("lehigh.edu")) {
                 // Print user identifier
-                String userID = payload.getSubject();
+                String userID = payload.getUserId();
 
                 UUID sessionKey = UUID.randomUUID();
 
@@ -205,6 +208,8 @@ public class App {
                 } else {
                     ht.put(sessionKey, userID);
                 }
+
+                return sessionKey;
             } else {
                 System.out.println("Invalid domain");
                 return null;
