@@ -153,7 +153,6 @@ public class MessageComments extends BaseActivity {
         JsonObjectRequest postReq = new JsonObjectRequest(Request.Method.POST, url, request,
                 response -> {
                     try {
-                        Log.d("slj222", "My response is " + response.toString());
                         response.getString("mStatus");  //if its working or not
                         cData.clear();
                         getComments();

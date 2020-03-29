@@ -43,7 +43,6 @@ public class EditActivity extends BaseActivity {
             JsonObjectRequest putReq = new JsonObjectRequest(Request.Method.PUT, url, request,
                     response -> {
                         try {
-                            Log.d("slj222", "My response is " + response.toString());
                             response.getString("mStatus");  //if its working or not
                             finish();
                         } catch (final JSONException e) {
