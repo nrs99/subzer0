@@ -20,15 +20,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     private Context context;
     private ArrayList<Message> myData;
+    private HashMap<Integer, Integer> likes;
 
 
-    ItemListAdapter(Context context, ArrayList<Message> data) {
+    ItemListAdapter(Context context, ArrayList<Message> data, HashMap<Integer, Integer> likes) {
         this.myData = data;
         this.context = context;
+        this.likes = likes;
+
+        for (int i = 0; i < data.size(); i++) {
+            if (likes.containsKey(data.get(i).msgId)) {
+                data.get(i).setLike(likes.get(data.get(i).msgId));
+            }
+        }
     }
 
 
@@ -78,6 +87,11 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         viewHolder.mText.setText(d.message);
         viewHolder.likeCount.setText(String.valueOf(d.likes));
         viewHolder.dislikeCount.setText(String.valueOf(d.dislikes));
+        if(Integer.parseInt(String.valueOf(d.commentCount)) == 1) {
+            viewHolder.commentCount.setText("1 comment");
+        } else {
+            viewHolder.commentCount.setText(String.valueOf(d.commentCount) + " comments");
+        }
         viewHolder.profilePic.setBackgroundResource(R.drawable.blank_profile); // Replace later with Google pic
         int likeStatus = d.myLike;
         if (likeStatus == 1) {
@@ -92,11 +106,11 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         }
 
         viewHolder.thumbup.setOnClickListener(b -> {
+            likeMessage(d.msgId); // Send the HTTP request
             //Change the image if clicked
             if (b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_unlikebutton).getConstantState()) {
                 b.setBackgroundResource(R.drawable.ic_likebutton);
                 d.myLike = 1;
-                likeMessage(d.msgId); // Send the HTTP request
                 if (viewHolder.thumbdown.getBackground().getConstantState() == viewHolder.thumbdown.getResources().getDrawable(R.drawable.ic_thumbdown).getConstantState()) {
                     // Decrease dislikes by 1
                     d.dislikes--;
@@ -120,10 +134,10 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
         viewHolder.thumbdown.setOnClickListener(b -> {
             // Change the image if clicked
+            dislikeMessage(d.msgId); // Send the HTTP request
             if (b.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.ic_no_thumbdown).getConstantState()) {
                 b.setBackgroundResource(R.drawable.ic_thumbdown);
                 d.myLike = -1;
-                dislikeMessage(d.msgId); // Send the HTTP request
                 if (viewHolder.thumbup.getBackground().getConstantState() == viewHolder.thumbup.getResources().getDrawable(R.drawable.ic_likebutton).getConstantState()) {
                     // Decrease likes by 1
                     d.likes--;
@@ -179,7 +193,11 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     public void likeMessage(int msgId) {
         JSONObject request = new JSONObject();
 
-        String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/like";
+        String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/like/";
+
+        if (context instanceof BaseActivity) {
+            url += ((BaseActivity) context).userId;
+        }
 
         JsonObjectRequest getReq = new JsonObjectRequest(Request.Method.PUT, url, request,
                 response -> {
@@ -207,7 +225,11 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     public void dislikeMessage(int msgId) {
         JSONObject request = new JSONObject();
 
-        String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/dislike";
+        String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/dislike/";
+
+        if (context instanceof BaseActivity) {
+            url += ((BaseActivity) context).userId;
+        }
 
         JsonObjectRequest getReq = new JsonObjectRequest(Request.Method.PUT, url, request,
                 response -> {

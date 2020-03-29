@@ -13,6 +13,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import static edu.lehigh.cse216.slj222.MainActivity.hideKeyboard;
 
 public class BaseActivity extends AppCompatActivity {
@@ -20,6 +30,8 @@ public class BaseActivity extends AppCompatActivity {
     String sessionKey;
     String givenName;
     String userId;
+
+    HashMap<Integer, Integer> likes = new HashMap<Integer, Integer>();
 
     private Menu mOptionsMenu;
 
@@ -30,6 +42,8 @@ public class BaseActivity extends AppCompatActivity {
         sessionKey = sharedPref.getString("sessionKey", "logout");
         givenName = sharedPref.getString("givenName", "Joe");
         userId = sharedPref.getString("userId", "0");
+
+        setLikes();
 
         Log.d("slj222", "Session key: " + sessionKey);
         Log.d("slj222", givenName);
@@ -93,6 +107,41 @@ public class BaseActivity extends AppCompatActivity {
                 hideKeyboard(this);
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    public static HashMap<Integer, Integer> getLikes(String response) {
+
+        HashMap<Integer, Integer> myLikes = new HashMap<>();
+
+        try {
+            JSONObject responseObj = new JSONObject(response);
+            JSONArray json = responseObj.getJSONArray("mData");
+            for (int i = 0; i < json.length(); i++) {
+                int mid = json.getJSONObject(i).getInt("mid");
+                int likes = json.getJSONObject(i).getInt("likes");
+                myLikes.put(mid, likes);
+            }
+
+        } catch (final JSONException e) {
+            e.printStackTrace();
+        }
+
+        return myLikes;
+
+    }
+
+     void setLikes() {
+
+        String url = "http://subzer0.herokuapp.com/likes/" + userId;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    likes = getLikes(response);
+                }, error -> {
+            Log.e("slj222", "That didn't work!");
+            Log.e("slj222", error.toString());
+        });
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
     }
 
 }

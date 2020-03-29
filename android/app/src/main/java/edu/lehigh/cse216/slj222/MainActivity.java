@@ -71,6 +71,7 @@ public class MainActivity extends BaseActivity {
         swipeContainer.setOnRefreshListener(() -> {
             mData.clear();
             getMessages();
+            setLikes();
             swipeContainer.setRefreshing(false);
         });
 
@@ -101,7 +102,8 @@ public class MainActivity extends BaseActivity {
                 String message = json.getJSONObject(i).getString("message");
                 int likes = json.getJSONObject(i).getInt("likes");
                 int dislikes = json.getJSONObject(i).getInt("dislikes");
-                mData.add(new Message(msgId, message, userId, likes, dislikes));
+                int comments = json.getJSONObject(i).getInt("comments");
+                mData.add(new Message(msgId, message, userId, likes, dislikes, comments));
             }
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
@@ -118,7 +120,7 @@ public class MainActivity extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(layoutManager);
         rv.setHasFixedSize(true);
-        ItemListAdapter adapter = new ItemListAdapter(this, mData);
+        ItemListAdapter adapter = new ItemListAdapter(this, mData, likes);
         rv.setAdapter(adapter);
 
     }

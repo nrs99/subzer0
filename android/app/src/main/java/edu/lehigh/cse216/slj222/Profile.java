@@ -45,7 +45,7 @@ public class Profile extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(layoutManager);
         rv.setHasFixedSize(true);
-        ItemListAdapter adapter = new ItemListAdapter(this, mData);
+        ItemListAdapter adapter = new ItemListAdapter(this, mData, likes);
         rv.setAdapter(adapter);
 
     }

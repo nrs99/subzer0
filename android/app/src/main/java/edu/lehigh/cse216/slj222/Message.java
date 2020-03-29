@@ -37,17 +37,24 @@ public class Message {
      */
     int myLike;
 
+    int commentCount;
+
     /**
      * Construct a Message object by providing values for its fields
      */
-    public Message(int msgId, String message, String userId, int likes, int dislikes) {
+    public Message(int msgId, String message, String userId, int likes, int dislikes, int commentCount) {
         this.msgId = msgId;
         this.message = message;
         this.userId = userId;
         this.dateCreated = null;
         this.likes = likes;
         this.dislikes = dislikes;
+        this.commentCount = commentCount;
         myLike = 0; // Set it to not be on creation, change later once route is updated
+    }
+
+    public void setLike(int myLike) {
+        this.myLike = myLike;
     }
 
 }

@@ -68,7 +68,7 @@ public class MessageComments extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(layoutManager);
         rv.setHasFixedSize(true);
-        ItemListAdapter adapter = new ItemListAdapter(this, mData);
+        ItemListAdapter adapter = new ItemListAdapter(this, mData, likes);
         rv.setAdapter(adapter);
 
     }
@@ -93,7 +93,8 @@ public class MessageComments extends BaseActivity {
             String message = json.getString("message");
             int likes = json.getInt("likes");
             int dislikes = json.getInt("dislikes");
-            mData.add(new Message(msgId, message, userId, likes, dislikes));
+            int comments = json.getInt("comments");
+            mData.add(new Message(msgId, message, userId, likes, dislikes, comments));
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
             e.printStackTrace();
