@@ -209,7 +209,7 @@ public class Database {
             ResultSet rs = mSelectAllNewest.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL")));
             }
             rs.close();
             return res;
@@ -230,7 +230,7 @@ public class Database {
             ResultSet rs = mSelectAllOldest.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL")));
             }
             rs.close();
             return res;
@@ -251,7 +251,7 @@ public class Database {
             ResultSet rs = mSelectAllPopular.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL")));
             }
             rs.close();
             return res;
@@ -275,7 +275,7 @@ public class Database {
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
                 res = new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -391,7 +391,7 @@ public class Database {
             ResultSet rs = mMessagesByUser.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL")));
             }
             rs.close();
             return res;

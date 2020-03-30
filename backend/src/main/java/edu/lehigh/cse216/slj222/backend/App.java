@@ -275,7 +275,7 @@ public class App {
             }
         });
 
-        Spark.post("/user", (request, response) -> {
+        Spark.put("/user", (request, response) -> {
             NewUserRequest req = gson.fromJson(request.body(), NewUserRequest.class); 
             response.status(200);
             response.type("application/json");
