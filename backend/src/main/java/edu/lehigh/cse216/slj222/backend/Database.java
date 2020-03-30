@@ -65,6 +65,8 @@ public class Database {
     private PreparedStatement mInsertUser;
 
     private PreparedStatement mUserExists;
+
+    private PreparedStatement mCommentAuthor;
  
     /**
      * The Database constructor is private: we only create Database objects through
@@ -135,6 +137,7 @@ public class Database {
             db.mUserLikes = db.mConnection.prepareStatement("SELECT mid, likes from likes where userid =?");
             db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
             db.mUserExists = db.mConnection.prepareStatement("SELECT * FROM users where userID = ?");
+            db.mCommentAuthor = db.mConnection.prepareStatement("SELECT userid FROM comments WHERE commentid=?")
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -354,12 +357,16 @@ public class Database {
         return count;
     }
  
-    int editComment(int commentid, String comment) {
+    int editComment(int commentid, String comment, String userid) {
         int count = 0;
         try {
-            mEditComment.setInt(2, commentid);
-            mEditComment.setString(1, comment);
-            count = mEditComment.executeUpdate();
+            mCommentAuthor.setInt(1, commentid);
+            String author = mCommentAuthor.executeQuery();
+            if (userid.equals(author)) {
+                mEditComment.setInt(2, commentid);
+                mEditComment.setString(1, comment);
+                count = mEditComment.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

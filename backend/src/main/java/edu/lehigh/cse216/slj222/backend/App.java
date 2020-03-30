@@ -214,7 +214,7 @@ public class App {
             response.status(200);
             response.type("application/json");
            
-            int result = db.editComment(req.cid, req.comment);
+            int result = db.editComment(req.cid, req.comment, req.userid);
  
             if (result == 1) {
                 return gson.toJson(new StructuredResponse("ok", null, result));
