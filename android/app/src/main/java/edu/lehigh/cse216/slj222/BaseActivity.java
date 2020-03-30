@@ -25,6 +25,12 @@ import java.util.HashMap;
 
 import static edu.lehigh.cse216.slj222.MainActivity.hideKeyboard;
 
+/**
+ * There are certain methods that all of the activities should be able to access,
+ * such as the menu bar and some methods that deal with the keyboard.
+ * It also helps store some user details
+ */
+
 public class BaseActivity extends AppCompatActivity {
 
     String sessionKey;
@@ -41,6 +47,8 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Read from SharedPreferences (a file that would be stored along with app on specific device)
         SharedPreferences sharedPref = this.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         sessionKey = sharedPref.getString("sessionKey", "logout");
         givenName = sharedPref.getString("givenName", "Joe");
@@ -75,30 +83,30 @@ public class BaseActivity extends AppCompatActivity {
             case R.id.logout:
                 intent = new Intent(this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Get rid of activity stack
-                intent.putExtra("logout", true);
+                intent.putExtra("logout", true); // Lets it know this was called rather than fresh app opening
 
                 SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("sessionKey", "logout");
-                editor.commit();
+                editor.putString("sessionKey", "logout"); // When the app starts, it would take the user to a
+                editor.commit();                          // signed in state unless the sessionKey is logout
                 startActivity(intent);
                 return true;
             case R.id.myName:
                 intent = new Intent(this, Profile.class);
                 // Pass my userID
-                intent.putExtra("profiledUser", userId);
+                intent.putExtra("profiledUser", userId);    // Pass my info into the profile activity
                 intent.putExtra("profiledName", displayName);
                 intent.putExtra("profiledPhoto", myURL);
                 startActivity(intent);
                 return true;
             case R.id.goBack:
-                finish();
+                finish(); // This ends the current activity and returns to state of previous
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
+    public boolean dispatchTouchEvent(MotionEvent ev) { // Method from StackOverflow that resolves keyboard hiding
         View v = getCurrentFocus();
 
         if (v != null &&
@@ -116,8 +124,8 @@ public class BaseActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
-    public static HashMap<Integer, Integer> getLikes(String response) {
-
+    public static HashMap<Integer, Integer> getLikes(String response) { // Creates a HashMap for
+                             // the messages the logged in user has liked based on HTTP response
         HashMap<Integer, Integer> myLikes = new HashMap<>();
 
         try {
@@ -137,7 +145,7 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-     void setLikes() {
+     void setLikes() { // HTTP request that sets up adding my likes HashMap
 
         String url = "http://subzer0.herokuapp.com/likes/" + userId;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

@@ -25,9 +25,9 @@ import static edu.lehigh.cse216.slj222.MainActivity.hideKeyboard;
 
 public class MessageComments extends BaseActivity {
 
-    private ArrayList<Message> mData;
-    private ArrayList<Comment> cData;
-    private int msgId;
+    private ArrayList<Message> mData; // The Message we are looking at, stored as an ArrayList to use methods from other classes
+    private ArrayList<Comment> cData; // An ArrayList of the comments associate with the message
+    private int msgId; // The id of the message we are looking at
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,7 @@ public class MessageComments extends BaseActivity {
         final EditText textToSend = findViewById(R.id.newComment);
         final Button sendComment = findViewById(R.id.button);
 
+        // HTTP get request for the one message
         String url = "http://subzer0.herokuapp.com/messages/" + msgId;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
@@ -50,10 +51,10 @@ public class MessageComments extends BaseActivity {
         });
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
 
-        getComments();
+        getComments(); // Get the comments associated
 
 
-        sendComment.setOnClickListener(b -> {
+        sendComment.setOnClickListener(b -> { // Set button to post a comment
             if (!textToSend.getText().toString().equals("")) {
                 String message = textToSend.getText().toString().trim();
                 postComment(message);
@@ -89,6 +90,7 @@ public class MessageComments extends BaseActivity {
         rv.setAdapter(adapter);
     }
 
+    // Getting a single message based on HTTP response
     public static ArrayList<Message> getMessage(String response) {
 
         ArrayList<Message> mData = new ArrayList<>();
@@ -115,6 +117,7 @@ public class MessageComments extends BaseActivity {
         return mData;
     }
 
+    // Getting ArrayList of comments based on HTTP response
     public static ArrayList<Comment> getComments(String response) {
         ArrayList<Comment> cData = new ArrayList<>();
 
@@ -140,6 +143,7 @@ public class MessageComments extends BaseActivity {
         return cData;
     }
 
+    // get Comments based on current message
     void getComments() {
         String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/comments";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
@@ -152,6 +156,7 @@ public class MessageComments extends BaseActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 
+    // HTTP POST the new comments
     private void postComment(String comment) {
         String url = "https://subzer0.herokuapp.com/comments";
         Map<String, Object> params = new HashMap<>();

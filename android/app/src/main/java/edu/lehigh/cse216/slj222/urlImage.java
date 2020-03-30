@@ -12,12 +12,21 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Taken from StackOverflow, probably should not modify
+ */
 public class urlImage extends AsyncTask<Void, Void, Bitmap> {
 
     private String url;
     private ImageView imageView;
     int resize;
 
+    /**
+     *
+     * @param url The URL string you are taking the image from
+     * @param imageView The view where your image will be displayed
+     * @param resize The bitmap dimension of your square photos
+     */
     public urlImage(String url, ImageView imageView, int resize) {
         this.url = url;
         this.imageView = imageView;

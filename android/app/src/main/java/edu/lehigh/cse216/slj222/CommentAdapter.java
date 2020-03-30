@@ -17,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter for Comments that is used for the comment RecyclerView
+ */
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder>{
     private Context context;
     private ArrayList<Comment> myData;
@@ -55,13 +58,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         final Comment d = myData.get(position);
         holder.cText.setText(d.comment);
         holder.postedBy.setText(d.displayName);
-        new urlImage(d.photoURL, holder.profilePic, 200).execute();
-
+        new urlImage(d.photoURL, holder.profilePic, 200).execute(); // Runs a method that converts URL
+                                                                        // to image asynchronously
         SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         String userId = sharedPref.getString("userId", "0");
 
 
-        if (d.userId.equals(userId)) {
+        if (d.userId.equals(userId)) { // Edit button only appears if it is the current user's ID
             holder.editButton.setVisibility(View.VISIBLE);
         } else {
             holder.editButton.setVisibility(View.INVISIBLE);
@@ -71,17 +74,24 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             Intent intent = new Intent(b.getContext(), EditActivity.class);
             intent.putExtra("comment", d.comment);
             intent.putExtra("cId", d.commentId);
-            context.startActivity(intent);
-            if (context instanceof MessageComments) {
-                Log.d("slj222", "We got here dude!");
-                ((MessageComments) context).getComments();
-            }
+            context.startActivity(intent); // Switch to EditActivity with a given original comment and cId
         });
 
-        holder.profilePic.setOnClickListener(b -> {
+        holder.profilePic.setOnClickListener(b -> { // Takes you to user profile if photo clicked
             Intent intent = new Intent(b.getContext(), Profile.class);
             // Add extra for profiledID + logged in ID
             intent.putExtra("profiledUser", d.userId);
+            intent.putExtra("profiledName", d.displayName);
+            intent.putExtra("profiledPhoto", d.photoURL);
+            context.startActivity(intent);
+        });
+
+        holder.postedBy.setOnClickListener(b -> { // Takes you to user profile if name clicked
+            Intent intent = new Intent(b.getContext(), Profile.class);
+            // Add extra for profiledID + logged in ID
+            intent.putExtra("profiledUser", d.userId);
+            intent.putExtra("profiledName", d.displayName);
+            intent.putExtra("profiledPhoto", d.photoURL);
             context.startActivity(intent);
         });
     }

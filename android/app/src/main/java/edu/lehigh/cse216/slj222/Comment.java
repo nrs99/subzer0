@@ -25,9 +25,14 @@ public class Comment {
      * The time the message was originally created
      */
     Timestamp dateCreated;
-
+    /**
+     * The displayName of whoever posted the message
+     */
     String displayName;
 
+    /**
+     * The photo URL of whoever posted the message
+     */
     String photoURL;
 
 

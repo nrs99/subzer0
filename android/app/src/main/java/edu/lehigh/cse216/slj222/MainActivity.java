@@ -53,7 +53,7 @@ public class MainActivity extends BaseActivity {
         textToSend.setCursorVisible(false); // Disable blinking cursor
 
         postButton.setOnClickListener(view -> {
-            if (!textToSend.getText().toString().equals("")) {
+            if (!textToSend.getText().toString().equals("")) { // If it's blank, don't send anything
                 message = textToSend.getText().toString().trim();
                 postMessage();
                 textToSend.getText().clear(); //Remove whatever's in there
@@ -72,6 +72,13 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    /**
+     * Overriding the menu to hide the "Go Back" button on main screen.
+     * The user should just logout instead. By forcing them to logout, the activity stack won't
+     * get too large if there are multiple logins/logouts in a session
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         /* I want to hide the go back if they are on the main page.
@@ -91,6 +98,11 @@ public class MainActivity extends BaseActivity {
         setLikes();
     }
 
+    /**
+     * Takes HTTP response and parses out the Messages and stores in an ArrayList
+     * @param response an HTTP response
+     * @return The parsed messages
+     */
     public static ArrayList<Message> getMData(String response) {
 
         ArrayList<Message> mData = new ArrayList<>();
@@ -129,6 +141,9 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    /**
+     * HTTP POST a new message
+     */
     public void postMessage() {
         String url = "https://subzer0.herokuapp.com/messages";
         Map<String, String> params = new HashMap<>();
@@ -158,7 +173,9 @@ public class MainActivity extends BaseActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(getReq);
     }
 
-
+    /**
+     * HTTP GET the current messages
+     */
     private void getMessages() {
         String url = "http://subzer0.herokuapp.com/messages";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -172,6 +189,10 @@ public class MainActivity extends BaseActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 
+    /**
+     * From StackOverflow DO NOT CHANGE
+     * @param activity
+     */
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.

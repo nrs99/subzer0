@@ -25,8 +25,8 @@ public class Profile extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        // Grab key attributes of the user whose profile this is from calling activity
         profiledUserID = getIntent().getExtras().getString("profiledUser");
-
         String profiledName = getIntent().getExtras().getString("profiledName");
         String profiledPhoto = getIntent().getExtras().getString("profiledPhoto");
 
@@ -46,6 +46,7 @@ public class Profile extends BaseActivity {
         setLikes();
     }
 
+    // Get messages that the current user posted
     private void getMessages() {
         String url = "http://subzer0.herokuapp.com/messages/user/" + profiledUserID;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

@@ -59,21 +59,21 @@ public class LoginActivity extends AppCompatActivity {
         // Go forward with the last session key if not logged out
         String sessionKey = sharedPref.getString("sessionKey", "logout");
 
-        if (!sessionKey.equals("logout")) {
+        if (!sessionKey.equals("logout")) { // This means the user signed in and never signed out
             Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            startActivity(intent); // Take the user directly to the MainActivity
         }
 
-        findViewById(R.id.sign_in_button).setOnClickListener(view -> {
+        findViewById(R.id.sign_in_button).setOnClickListener(view -> { // Run Google sign-in
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             signInIntent.putExtra("userID", mGoogleSignInClient.getInstanceId());
-            startActivityForResult(signInIntent, 1);
+            startActivityForResult(signInIntent, 1); // Starts Google sign-in process
         });
 
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) { // This happens after Google sign-in
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
@@ -127,10 +127,10 @@ public class LoginActivity extends AppCompatActivity {
             // Signed in successfully, show authenticated UI.
             Intent intent = new Intent(this, MainActivity.class);
 
-            // TODO: Post user info to users table
+            // Post user info to users table, if not there already
             newUser(account.getId(), account.getDisplayName(), account.getPhotoUrl().toString());
 
-            startActivity(intent);
+            startActivity(intent); // Start the MainActivity!
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -139,6 +139,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * HTTP PUT user information to the users table
+     * @param userID
+     * @param displayName
+     * @param photoURL
+     */
     private void newUser(String userID, String displayName, String photoURL) {
         String url = "https://subzer0.herokuapp.com/user";
         Map<String, String> params = new HashMap<>();

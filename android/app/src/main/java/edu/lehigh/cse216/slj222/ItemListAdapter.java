@@ -87,7 +87,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         viewHolder.mText.setText(d.message);
         viewHolder.likeCount.setText(String.valueOf(d.likes));
         viewHolder.dislikeCount.setText(String.valueOf(d.dislikes));
-        if(Integer.parseInt(String.valueOf(d.commentCount)) == 1) {
+        if(Integer.parseInt(String.valueOf(d.commentCount)) == 1) { // Set number of comments display
             viewHolder.commentCount.setText("1 comment");
         } else {
             viewHolder.commentCount.setText(String.valueOf(d.commentCount) + " comments");
@@ -95,6 +95,8 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         viewHolder.postedBy.setText(d.displayName);
         new urlImage(d.photoURL, viewHolder.profilePic, 200).execute();
         int likeStatus = d.myLike;
+
+        // Set thumb up and down colors based on what the status of the like is
         if (likeStatus == 1) {
             viewHolder.thumbup.setBackgroundResource(R.drawable.ic_likebutton);
             viewHolder.thumbdown.setBackgroundResource(R.drawable.ic_no_thumbdown);

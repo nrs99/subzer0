@@ -16,6 +16,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Activity to edit a comment
+ */
 public class EditActivity extends BaseActivity {
 
     @Override
@@ -29,7 +32,7 @@ public class EditActivity extends BaseActivity {
         int cId = getIntent().getExtras().getInt("cId");
 
         Button fixButton = findViewById(R.id.fixedComment);
-        fixButton.setOnClickListener(b -> {
+        fixButton.setOnClickListener(b -> { // When the button is clicked, do HTTP PUT to modify comment
 
             String url = "https://subzer0.herokuapp.com/comments/edit";
             Map<String, Object> params = new HashMap<>();
