@@ -179,7 +179,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             // Go to individual profile
             Intent intent = new Intent(b.getContext(), Profile.class);
             // Add extra for profiledID + logged in ID
-            intent.putExtra("profiledUser", 0);
+            intent.putExtra("profiledUser", d.userId);
             context.startActivity(intent);
         });
 
