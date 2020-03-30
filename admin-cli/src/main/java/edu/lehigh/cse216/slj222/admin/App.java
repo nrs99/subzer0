@@ -142,6 +142,7 @@ public class App {
 
 
         while (true) {
+            
 
 
             // Get the user's request, and do it
@@ -174,19 +175,19 @@ public class App {
                     System.out.println("  --> " + res.mMessage);
                 }
             } else if (action == '2') {
-                int id = getInt(in, "Enter the row ID");
-                if (id == -1)
+                String id = getString(in, "Enter the user ID");
+                if (id.equals(""))
                     continue;
                 Database.RowData res = db.selectOneLikes(id);
                 if (res != null) {
-                    System.out.println("  [" + res.lMsgid + "] " + res.lLike);
-                    System.out.println("  --> " + res.lLike);
+                    System.out.println("  [" + res.lMsgid + "] " +  "user id: " + res.lUserid + " like: "+res.lLikes);
+                    System.out.println("  --> " + res.lLikes);
                 }
             } else if (action == '3') {
-                int id = getInt(in, "Enter the row ID");
-                if (id == -1)
+                String comment = getString(in, "Enter Comment");
+                if (comment.equals(""))
                     continue;
-                Database.RowData res = db.selectOneComments(id);
+                Database.RowData res = db.selectOneComments(comment);
                 if (res != null) {
                     System.out.println("  [" + res.cMsgid + "] " + res.cComment);
                     System.out.println("  --> " + res.cComment);
@@ -207,7 +208,7 @@ public class App {
                 System.out.println("  Current Like Table Contents");
                 System.out.println("  -------------------------");
                 for (Database.RowData rd : res) {
-                    System.out.println("  [" + rd.lMsgid + "] " +  "user id: " + rd.lUserid + " like: " + rd.lLike);
+                    System.out.println("  [" + rd.lMsgid + "] " +  "user id: " + rd.lUserid + " like: " + rd.lLikes);
                 }
             }else if (action == '$') {
                 ArrayList<Database.RowData> res = db.selectAllComments();
