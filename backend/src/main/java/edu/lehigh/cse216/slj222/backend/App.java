@@ -147,15 +147,16 @@ public class App {
         });
  
         // Spark put route to like a message with a given id
-        Spark.put("/messages/:id/like", (request, response) -> {
+        Spark.put("/messages/:id/like/:user", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
             int idx = Integer.parseInt(request.params("id"));
+            String user = request.params("user");
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            int result = db.likeOne(idx);
+            int result = db.vote(idx, user, 1);
             if (result == 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {
@@ -164,15 +165,16 @@ public class App {
         });
  
         // Spark put route to dislike a message with a given id
-        Spark.put("/messages/:id/dislike", (request, response) -> {
+        Spark.put("/messages/:id/dislike/:user", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
             int idx = Integer.parseInt(request.params("id"));
+            String user = request.params("user");
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            int result = db.dislikeOne(idx);
+            int result = db.vote(idx, user, -1);
             if (result == 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {
@@ -227,6 +229,13 @@ public class App {
             response.status(200);
             response.type("application/json");
             return gson.toJson(new StructuredResponse("ok", null, db.selectAllByUser(userID)));
+        });
+ 
+        Spark.get("/likes/:id", (request, response) -> {
+            String userID = request.params("id");
+            response.status(200);
+            response.type("applicaiton/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.getMyLikes(userID)));
         });
        
         Spark.post("/login/:token", (request, response) -> {

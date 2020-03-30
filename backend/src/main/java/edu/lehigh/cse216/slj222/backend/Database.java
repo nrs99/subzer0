@@ -46,19 +46,11 @@ public class Database {
      */
     private PreparedStatement mInsertOne;
  
-    /**
-     * A prepared statement for liking a message in the database
-     */
-    private PreparedStatement mLike;
- 
-    /**
-     * A prepared statement for disliking a message in the database
-     */
-    private PreparedStatement mDislike;
- 
     private PreparedStatement mInsertVote;
  
     private PreparedStatement mRemoveVote;
+ 
+    private PreparedStatement mGetVote;
  
     private PreparedStatement mInsertComment;
  
@@ -67,6 +59,8 @@ public class Database {
     private PreparedStatement mGetComments;
  
     private PreparedStatement mMessagesByUser;
+ 
+    private PreparedStatement mUserLikes;
  
     /**
      * The Database constructor is private: we only create Database objects through
@@ -120,21 +114,21 @@ public class Database {
         try {
  
             // Standard CRUD operations
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?, 0, 0, ?)",
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
-            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE msgid=?");
-            db.mSelectAllNewest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated DESC");
-            db.mSelectAllOldest = db.mConnection.prepareStatement("SELECT * from messages ORDER BY datecreated ASC");
-            db.mSelectAllPopular = db.mConnection.prepareStatement("SELECT * from messages ORDER BY (likes - dislikes) DESC");
-            db.mLike = db.mConnection.prepareStatement("UPDATE votes SET vote = 1 WHERE msgid = ?");
-            db.mDislike = db.mConnection.prepareStatement("UPDATE votes SET vote = -1 WHERE msgid = ?");
-            db.mInsertVote = db.mConnection.prepareStatement("INSERT INTO votes VALUES(?, ?, 0)");
-            db.mRemoveVote = db.mConnection.prepareStatement("DELETE FROM votes where msgid = ? and userid = ?");
+            db.mSelectOne = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments from messages where msgid = ?");
+            db.mSelectAllNewest = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments from messages ORDER BY datecreated DESC");
+            db.mSelectAllOldest = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments from messages ORDER BY datecreated ASC");
+            db.mSelectAllPopular = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments from messages ORDER BY (likes - dislikes) DESC");
+            db.mInsertVote = db.mConnection.prepareStatement("INSERT INTO likes VALUES(?, ?, ?)");
+            db.mRemoveVote = db.mConnection.prepareStatement("DELETE FROM likes where mid = ? and userid = ?");
+            db.mGetVote = db.mConnection.prepareStatement("SELECT likes FROM likes WHERE userid = ? and mid = ?");
             db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO comments VALUES (?, default, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             db.mEditComment = db.mConnection.prepareStatement("UPDATE comments SET comment = ? WHERE commentid = ?");
             db.mGetComments = db.mConnection.prepareStatement("SELECT * from comments WHERE mid=? ORDER BY datecreated ASC");
-            db.mMessagesByUser = db.mConnection.prepareStatement("SELECT * from messages WHERE userid = ? ORDER BY datecreated DESC");
+            db.mMessagesByUser = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments from messages WHERE userid = ? ORDER BY datecreated DESC");
+            db.mUserLikes = db.mConnection.prepareStatement("SELECT mid, likes from likes where userid =?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -209,7 +203,7 @@ public class Database {
             ResultSet rs = mSelectAllNewest.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments")));
             }
             rs.close();
             return res;
@@ -230,7 +224,7 @@ public class Database {
             ResultSet rs = mSelectAllOldest.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments")));
             }
             rs.close();
             return res;
@@ -251,7 +245,7 @@ public class Database {
             ResultSet rs = mSelectAllPopular.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments")));
             }
             rs.close();
             return res;
@@ -275,7 +269,7 @@ public class Database {
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
                 res = new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -283,36 +277,30 @@ public class Database {
         return res;
     }
  
-    /**
-     * Add a like to a certain message
-     *
-     * @param id msgID of message to be liked
-     */
-    int likeOne(int id) {
-        int res = 0;
-        try {
-            mLike.setInt(1, id);
-            res = mLike.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
  
-    /**
-     * Remove a like from a certain message
-     *
-     * @param id msgID of message to be disliked
-     */
-    int dislikeOne(int id) {
-        int res = 0;
+    int vote(int msgid, String userid, int like) {
+        int val = 0;
         try {
-            mDislike.setInt(1, id);
-            res = mDislike.executeUpdate();
+            mGetVote.setString(1, userid);
+            mGetVote.setInt(2, msgid);
+            ResultSet rs = mGetVote.executeQuery();
+            if (rs.next()) {
+                val = rs.getInt("likes");
+            }
+            mRemoveVote.setInt(1, msgid); // Remove any votes if there are any
+            mRemoveVote.setString(2, userid);
+            mRemoveVote.executeUpdate();
+            if (val != like) {
+                mInsertVote.setString(1, userid);
+                mInsertVote.setInt(2, like);
+                mInsertVote.setInt(3, msgid);
+                mInsertVote.executeUpdate();
+            }
+            return 1;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return res;
+        return 0;
     }
  
     int insertVote(int msgid, String userid) {
@@ -397,7 +385,23 @@ public class Database {
             ResultSet rs = mMessagesByUser.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+ 
+    ArrayList<MyLikes> getMyLikes(String userID) {
+        ArrayList<MyLikes> res = new ArrayList<MyLikes>();
+        try {
+            mUserLikes.setString(1, userID);
+            ResultSet rs = mUserLikes.executeQuery();
+            while (rs.next()) {
+                res.add(new MyLikes(rs.getInt("mid"), rs.getInt("likes")));
             }
             rs.close();
             return res;

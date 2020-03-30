@@ -1,9 +1,9 @@
 package edu.lehigh.cse216.slj222.backend;
-
+ 
 import java.sql.Timestamp;
-
+ 
 public class Message {
-
+ 
     /**
          * The ID of this row of the database
          */
@@ -29,22 +29,22 @@ public class Message {
          */
         int dislikes;
         /**
-         * 
+         *
          */
-        //int comments;
+        int comments;
         /**
          * Construct a Message object by providing values for its fields
          */
-        public Message(int msgId, String message, String userId, Timestamp dateCreated, int likes, int dislikes) {
+        public Message(int msgId, String message, String userId, Timestamp dateCreated, int likes, int dislikes, int comments) {
             this.msgId = msgId;
             this.message = message;
             this.userId = userId;
             this.dateCreated = dateCreated;
             this.likes = likes;
             this.dislikes = dislikes;
-            //this.comments = comments;
+            this.comments = comments;
         }
-
+ 
         /**
          * String for testing purposes
          */
@@ -53,5 +53,5 @@ public class Message {
             str = "ID: " + msgId + ", Message: " + message;
             return str;
         }
-
+ 
 }
