@@ -132,5 +132,59 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
         });
+        //set up local enviornemnt to test out, must enable cors
+       // String cors_enabled = getenv("CORS_ENABLED");
+//         String cors_enabled = env.get("CORS_ENABLED");
+
+//     //String cors_enabled = System.getenv("CORS_ENABLED");
+//     System.out.println(cors_enabled);
+//         if (cors_enabled.equals("True")) {
+//             final String acceptCrossOriginRequestsFrom = "*";
+//             final String acceptedCrossOriginRoutes = "GET,PUT,POST,DELETE,OPTIONS";
+//             final String supportedRequestHeaders = "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin";
+//             enableCORS(acceptCrossOriginRequestsFrom, acceptedCrossOriginRoutes, supportedRequestHeaders);
+// }
+
+    
     }
+
+
+    //added this to test if cors was an issue:
+    
+    /**
+ * Set up CORS headers for the OPTIONS verb, and for every response that the
+ * server sends.  This only needs to be called once.
+ * 
+ * @param origin The server that is allowed to send requests to this server
+ * @param methods The allowed HTTP verbs from the above origin
+ * @param headers The headers that can be sent with a request from the above
+ *                origin
+ */
+
+// private static void enableCORS(String origin, String methods, String headers) {
+//     // Create an OPTIONS route that reports the allowed CORS headers and methods
+//     Spark.options("/*", (request, response) -> {
+//         String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+//         if (accessControlRequestHeaders != null) {
+//             response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+//         }
+//         String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+//         if (accessControlRequestMethod != null) {
+//             response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+//         }
+//         return "OK";
+//     });
+
+//     // 'before' is a decorator, which will run before any 
+//     // get/post/put/delete.  In our case, it will put three extra CORS
+//     // headers into the response
+//     Spark.before((request, response) -> {
+//         response.header("Access-Control-Allow-Origin", origin);
+//         response.header("Access-Control-Request-Method", methods);
+//         response.header("Access-Control-Allow-Headers", headers);
+//     });
+    
+// }
+
+
 }
