@@ -105,7 +105,9 @@ public class MainActivity extends BaseActivity {
                 int likes = json.getJSONObject(i).getInt("likes");
                 int dislikes = json.getJSONObject(i).getInt("dislikes");
                 int comments = json.getJSONObject(i).getInt("comments");
-                mData.add(new Message(msgId, message, userId, likes, dislikes, comments));
+                String displayName = json.getJSONObject(i).getString("displayName");;
+                String photoURL = json.getJSONObject(i).getString("photoURL");
+                mData.add(new Message(msgId, message, userId, likes, dislikes, comments, displayName, photoURL));
             }
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());

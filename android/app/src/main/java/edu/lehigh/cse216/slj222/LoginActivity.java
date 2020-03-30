@@ -22,6 +22,9 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class LoginActivity extends AppCompatActivity {
 
     @Override
@@ -123,6 +126,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
 
             // TODO: Post user info to users table
+            newUser(account.getId(), account.getDisplayName(), account.getPhotoUrl().toString());
 
             startActivity(intent);
         } catch (ApiException e) {
@@ -131,6 +135,34 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
             Log.w("slj222", "signInResult:failed code=" + e.getStatusCode());
         }
+    }
+
+    private void newUser(String userID, String displayName, String photoURL) {
+        String url = "https://subzer0.herokuapp.com/user";
+        Map<String, String> params = new HashMap<>();
+
+        params.put("userID", userID);
+        params.put("displayName", displayName);
+        params.put("photoURL", photoURL);
+
+        JSONObject request = new JSONObject(params);
+
+        // Request a string response from the provided URL.
+        JsonObjectRequest putReq = new JsonObjectRequest(Request.Method.PUT, url, request,
+                response -> {
+                    try {
+                        response.getString("mStatus");  //if its working or not
+                    } catch (final JSONException e) {
+                        Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
+                    }
+                },
+                error -> {
+                    // if there's an error
+                    Log.d("slj222", "error:" + error.getMessage());
+                    error.printStackTrace();
+                }) {
+        };
+        VolleySingleton.getInstance(this).addToRequestQueue(putReq);
     }
 
 }

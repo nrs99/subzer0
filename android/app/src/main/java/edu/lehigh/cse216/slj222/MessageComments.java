@@ -102,7 +102,9 @@ public class MessageComments extends BaseActivity {
             int likes = json.getInt("likes");
             int dislikes = json.getInt("dislikes");
             int comments = json.getInt("comments");
-            mData.add(new Message(msgId, message, userId, likes, dislikes, comments));
+            String displayName = json.getString("displayName");
+            String photoURL = json.getString("photoURL");
+            mData.add(new Message(msgId, message, userId, likes, dislikes, comments, displayName, photoURL));
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
             e.printStackTrace();
@@ -124,7 +126,9 @@ public class MessageComments extends BaseActivity {
                 int msgId = json.getJSONObject(i).getInt("msgId");
                 String comment = json.getJSONObject(i).getString("comment");
                 String userId = json.getJSONObject(i).getString("userId");
-                cData.add(new Comment(commentId, msgId, comment, userId));
+                String displayName = json.getJSONObject(i).getString("displayName");
+                String photoURL = json.getJSONObject(i).getString("photoURL");
+                cData.add(new Comment(commentId, msgId, comment, userId, displayName, photoURL));
             }
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());

@@ -92,7 +92,8 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         } else {
             viewHolder.commentCount.setText(String.valueOf(d.commentCount) + " comments");
         }
-        viewHolder.profilePic.setBackgroundResource(R.drawable.blank_profile); // Replace later with Google pic
+        viewHolder.postedBy.setText(d.displayName);
+        viewHolder.profilePic.setImageBitmap(urlImage.getBitmapFromURL(d.photoURL));
         int likeStatus = d.myLike;
         if (likeStatus == 1) {
             viewHolder.thumbup.setBackgroundResource(R.drawable.ic_likebutton);

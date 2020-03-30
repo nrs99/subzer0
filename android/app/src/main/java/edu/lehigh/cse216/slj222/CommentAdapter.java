@@ -54,7 +54,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void onBindViewHolder(CommentViewHolder holder, int position) {
         final Comment d = myData.get(position);
         holder.cText.setText(d.comment);
-        holder.profilePic.setBackgroundResource(R.drawable.blank_profile); // Replace later with Google pic
+        holder.postedBy.setText(d.displayName);
+        holder.profilePic.setImageBitmap(urlImage.getBitmapFromURL(d.photoURL));
 
         SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         String userId = sharedPref.getString("userId", "0");

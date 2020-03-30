@@ -39,10 +39,14 @@ public class Message {
 
     int commentCount;
 
+    String displayName;
+
+    String photoURL;
+
     /**
      * Construct a Message object by providing values for its fields
      */
-    public Message(int msgId, String message, String userId, int likes, int dislikes, int commentCount) {
+    public Message(int msgId, String message, String userId, int likes, int dislikes, int commentCount, String displayName, String photoURL) {
         this.msgId = msgId;
         this.message = message;
         this.userId = userId;
@@ -51,6 +55,8 @@ public class Message {
         this.dislikes = dislikes;
         this.commentCount = commentCount;
         myLike = 0; // Set it to not be on creation, change later once route is updated
+        this.displayName = displayName;
+        this.photoURL = photoURL;
     }
 
     public void setLike(int myLike) {

@@ -35,7 +35,7 @@
     <LinearLayout
         android:id="@+id/LinearLayout02"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="40dp">
 
         <TextView
             android:id="@+id/posted_by"
@@ -108,4 +108,8 @@
 
 
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 </LinearLayout>
