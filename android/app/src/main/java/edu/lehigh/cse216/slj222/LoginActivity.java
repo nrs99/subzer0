@@ -121,6 +121,9 @@ public class LoginActivity extends AppCompatActivity {
 
             // Signed in successfully, show authenticated UI.
             Intent intent = new Intent(this, MainActivity.class);
+
+            // TODO: Post user info to users table
+
             startActivity(intent);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
