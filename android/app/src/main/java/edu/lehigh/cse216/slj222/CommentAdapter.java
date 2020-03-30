@@ -3,6 +3,8 @@ package edu.lehigh.cse216.slj222;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +72,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             intent.putExtra("cId", d.commentId);
             context.startActivity(intent);
             if (context instanceof MessageComments) {
+                Log.d("slj222", "We got here dude!");
                 ((MessageComments) context).getComments();
             }
         });

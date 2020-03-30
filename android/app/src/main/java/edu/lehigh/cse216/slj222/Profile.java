@@ -1,10 +1,12 @@
 package edu.lehigh.cse216.slj222;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
@@ -25,6 +27,12 @@ public class Profile extends BaseActivity {
 
         getMessages();
 
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        getMessages();
+        setLikes();
     }
 
     private void getMessages() {

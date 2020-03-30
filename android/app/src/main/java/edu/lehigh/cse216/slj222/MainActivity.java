@@ -1,8 +1,8 @@
 package edu.lehigh.cse216.slj222;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -61,11 +61,6 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        SwipeRefreshLayout refreshLayout = findViewById(R.id.RefreshLayout);
-        refreshLayout.setOnClickListener(view -> {
-            hideKeyboard(this); // Hiding keyboard if you click outside the edittext area
-        });
-
         final SwipeRefreshLayout swipeContainer = findViewById(R.id.RefreshLayout);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(() -> {
@@ -87,6 +82,13 @@ public class MainActivity extends BaseActivity {
         goBack.setVisible(false);
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        getMessages();
+        setLikes();
     }
 
     public static ArrayList<Message> getMData(String response) {

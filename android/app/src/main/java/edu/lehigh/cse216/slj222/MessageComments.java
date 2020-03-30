@@ -1,5 +1,6 @@
 package edu.lehigh.cse216.slj222;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -61,6 +62,13 @@ public class MessageComments extends BaseActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        setLikes();
+        getComments();
     }
 
     private void populateListFromVolley(RecyclerView rv) {
