@@ -131,7 +131,7 @@ public class Database {
                     Statement.RETURN_GENERATED_KEYS);
             db.mEditComment = db.mConnection.prepareStatement("UPDATE comments SET comment = ? WHERE commentid = ?");
             db.mGetComments = db.mConnection.prepareStatement("SELECT * from comments natural join users WHERE mid=? ORDER BY datecreated ASC");
-            db.mMessagesByUser = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments from messages natural join users WHERE userid = ? ORDER BY datecreated DESC");
+            db.mMessagesByUser = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users WHERE userid = ? ORDER BY datecreated DESC");
             db.mUserLikes = db.mConnection.prepareStatement("SELECT mid, likes from likes where userid =?");
             db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
             db.mUserExists = db.mConnection.prepareStatement("SELECT * FROM users where userID = ?");
