@@ -33,7 +33,7 @@ class NewLogin {
             $("#" + NewLogin.NAME + "-signIn").click(NewLogin.show);
             NewLogin.initClient();
             NewLogin.renderButton();
-            $("#" + NewLogin.NAME + "-signOut").click(NewLogin.signOut);
+            
 
             NewLogin.isInit = true;
         }
@@ -46,6 +46,7 @@ class NewLogin {
      */
     public static refresh() {
         NewLogin.init();
+        $("#" + NewLogin.NAME + "-signOut").click(NewLogin.signOut);
     }
 
     /**

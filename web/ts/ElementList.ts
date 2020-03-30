@@ -2,6 +2,7 @@
  * The ElementList Singleton provides a way of displaying all of the data 
  * stored on the server as an HTML table.
  */
+const backendUrl = "https://subzer0.herokuapp.com/";
 class ElementList {
     /**
      * The name of the DOM entry associated with ElementList
@@ -10,6 +11,7 @@ class ElementList {
 
     /**
      * Track if the Singleton has been initialized
+     * 
      */
     private static isInit = false;
 
@@ -52,7 +54,7 @@ class ElementList {
         if(sort == "undefined") sort = "";
         $.ajax({
             type: "GET",
-            url: "/messages" + sort,
+            url: backendUrl + "/messages" + sort,
             dataType: "json",
             success: ElementList.update
         });    
@@ -65,7 +67,7 @@ class ElementList {
     	let id = $(this).data("value");
 	    $.ajax({
 		    type: "PUT",
-    		url: "/messages/" + id + "/like",
+    		url: backendUrl + "/messages/" + id + "/like",
             dataType: "json",
             data: JSON.stringify({ msgID : id }),
 		    success: ElementList.refresh
@@ -78,7 +80,7 @@ class ElementList {
         let id = $(this).data("value");
         $.ajax({
             type: "PUT",
-            url: "/messages/" + id + "/dislike",
+            url: backendUrl + "/messages/" + id + "/dislike",
             dataType: "json",
             data: JSON.stringify({ msgID : id }),
             success: ElementList.refresh
