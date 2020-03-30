@@ -274,6 +274,20 @@ public class App {
                 return gson.toJson(new StructuredResponse("error", "login error", null));
             }
         });
+
+        Spark.post("/user", (request, response) -> {
+            NewUserRequest req = gson.fromJson(request.body(), NewUserRequest.class); 
+            response.status(200);
+            response.type("application/json");
+            // NB: createEntry checks for null title and message
+            int newId = db.insertUser(req.userID, req.displayName, req.photoURL);
+            if (newId == -1) {
+                return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+            }
+
+        });
  
     }
  
