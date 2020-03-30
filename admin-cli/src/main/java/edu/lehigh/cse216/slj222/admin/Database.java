@@ -194,7 +194,7 @@ public class Database {
         int mLike;
 
 
-        int lLike;
+        int lLikes;
         /**
          * The message stored in this row
          */
@@ -222,10 +222,10 @@ public class Database {
          * Construct a RowData object by providing values for its fields
          * likes---
          */
-        public RowData( int msgid, String userid, int like) {
-            lMsgid = msgid;//not sure about this
+        public RowData( String userid, int likes, int mid) {
+            lMsgid = mid;//not sure about this
             lUserid = userid;
-            lLike = like;
+            lLikes = likes;
         }
 
         //COMMENTS LATER
@@ -335,14 +335,14 @@ try {
             // db.mDropTable = db.Connection.prepareStatement("DROP TABLE like;");
 
             // Standard CRUD operations
-            db.lDeleteOne = db.Connection.prepareStatement("DELETE FROM likes WHERE msgid = ?");
+            db.lDeleteOne = db.Connection.prepareStatement("DELETE FROM likes WHERE msgid = ?;");
             //create sequence
             //db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
 
             db.lInsertOne = db.Connection.prepareStatement("INSERT INTO likes(userid, likes, mid) VALUES (?, ?, default);");
-            db.lSelectAll = db.Connection.prepareStatement("SELECT * FROM likes");
-            db.lSelectOne = db.Connection.prepareStatement("SELECT * from likes WHERE mid=?");
-            db.lUpdateOne = db.Connection.prepareStatement("UPDATE likes SET like = ? WHERE msgid = ?");
+            db.lSelectAll = db.Connection.prepareStatement("SELECT * FROM likes;");
+            db.lSelectOne = db.Connection.prepareStatement("SELECT * FROM likes WHERE userid=?;");
+            db.lUpdateOne = db.Connection.prepareStatement("UPDATE likes SET like = ? WHERE mid = ?;");
 
 
         // //Comments
@@ -367,9 +367,9 @@ try {
             //create sequence
             //db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
             db.cInsertOne = db.Connection.prepareStatement("INSERT INTO comments(mid, commentID, userID, datecreated, comment) VALUES (default, default, ?, ?, ?);");
-            db.cSelectAll = db.Connection.prepareStatement("SELECT * FROM comments");
-            db.cSelectOne = db.Connection.prepareStatement("SELECT * from comments WHERE commentID=?");
-            db.cUpdateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentID = ?");
+            db.cSelectAll = db.Connection.prepareStatement("SELECT * FROM comments;");
+            db.cSelectOne = db.Connection.prepareStatement("SELECT * from comments WHERE comment=?;");
+            db.cUpdateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentID = ?;");
         
 
 
@@ -433,7 +433,7 @@ try {
 
      /**
      * Insert a row into the database
-     * 
+     *
      * @param subject The subject for this new row
      * @param like the value of the boolean like 
      * 
@@ -511,7 +511,7 @@ try {
         try {
             ResultSet rs = lSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getInt("like")));
+                res.add(new RowData(rs.getString("userid"),rs.getInt("likes"),rs.getInt("mid")));
             }
             rs.close();
             return res;
@@ -526,7 +526,7 @@ try {
         try {
             ResultSet rs = cSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getInt("commentID"),rs.getString("userid"),rs.getString("datecreated"),rs.getString("comment")));
+                res.add(new RowData(rs.getInt("mid"), rs.getInt("commentID"),rs.getString("userid"),rs.getString("datecreated"),rs.getString("comment")));
             }
             rs.close();
             return res;
@@ -565,13 +565,13 @@ try {
      * 
      * @return The data for the requested row, or null if the ID was invalid
      */
-    RowData selectOneLikes(int id) {
+    RowData selectOneLikes(String id) {
         RowData res = null;
         try {
-            lSelectOne.setInt(1, id);
+            lSelectOne.setString(1, id);
             ResultSet rs = lSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("mid"), rs.getString("userid"),rs.getInt("like"));
+                res = new RowData(rs.getString("userid"), rs.getInt("likes"),rs.getInt("mid"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -587,10 +587,10 @@ try {
      * 
      * @return The data for the requested row, or null if the ID was invalid
      */
-    RowData selectOneComments(int id) {
+    RowData selectOneComments(String id) {
         RowData res = null;
         try {
-            cSelectOne.setInt(1, id);
+            cSelectOne.setString(1, id);
             ResultSet rs = cSelectOne.executeQuery();
             if (rs.next()) {
                 res = new RowData(rs.getInt("mid"), rs.getInt("commentID"),rs.getString("userid"),rs.getString("datecreated"),rs.getString("comment"));
