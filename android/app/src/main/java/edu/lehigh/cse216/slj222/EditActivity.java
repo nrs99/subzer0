@@ -39,6 +39,7 @@ public class EditActivity extends BaseActivity {
 
             params.put("cid", cId);
             params.put("comment", comment.getText().toString());
+            params.put("userid", userId);
 
             JSONObject request = new JSONObject(params);
 
