@@ -30,7 +30,7 @@ public class App {
         System.out.println("  [$] Query for all comment rows");
         System.out.println("  [-] Delete a message row");
         System.out.println("  [#] Delete a like row");
-        System.out.println("  [^] Delete a Comment row");
+        System.out.println("  [^] Delete a comment row");
         System.out.println("  [+] Insert a new message row");
         System.out.println("  [@] Insert a new like row");
         System.out.println("  [!] Insert a new comment row");
@@ -51,7 +51,7 @@ public class App {
      */
     static char prompt(BufferedReader in) {
         // The valid actions:
-        String actions = "MLCD123&*&$-#^+@!~XZq?";
+        String actions = "MLCD123*&$-#^+@!~XZq?";
 
         // We repeat until a valid single-character option is selected        
         while (true) {
@@ -73,7 +73,7 @@ public class App {
     }
 
 
-    /**
+    /**x
      * Ask the user to enter a String message
      * 
      * @param in A BufferedReader, for reading from the keyboard
@@ -168,6 +168,7 @@ public class App {
                 if (id == -1)
                     continue;
                 Database.RowData res = db.selectOneMessages(id);
+
                 if (res != null) {
                     System.out.println("  [" + res.mMsgid + "] " + res.mMessage);
                     System.out.println("  --> " + res.mMessage);
@@ -191,30 +192,28 @@ public class App {
                     System.out.println("  --> " + res.cComment);
                 }
             } else if (action == '*') {
-                //another if statement here to see which table????????????????????????????????????????
                 ArrayList<Database.RowData> res = db.selectAllMessgaes();
                 if (res == null)
                     continue;
-                System.out.println("  Current Database Contents");
+                System.out.println("  Current Message Table Contents");
                 System.out.println("  -------------------------");
                 for (Database.RowData rd : res) {
-                    System.out.println("  [" + rd.mMsgid + "] " + "message: " + rd.mMessage + " date: " + rd.mDatecreated + " user id: " + rd.mUserid + " likes: " +  rd.mLike);
+                    System.out.println("  [" + rd.mMsgid + "] " + "message: " + rd.mMessage + " date: " + rd.mDatecreated + " user id: " + rd.mUserid);
                 }
             }else if (action == '&') {
                 ArrayList<Database.RowData> res = db.selectAllLikes();
                 if (res == null)
                     continue;
-                System.out.println("  Current Database Contents");
+                System.out.println("  Current Like Table Contents");
                 System.out.println("  -------------------------");
                 for (Database.RowData rd : res) {
                     System.out.println("  [" + rd.lMsgid + "] " +  "user id: " + rd.lUserid + " like: " + rd.lLike);
                 }
             }else if (action == '$') {
-                //another if statement here to see which table????????????????????????????????????????
                 ArrayList<Database.RowData> res = db.selectAllComments();
                 if (res == null)
                     continue;
-                System.out.println("  Current Database Contents");
+                System.out.println("  Current Comment Table Contents");
                 System.out.println("  -------------------------");
                 for (Database.RowData rd : res) {
                     System.out.println("  [" + rd.cMsgid + "] " + "comment: " + rd.cComment + " date: " + rd.cDatecreated + " user id: " + rd.cUserid);
@@ -247,24 +246,23 @@ public class App {
                     continue;
                 System.out.println("  " + res + " rows deleted");
             } else if (action == '+') {
-                //...and here..
-                int id = getInt(in, "Enter the userid");
-                int like = getInt(in, " like or dislike(0 or 1)");
+                //insert new row in messages table
+                String id = getString(in, "Enter the userid");
                 String message = getString(in, "Enter the message");
                 if (message.equals(""))
                     continue;
-                int res = db.insertRowMessages(id, like, message);
+                int res = db.insertRowMessages(id, message);
                 System.out.println(res + " row added");
             }else if (action == '@') {
-                //...and here..
-                int id = getInt(in, "Enter the userid");
+                //insert new row in likes table
+                String id = getString(in, "Enter the userid");
                 int like = getInt(in, "Enter like or dislike? (0 or 1)");
                 // int mid = getInt(in, "Enter Msg id");
                 int res = db.insertRowLikes(id,like);
                 System.out.println(res + " row added");
             }else if (action == '!') {
-                //...and here..
-                int id = getInt(in, "Enter the userid");
+                 //insert new row in comments table
+                String id = getString(in, "Enter the userid");
                 String comment = getString(in, " Enter the Comment");
                 if (comment.equals(""))
                     continue;

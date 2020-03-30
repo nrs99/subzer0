@@ -170,16 +170,16 @@ public class Database {
         /**
          * The userid of this row of the database
          */
-        int mUserid;
+        String mUserid;
         
         /**
          * The userid of this row of the database
          */
-        int lUserid;
+        String lUserid;
          /**
          * The userid of this row of the database
          */
-        int cUserid;
+        String cUserid;
         /**
          * The datecreated
          */
@@ -212,18 +212,17 @@ public class Database {
          * Construct a RowData object by providing values for its fields
          * messages---
          */
-        public RowData(int msgid, int userid, String datecreated, int like, String message) {
+        public RowData(int msgid, String userid, String datecreated, String message) {
             mMsgid = msgid;
             mUserid = userid;
             mDatecreated = datecreated;
-            mLike = like;
             mMessage = message;
         }
         /**
          * Construct a RowData object by providing values for its fields
          * likes---
          */
-        public RowData( int msgid, int userid, int like) {
+        public RowData( int msgid, String userid, int like) {
             lMsgid = msgid;//not sure about this
             lUserid = userid;
             lLike = like;
@@ -231,7 +230,7 @@ public class Database {
 
         //COMMENTS LATER
 
-        public RowData(int msgid, int commentid, int userid, String datecreated, String comment) {
+        public RowData(int msgid, int commentid, String userid, String datecreated, String comment) {
             cMsgid = msgid;
             cCommentID = commentid;
             cUserid = userid;
@@ -308,14 +307,14 @@ try {
 
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
-            db.mCreateTable = db.Connection.prepareStatement("CREATE TABLE messages(msgid SERIAL PRIMARY KEY, userid integer, datecreated TIMESTAMP, likes integer, message VARCHAR(30));");
+            db.mCreateTable = db.Connection.prepareStatement("CREATE TABLE messages(msgid SERIAL PRIMARY KEY, userid VARCHAR(30), datecreated TIMESTAMP, message VARCHAR(250));");
             // db.mDropTable = db.Connection.prepareStatement("DROP TABLE messages;");
 
             // Standard CRUD operations
             db.mDeleteOne = db.Connection.prepareStatement("DELETE FROM messages WHERE msgid = ?;");
             //create sequence
             //db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
-            db.mInsertOne = db.Connection.prepareStatement("INSERT INTO messages(msgid, userid, datecreated, likes, message) VALUES (default, ?, ?, ?, ?);");
+            db.mInsertOne = db.Connection.prepareStatement("INSERT INTO messages(msgid, userid, datecreated, message) VALUES (default,?, ?, ?);");
             db.mSelectAll = db.Connection.prepareStatement("SELECT * FROM messages;");
             db.mSelectOne = db.Connection.prepareStatement("SELECT * from messages WHERE msgid=?;");
             db.mUpdateOne = db.Connection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?;");
@@ -330,7 +329,7 @@ try {
 
 
             //LIKES
-            db.lCreateTable = db.Connection.prepareStatement("CREATE TABLE likes(userid INT, likes INT);"
+            db.lCreateTable = db.Connection.prepareStatement("CREATE TABLE likes(userid VARCHAR(30), likes INT);"
             +"ALTER TABLE likes ADD COLUMN mid INT;"
             +" ALTER TABLE likes ADD CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES messages(msgid);");
             // db.mDropTable = db.Connection.prepareStatement("DROP TABLE like;");
@@ -342,7 +341,7 @@ try {
 
             db.lInsertOne = db.Connection.prepareStatement("INSERT INTO likes(userid, likes, mid) VALUES (?, ?, default);");
             db.lSelectAll = db.Connection.prepareStatement("SELECT * FROM likes");
-            db.lSelectOne = db.Connection.prepareStatement("SELECT * from likes WHERE msgid=?");
+            db.lSelectOne = db.Connection.prepareStatement("SELECT * from likes WHERE mid=?");
             db.lUpdateOne = db.Connection.prepareStatement("UPDATE likes SET like = ? WHERE msgid = ?");
 
 
@@ -358,9 +357,9 @@ try {
             +"ALTER TABLE comments ADD COLUMN mid INT;"
             +"ALTER TABLE comments ADD CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES messages(msgid);"
             +"ALTER TABLE comments ADD COLUMN commentID SERIAL PRIMARY KEY;"
-            +"ALTER TABLE comments ADD COLUMN userID INT;"
+            +"ALTER TABLE comments ADD COLUMN userID VARCHAR(30);"
             +"ALTER TABLE comments ADD COLUMN datecreated TIMESTAMP;"
-            +"ALTER TABLE comments ADD COLUMN comment VARCHAR(30);");
+            +"ALTER TABLE comments ADD COLUMN comment VARCHAR(250);");
             // db.mDropTable = db.Connection.prepareStatement("DROP TABLE messages;");
 
             // Standard CRUD operations
@@ -416,17 +415,15 @@ try {
      * 
      * @return The number of rows that were inserted
      */
-    int insertRowMessages(int userid, int like, String message) {
+    int insertRowMessages(String userid, String message) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         int count = 0;
         try {
-            mInsertOne.setInt(1, userid);
+            mInsertOne.setString(1, userid);
 
             mInsertOne.setTimestamp(2, ts);
 
-            mInsertOne.setInt(3, like);
-
-            mInsertOne.setString(4, message);
+            mInsertOne.setString(3, message);
             count += mInsertOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -445,10 +442,10 @@ try {
      * @return The number of rows that were inserted
      */
     // int insertRowLikes(int userid, int like,int mid) {//unsure!
-        int insertRowLikes(int userid, int like) {//unsure!
+        int insertRowLikes(String userid, int like) {//unsure!
         int count = 0;
         try {
-            lInsertOne.setInt(1, userid);
+            lInsertOne.setString(1, userid);
             lInsertOne.setInt(2, like);
             // lInsertOne.setInt(3,mid);
             count += lInsertOne.executeUpdate();
@@ -469,11 +466,11 @@ try {
      * 
      * @return The number of rows that were inserted
      */
-    int insertRowComments(int userid, String comment) {
+    int insertRowComments(String userid, String comment) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         int count = 0;
         try {
-            cInsertOne.setInt(1, userid);
+            cInsertOne.setString(1, userid);
             cInsertOne.setTimestamp(2, ts);
             cInsertOne.setString(3, comment);
             count += cInsertOne.executeUpdate();
@@ -493,7 +490,7 @@ try {
         try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getString("datecreated"), rs.getInt("like"),rs.getString("message")));
+                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"),rs.getString("message")));
             }
             rs.close();
             return res;
@@ -514,7 +511,7 @@ try {
         try {
             ResultSet rs = lSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getInt("like")));
+                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getInt("like")));
             }
             rs.close();
             return res;
@@ -529,7 +526,7 @@ try {
         try {
             ResultSet rs = cSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getInt("commentID"),rs.getInt("userid"),rs.getString("datecreated"),rs.getString("comment")));
+                res.add(new RowData(rs.getInt("msgid"), rs.getInt("commentID"),rs.getString("userid"),rs.getString("datecreated"),rs.getString("comment")));
             }
             rs.close();
             return res;
@@ -552,7 +549,7 @@ try {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getString("datecreated"), rs.getInt("like"), rs.getString("message"));
+                res = new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"), rs.getString("message"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -574,7 +571,7 @@ try {
             lSelectOne.setInt(1, id);
             ResultSet rs = lSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getInt("userid"),rs.getInt("like"));
+                res = new RowData(rs.getInt("mid"), rs.getString("userid"),rs.getInt("like"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -596,7 +593,7 @@ try {
             cSelectOne.setInt(1, id);
             ResultSet rs = cSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getInt("commentID"),rs.getInt("userid"),rs.getString("datecreated"),rs.getString("comment"));
+                res = new RowData(rs.getInt("mid"), rs.getInt("commentID"),rs.getString("userid"),rs.getString("datecreated"),rs.getString("comment"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
