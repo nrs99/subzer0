@@ -26,13 +26,19 @@ public class Comment {
          */
         Timestamp dateCreated;
 
+        String displayName;
 
-        public Comment(int commentId, int msgId, String comment, String userId, Timestamp dateCreated) {
+        String photoURL;
+
+
+        public Comment(int commentId, int msgId, String comment, String userId, Timestamp dateCreated, String displayName, String photoURL) {
             this.commentId = commentId;
             this.msgId = msgId;
             this.comment = comment;
             this.userId = userId;
             this.dateCreated = dateCreated;
+            this.displayName = displayName;
+            this.photoURL = photoURL;
         }
 
 }

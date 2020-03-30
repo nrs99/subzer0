@@ -27,7 +27,7 @@ public class Message {
         /**
          * The number of dislikes the message contains
          */
-        int dislikes;
+        int dislikes;   
         /**
          *
          */
