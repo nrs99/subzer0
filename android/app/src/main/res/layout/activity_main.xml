@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,8 +8,8 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
@@ -23,10 +22,11 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="729dp"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
         tools:context=".MainActivity">
 
@@ -39,8 +39,9 @@
 
             <EditText
                 android:id="@+id/textView"
-                android:layout_width="match_parent"
+                android:layout_width="320dp"
                 android:layout_height="55dp"
+                android:hint="Type a new message..."
                 android:textColor="#000000"
                 android:textSize="25dp" />
 
@@ -48,20 +49,26 @@
                 android:id="@+id/post_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="-100dp"
+                android:layout_marginLeft="0dp"
                 android:layout_marginTop="-5dp"
                 android:text="post" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/Subzer0"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/RefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="65dp"
-            android:layout_marginTop="0dp"/>
+            android:clickable="true"
+            android:focusableInTouchMode="true">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/Recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="30dp" />
 
-
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
