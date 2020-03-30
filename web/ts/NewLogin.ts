@@ -28,6 +28,8 @@ class NewLogin {
             $("#" + NewLogin.NAME + "-signIn").click(NewLogin.show);
             NewLogin.initClient();
             NewLogin.renderButton();
+            $("#" + NewLogin.NAME + "-signOff").click(NewLogin.signOut);
+
             NewLogin.isInit = true;
         }
     }
@@ -45,9 +47,8 @@ class NewLogin {
      * Hide the NewEntryForm.  Be sure to clear its fields first
      */
     private static hide() {
-        $("#" + NewLogin.NAME + "-signOut").click(NewLogin.signOut);
+        $("#" + NewLogin.NAME + "-signOut").val("");
         $("#" + NewLogin.NAME).modal("hide");
-        //NewLogin.signOut();
     }
 
     private static initClient() {
@@ -72,7 +73,6 @@ class NewLogin {
      */
     public static show() { //similar to rednder button
         $("#" + NewLogin.NAME).modal("show"); 
-        //NewLogin.renderButton();  
     }
     
     public static renderButton() {
@@ -133,9 +133,7 @@ class NewLogin {
        // $("#" + NewLogin.NAME).hide();
         let auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function() {
-            // document.getElementsByClassName("userContent")[0].innerHTML = '';
-            // document.getElementsByClassName("userContent")[0].style.display = "none"; 
-            // document.getElementById("NewLogin-signIn").style.display = "block";
+            console.log('User signed out.');
         });
         auth2.disconnect();
     }
