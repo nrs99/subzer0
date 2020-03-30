@@ -281,7 +281,7 @@ public class App {
             response.type("application/json");
             // NB: createEntry checks for null title and message
             int newId = db.insertUser(req.userID, req.displayName, req.photoURL);
-            if (newId == -1) {
+            if (newId == 0) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
