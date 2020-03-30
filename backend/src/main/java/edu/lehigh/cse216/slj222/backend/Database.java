@@ -361,7 +361,8 @@ public class Database {
         int count = 0;
         try {
             mCommentAuthor.setInt(1, commentid);
-            String author = mCommentAuthor.executeQuery();
+            ResultSet rs = mCommentAuthor.executeQuery();
+            String author = rs.getString("userid");
             if (userid.equals(author)) {
                 mEditComment.setInt(2, commentid);
                 mEditComment.setString(1, comment);
