@@ -132,19 +132,17 @@ public class App {
             // NB: if gson.Json fails, Spark will reply with status 500 Internal
             // Server Error
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
-            if (ht.contains(req.userID)) {
-                // ensure status 200 OK, with a MIME type of JSON
-                // NB: even on error, we return 200, but with a JSON object that
-                // describes the error.
-                response.status(200);
-                response.type("application/json");
-                // NB: createEntry checks for null title and message
-                int newId = db.insertRow(req.message, req.userID);
-                if (newId == -1) {
-                    return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
-                } else {
-                    return gson.toJson(new StructuredResponse("ok", "" + newId, null));
-                }
+            // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
+            // NB: createEntry checks for null title and message
+            int newId = db.insertRow(req.message, req.userID);
+            if (newId == -1) {
+                return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
             }
         });
  

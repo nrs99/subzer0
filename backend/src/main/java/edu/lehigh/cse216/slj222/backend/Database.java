@@ -362,7 +362,10 @@ public class Database {
         try {
             mCommentAuthor.setInt(1, commentid);
             ResultSet rs = mCommentAuthor.executeQuery();
-            String author = rs.getString("userid");
+            String author = "";
+            if (rs.next()) {
+                author = rs.getString("userid");
+            }
             if (userid.equals(author)) {
                 mEditComment.setInt(2, commentid);
                 mEditComment.setString(1, comment);
