@@ -55,7 +55,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         final Comment d = myData.get(position);
         holder.cText.setText(d.comment);
         holder.postedBy.setText(d.displayName);
-        holder.profilePic.setImageBitmap(urlImage.getBitmapFromURL(d.photoURL));
+        new urlImage(d.photoURL, holder.profilePic).execute();
 
         SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         String userId = sharedPref.getString("userId", "0");

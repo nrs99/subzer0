@@ -93,7 +93,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             viewHolder.commentCount.setText(String.valueOf(d.commentCount) + " comments");
         }
         viewHolder.postedBy.setText(d.displayName);
-        viewHolder.profilePic.setImageBitmap(urlImage.getBitmapFromURL(d.photoURL));
+        new urlImage(d.photoURL, viewHolder.profilePic).execute();
         int likeStatus = d.myLike;
         if (likeStatus == 1) {
             viewHolder.thumbup.setBackgroundResource(R.drawable.ic_likebutton);
