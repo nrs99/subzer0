@@ -16,12 +16,13 @@ let Handlebars: any;
 
 // Run some configuration code when the web page loads
 $(document).ready(function () {
-    NewLogin.refresh();
 
     ElementList.refresh();
     Navbar.refresh();
     NewEntryForm.refresh();
     EditEntryForm.refresh();
+    NewLogin.refresh();
+
 
 });
 
