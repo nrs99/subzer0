@@ -3,6 +3,8 @@ package edu.lehigh.cse216.slj222;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +26,15 @@ public class Profile extends BaseActivity {
         setContentView(R.layout.activity_profile);
 
         profiledUserID = getIntent().getExtras().getString("profiledUser");
+
+        String profiledName = getIntent().getExtras().getString("profiledName");
+        String profiledPhoto = getIntent().getExtras().getString("profiledPhoto");
+
+        TextView displayName = findViewById(R.id.profileName);
+        displayName.setText(profiledName);
+
+        ImageButton profilePic = findViewById(R.id.profilePic);
+        new urlImage(profiledPhoto, profilePic, 250).execute();
 
         getMessages();
 

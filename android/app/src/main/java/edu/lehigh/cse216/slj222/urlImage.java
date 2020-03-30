@@ -16,10 +16,12 @@ public class urlImage extends AsyncTask<Void, Void, Bitmap> {
 
     private String url;
     private ImageView imageView;
+    int resize;
 
-    public urlImage(String url, ImageView imageView) {
+    public urlImage(String url, ImageView imageView, int resize) {
         this.url = url;
         this.imageView = imageView;
+        this.resize = resize;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class urlImage extends AsyncTask<Void, Void, Bitmap> {
     @Override
     protected void onPostExecute(Bitmap result) {
         super.onPostExecute(result);
-        imageView.setImageBitmap(Bitmap.createScaledBitmap(result, 200, 200, false));
+        imageView.setImageBitmap(Bitmap.createScaledBitmap(result, resize, resize, false));
     }
 
 }

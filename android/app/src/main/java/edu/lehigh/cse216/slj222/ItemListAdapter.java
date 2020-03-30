@@ -93,7 +93,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             viewHolder.commentCount.setText(String.valueOf(d.commentCount) + " comments");
         }
         viewHolder.postedBy.setText(d.displayName);
-        new urlImage(d.photoURL, viewHolder.profilePic).execute();
+        new urlImage(d.photoURL, viewHolder.profilePic, 200).execute();
         int likeStatus = d.myLike;
         if (likeStatus == 1) {
             viewHolder.thumbup.setBackgroundResource(R.drawable.ic_likebutton);
@@ -173,6 +173,8 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             Intent intent = new Intent(b.getContext(), Profile.class);
             // Add extra for profiledID + logged in ID
             intent.putExtra("profiledUser", d.userId);
+            intent.putExtra("profiledName", d.displayName);
+            intent.putExtra("profiledPhoto", d.photoURL);
             context.startActivity(intent);
         });
 
@@ -181,6 +183,8 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             Intent intent = new Intent(b.getContext(), Profile.class);
             // Add extra for profiledID + logged in ID
             intent.putExtra("profiledUser", d.userId);
+            intent.putExtra("profiledName", d.displayName);
+            intent.putExtra("profiledPhoto", d.photoURL);
             context.startActivity(intent);
         });
 

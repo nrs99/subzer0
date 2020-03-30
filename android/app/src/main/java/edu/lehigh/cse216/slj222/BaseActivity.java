@@ -31,6 +31,9 @@ public class BaseActivity extends AppCompatActivity {
     String givenName;
     String userId;
 
+    String displayName;
+    String myURL;
+
     HashMap<Integer, Integer> likes = new HashMap<Integer, Integer>();
 
     private Menu mOptionsMenu;
@@ -42,6 +45,8 @@ public class BaseActivity extends AppCompatActivity {
         sessionKey = sharedPref.getString("sessionKey", "logout");
         givenName = sharedPref.getString("givenName", "Joe");
         userId = sharedPref.getString("userId", "0");
+        displayName = sharedPref.getString("displayName", "Joe Schmoe");
+        myURL = sharedPref.getString("photoURL", "");
 
         setLikes();
 
@@ -81,6 +86,8 @@ public class BaseActivity extends AppCompatActivity {
                 intent = new Intent(this, Profile.class);
                 // Pass my userID
                 intent.putExtra("profiledUser", userId);
+                intent.putExtra("profiledName", displayName);
+                intent.putExtra("profiledPhoto", myURL);
                 startActivity(intent);
                 return true;
             case R.id.goBack:

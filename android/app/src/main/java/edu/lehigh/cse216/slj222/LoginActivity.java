@@ -120,6 +120,8 @@ public class LoginActivity extends AppCompatActivity {
             editor.putString("sessionKey", "bla");
             editor.putString("givenName", account.getGivenName());
             editor.putString("userId", account.getId());
+            editor.putString("displayName", account.getDisplayName());
+            editor.putString("photoURL", account.getPhotoUrl().toString());
             editor.commit();
 
             // Signed in successfully, show authenticated UI.
