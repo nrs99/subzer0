@@ -5,6 +5,11 @@
 
  declare var gapi:any;
  declare var GoogleAuth: any; // Google Auth object.
+ declare var Handlebars:any;
+ declare var request:any;
+ declare var profile:any;
+
+
 
 class NewLogin {
 	/**
@@ -28,7 +33,7 @@ class NewLogin {
             $("#" + NewLogin.NAME + "-signIn").click(NewLogin.show);
             NewLogin.initClient();
             NewLogin.renderButton();
-            $("#" + NewLogin.NAME + "-signOff").click(NewLogin.signOut);
+            $("#" + NewLogin.NAME + "-signOut").click(NewLogin.signOut);
 
             NewLogin.isInit = true;
         }
@@ -92,37 +97,41 @@ class NewLogin {
         //get the google profile data
         //var profile = googleUser.getBasicProfile();
         //retrieve the google account data
-        
+        // let request;
         gapi.client.load('auth2', 'v2', function() {
-            let request = gapi.client.oauth2.userInfo.get('me');
+            request = gapi.client.oauth2.userInfo.get('me');
         });
+        // let profile;
 
-         gapi.client.load('auth2', function () {
-            if (GoogleAuth.isSignedIn.get()) {
-            let profile = GoogleAuth.currentUser.get().getBasicProfile();
-            
-            console.log('ID: ' + profile.getId());
-            console.log('Full Name: ' + profile.getName());
-            console.log('Given Name: ' + profile.getGivenName());
-            console.log('Family Name: ' + profile.getFamilyName());
-            console.log('Image URL: ' + profile.getImageUrl());
-            console.log('Email: ' + profile.getEmail());
-          }
+            gapi.client.load('auth2', function () {
+                if (GoogleAuth.isSignedIn.get()) {
+                profile = GoogleAuth.currentUser.get().getBasicProfile();
+                
+                console.log('ID: ' + profile.getId());
+                console.log('Full Name: ' + profile.getName());
+                console.log('Given Name: ' + profile.getGivenName());
+                console.log('Family Name: ' + profile.getFamilyName());
+                console.log('Image URL: ' + profile.getImageUrl());
+                console.log('Email: ' + profile.getEmail());
+            }
             request.execute(function(resp) {
-                let profileHTML = '<h3>Welcome ' + resp.name + '! <a href = "javascript:void(0);" onclick = "signOut();"> Sign out</a></h3>';
-                profileHTML+= 'img src = " ' + resp.pic + ' " /><p><b>GoogleID: </b> ' + resp.id + '</p><p><b>Name: </b> ' + resp.name + '</p><p><b>Email: </b>' + resp.email + '</p><p><b>Gender: </b' +
+                NewLogin.initProfile(profile);
+            });
+       
+        });
+    }
+    private static initProfile(resp:any) {
+        let profileHTML = '<h3>Welcome ' + resp.name + '! <a href = "javascript:void(0);" onclick = "NewLogin.signOut();"> Sign out</a></h3>';
+                profileHTML+= 'img src = " ' + resp.pic + ' " />   <p><b>GoogleID: </b> ' + resp.id + '</p><p><b>Name: </b> ' + resp.name + '</p><p><b>Email: </b>' + resp.email + '</p><p><b>Gender: </b' +
                 resp.gender + '</p><p><b>Locale: </b>' + resp.locale + '</p><p><b> Google profile: </b> <a target="_blank" href = " ' + resp.link + ' "> click to view profile</a></p>';
                 document.getElementsByClassName("userContent")[0].innerHTML = profileHTML;
                 document.getElementById("signIn").style.display = "none";
-                //document.getElementsByClassName("userContent")[0].style.display = "block";
-                NewLogin.saveUserData(resp);
+                document.getElementsByClassName("userContent")[0].style.display = "block";
+               // NewLogin.saveUserData(resp);
 
-
-            });
-        });
     }
 
-    private static onFailure(error: any) {
+    public static onFailure(error: any) {
         alert(error)
     }
 
