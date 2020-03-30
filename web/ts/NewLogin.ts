@@ -2,6 +2,10 @@
 /**
  * NewLogin encapsulates all of the code for the form for logging in
  */
+
+ declare var gapi:any;
+ declare var GoogleAuth: any; // Google Auth object.
+
 class NewLogin {
 	/**
      * The name of the DOM entry associated with NewEntryForm
@@ -22,6 +26,7 @@ class NewLogin {
         if (!NewLogin.isInit) {
             $("body").prepend(Handlebars.templates[NewLogin.NAME + ".hb"]());
             $("#" + NewLogin.NAME + "-signIn").click(NewLogin.show);
+            NewLogin.initClient();
             NewLogin.renderButton();
             NewLogin.isInit = true;
         }
@@ -44,6 +49,20 @@ class NewLogin {
         $("#" + NewLogin.NAME).modal("hide");
         //NewLogin.signOut();
     }
+
+    private static initClient() {
+       gapi.client.init({
+            'apiKey': 'AIzaSyBNFCZM7GjZSnX_qh-ucZ8MPlAOEo41ZLU',
+            'clientId': '363085709256-27bcmvdo6sqga5b2nsk0ks1g4uh9nf52',
+            'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly',
+            'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
+    }).then(function () {
+        GoogleAuth = gapi.auth2.getAuthInstance();
+
+        // // Listen for sign-in state changes.
+        // NewLogin.GoogleAuth.isSignedIn.listen(updateSigninStatus);
+    });
+    } 
 
     /**
      * Show the NewEntryForm.  Be sure to clear its fields, because there are
@@ -68,6 +87,7 @@ class NewLogin {
             'onfailiure': NewLogin.onFailure
         });
     }
+    
     public static onSuccess (googleUser: any) {
         //get the google profile data
         //var profile = googleUser.getBasicProfile();
@@ -75,13 +95,12 @@ class NewLogin {
         
         gapi.client.load('auth2', 'v2', function() {
             let request = gapi.client.oauth2.userInfo.get('me');
-            //request.execute(getFullNameCallback);
-        //   });
+        });
 
-        // gapi.load('auth2', function () {
-
-            if (auth2.isSignedIn.get()) {
-            let profile = auth2.currentUser.get().getBasicProfile();
+         gapi.client.load('auth2', function () {
+            if (GoogleAuth.isSignedIn.get()) {
+            let profile = GoogleAuth.currentUser.get().getBasicProfile();
+            
             console.log('ID: ' + profile.getId());
             console.log('Full Name: ' + profile.getName());
             console.log('Given Name: ' + profile.getGivenName());
@@ -108,15 +127,15 @@ class NewLogin {
     }
 
     private static saveUserData(userData) {
-        $.post('some file', {oauth_provider: 'google', userData: JSON.stringify(userData)});
+        //$.post('some file', {oauth_provider: 'google', userData: JSON.stringify(userData)});
     }
     private static signOut() {
        // $("#" + NewLogin.NAME).hide();
         let auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function() {
-            document.getElementsByClassName("userContent")[0].innerHTML = '';
-            //document.getElementsByClassName("userContent")[0].style.display = "none";
-            document.getElementById("NewLogin-signIn").style.display = "block";
+            // document.getElementsByClassName("userContent")[0].innerHTML = '';
+            // document.getElementsByClassName("userContent")[0].style.display = "none"; 
+            // document.getElementById("NewLogin-signIn").style.display = "block";
         });
         auth2.disconnect();
     }
