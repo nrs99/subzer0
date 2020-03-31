@@ -1,6 +1,6 @@
 <<<<<<< HEAD
 # CSE 216
-This is an individual student repository. It is intended for use during phase 0.
+This is a seperate repository. It is intended for use during phase 2.
 =======
 # subzero #
 ## team mates ##
@@ -13,8 +13,8 @@ This is an individual student repository. It is intended for use during phase 0.
 
 ## Details
 - Semester: Spring 2020
-- Student ID: slj222
+- Student ID: zhl221
 - Bitbucket Repository: https://sam_joffe@bitbucket.org/sam_joffe/cse216_slj222.git
 
 ## Contributors
-1. Sam Joffe
+Colin Li
