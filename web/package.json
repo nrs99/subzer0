@@ -2,11 +2,17 @@
     "name": "web",
     "version": "1.0.0",
     "description": "Web Front-End",
+    "main": "app.js",
+    "scripts": {
+        "server": "http-server"
+    },
     "dependencies": {
+        "@types/jquery": "^3.3.34",
         "bootstrap": "^3.4.1",
         "handlebars": "^4.7.3",
+        "http-server": "^0.12.1",
         "jasmine-core": "^3.5.0",
         "jquery": "^3.4.1",
-        "typescript": "^3.8.2"
+        "typescript": "^3.8.3"
     }
 }

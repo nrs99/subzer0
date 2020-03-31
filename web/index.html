@@ -8,23 +8,106 @@
     <meta name="description" content="Front-End for Bootstrap Tutorial" />
     <meta name="author" content="CSE 216 Student Name Goes Here" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <!-- <meta name="google-signin-scope" content="profile email">  -->
+
+    <!-- load the Google platform librry -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+
+    <!-- specifiy your app's client id -->
+    <meta name="google-signin-client_id" content="363085709256-27bcmvdo6sqga5b2nsk0ks1g4uh9nf52.apps.googleusercontent.com">
+
+
+    <!-- load the jQuery library -->
+    <script src="jquery.min.js"></script>
 
     <title>CSE 216</title>
-
-    <script src="jquery.min.js"></script>
+    <!-- load the handlebars library -->
     <script src="handlebars.min.js"></script>
+
+    <!-- load the bootstrap library -->
     <script src="bootstrap.min.js"></script>
+    <!-- load the template library -->
     <script src="templates.js"></script>
+    <!-- load the app.js -->
     <script src="app.js"></script>
+
+
+    <!-- for google sign in -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script> 
+ 
+    
+
 
     <link href="https://fonts.googleapis.com/css?family=Fresca" rel="stylesheet">
     <link rel="stylesheet" href="app.css" />
     <link href="bootstrap.min.css" rel="stylesheet">
 
+    <!-- <script>
+        // //render google sing in button
+        function renderButton() {
+        $("#" + NewLogin.NAME).modal("show");
+        gapi.signin2.render('NewLogin-signIn', {
+            'scope' : "profile email",
+            'width' : 240,
+            'height': 50,
+            'longtitle': true,
+            'theme' : 'dark',
+            'onsuccess': onSuccess,
+            'onfailiure': onFailure
+        });
+    }
+    function onSuccess (googleUser) {
+        //get the google profile data
+        //var profile = googleUser.getBasicProfile();
+        //retrieve the google account data
+        gapi.client.load('oauth2', 'v2', function () {
+            var request = gapi.client.oauth2.userInfo.get({
+                'userId': 'me'
+            });
+            request.execute(function(resp) {
+                var profileHTML = '<h3>Welcome ' + resp.name + '! <a href = "javascript:void(0);" onclick = "signOut();"> Sign out</a></h3>';
+                profileHTML+= 'img src = " ' + resp.pic + ' " /><p><b>GoogleID: </b> ' + resp.id + '</p><p><b>Name: </b> ' + resp.name + '</p><p><b>Email: </b>' + resp.email + '</p><p><b>Gender: </b' +
+                resp.gender + '</p><p><b>Locale: </b>' + resp.locale + '</p><p><b> Google profile: </b> <a target="_blank" href = " ' + resp.link + ' "> click to view profile</a></p>';
+                document.getElementsByClassName("userContent")[0].innerHTML = profileHTML;
+                document.getElementById("NewLogin-signIn").style.display = "none";
+                document.getElementsByClassName("userContent")[0].style.display = "block";
+                NewLogin.saveUserData(resp);
+
+
+            });
+        });
+    }
+
+    function onFailure(error) {
+        alert(error)
+    }
+
+    function saveUserData(userData) {
+        $.post('some file', {oauth_provider: 'google', userData: JSON.stringify(userData)});
+    }
+    function signOut() {
+       // $("#" + NewLogin.NAME).hide();
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function() {
+            document.getElementsByClassName("userContent")[0].innerHTML = '';
+            document.getElementsByClassName("userContent")[0].style.display = "none";
+            document.getElementById("NewLogin-signIn").style.display = "block";
+        });
+        auth2.disconnect();
+    }
+    </script> -->
+
 </head>
 
 <body role="document">
+    
 
 </body>
+<!-- <div class="container">
+	<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" id="NewLogin-signIn"></div>
+</div> -->
+
 
 </html>
+

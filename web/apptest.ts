@@ -26,4 +26,9 @@ describe("Tests of basic math functions", function() {
         // reset the UI, so we don't mess up the next test
         $('#addCancel').click();        
     });
+
+    it("Login Test: sign in shows sign off", function() {
+        $('#signOn').click();
+        expect($("#signOff").attr("style").indexOf("display: none;")).toEqual(0);
+    })
 });

@@ -1,10 +1,3 @@
-# deploy script for the web front-end
-
-# This file is responsible for preprocessing all TypeScript files, making sure
-# all dependencies are up-to-date, and copying all necessary files into the
-# web deploy directory.
-
-# This is the resource folder where maven expects to find our files
 TARGETFOLDER=../backend/src/main/resources
 
 # This is the folder that we used with the Spark.staticFileLocation command
@@ -30,12 +23,16 @@ cp -R node_modules/bootstrap/dist/fonts $TARGETFOLDER/$WEBFOLDERNAME
 node_modules/typescript/bin/tsc app.ts --strict --outFile $TARGETFOLDER/$WEBFOLDERNAME/app.js
 
 # step 5: copy css files
-cat app.css css/ElementList.css css/NewEntryForm.css css/Navbar.css > $TARGETFOLDER/$WEBFOLDERNAME/app.css
+## Didn't add one for EditEntryForm
+cat app.css css/ElementList.css css/NewEntryForm.css css/Navbar.css css/NewLogin.css > $TARGETFOLDER/$WEBFOLDERNAME/app.css
 
 # step 6: compile handlebars templates to the deploy folder
 node_modules/handlebars/bin/handlebars hb/ElementList.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
 node_modules/handlebars/bin/handlebars hb/NewEntryForm.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
 node_modules/handlebars/bin/handlebars hb/Navbar.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
+node_modules/handlebars/bin/handlebars hb/NewLogin.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
+node_modules/handlebars/bin/handlebars hb/EditEntryForm.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
+
 
 # there are many more steps to be done.  For now, we will just copy an HTML file
 cp index.html $TARGETFOLDER/$WEBFOLDERNAME
