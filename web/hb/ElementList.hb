@@ -13,8 +13,9 @@
             {{#each mData}}
             <tr>
                 <td>{{this.message}}</td>
-		        <td><button class="ElementList-likebtn" data-value="{{this.msgId}}">Like</button><p>{{this.likes}}</p></td>
+		<td><button class="ElementList-likebtn" data-value="{{this.msgId}}">Like</button><p>{{this.likes}}</p></td>
                 <td><button class="ElementList-dislikebtn" data-value="{{this.msgId}}">Dislike</button><p>{{this.dislikes}}</p></td>
+		<td><p>{{this.comments}} comments</p></td>
             </tr>
             {{/each}}
         </tbody>
