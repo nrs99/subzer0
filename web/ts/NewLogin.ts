@@ -59,5 +59,14 @@ class NewLogin {
         });
         ElementList.hide();
         Navbar.hide();
-      }
+        NewLogin.show();
+    }
+
+    public static hide() {
+        $("#" + NewLogin.NAME).hide();
+    }
+
+    public static show() {
+        $("#" + NewLogin.NAME).show();
+    }
 }
