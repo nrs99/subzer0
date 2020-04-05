@@ -22,6 +22,7 @@ $(document).ready(function () {
     NewEntryForm.refresh();
     EditEntryForm.refresh();
     NewLogin.refresh();
+    ViewComments.refresh();
 
     ElementList.hide();
     Navbar.hide();
