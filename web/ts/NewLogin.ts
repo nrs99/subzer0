@@ -40,7 +40,7 @@ class NewLogin {
         NewLogin.init();
     }
 
-    private onSignIn(googleUser) {
+    private static onSignIn(googleUser) {
         var profile = googleUser.getBasicProfile();
         console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
         console.log('Name: ' + profile.getName());
@@ -48,7 +48,7 @@ class NewLogin {
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
     }
 
-    public signOut() {
+    public static signOut() {
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
           console.log('User signed out.');
