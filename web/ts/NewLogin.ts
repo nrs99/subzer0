@@ -27,7 +27,7 @@ class NewLogin {
     private static signedInID = "";
 
     /**
-     * Initialize the NewEntryForm by creating its element in the DOM and 
+     * Initialize the NewLogin by creating its element in the DOM and 
      * configuring its buttons.  This needs to be called from any public static 
      * method, to ensure that the Singleton is initialized before use
      */
