@@ -64,10 +64,11 @@ class ElementList {
      * clickLike is the code we run in response to a click of a like button
      */
     private static clickLike() {
-    	let id = $(this).data("value");
+        let id = $(this).data("value");
+        let userID = localStorage.getItem("ID");
 	    $.ajax({
 		    type: "PUT",
-    		url: backendUrl + "/messages/" + id + "/like",
+    		url: backendUrl + "/messages/" + id + "/like/" + userID,
             dataType: "json",
             data: JSON.stringify({ msgID : id }),
 		    success: ElementList.refresh
@@ -78,9 +79,10 @@ class ElementList {
      */ 
     private static clickDislike() {
         let id = $(this).data("value");
+        let userID = localStorage.getItem("ID");
         $.ajax({
             type: "PUT",
-            url: backendUrl + "/messages/" + id + "/dislike",
+            url: backendUrl + "/messages/" + id + "/dislike/" + userID,
             dataType: "json",
             data: JSON.stringify({ msgID : id }),
             success: ElementList.refresh

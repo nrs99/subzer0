@@ -74,7 +74,7 @@ class NewEntryForm {
         NewEntryForm.hide();
 
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "/user",
             dataType: "json",
             data: JSON.stringify({ userID: localStorage.getItem("ID"), displayName: localStorage.getItem("fullName"),
