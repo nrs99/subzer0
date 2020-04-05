@@ -40,10 +40,10 @@ class Navbar {
     }
 
     public static hide() {
-        $("#nav.navbar-default").hide();
+        $(".navbar").hide();
     }
 
     public static show() {
-        $("#nav.navbar-default").show();
+        $(".navbar").show();
     }
 }

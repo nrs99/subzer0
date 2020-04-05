@@ -43,20 +43,16 @@ class NewLogin {
         NewLogin.init();
     }
 
-    private static onSignIn() {
-        ElementList.show;
-        Navbar.show;
-        this.hide;
-    }
 
     public static signOut() {
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
           console.log('User ' + localStorage.getItem("fullName") + ' signed out.');
         });
-        ElementList.hide;
-        Navbar.hide;
-        this.show;
+        localStorage.setItem("state", "logged-out");
+        ElementList.hide();
+        Navbar.hide();
+        NewLogin.show();
     }
 
     public static hide() {
@@ -64,6 +60,7 @@ class NewLogin {
     }
 
     public static show() {
+        NewLogin.refresh();
         $("#" + NewLogin.NAME).show();
     }
 

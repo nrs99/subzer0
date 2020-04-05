@@ -15,6 +15,10 @@
         localStorage.setItem("givenName", profile.getGivenName());
         localStorage.setItem("fullName", profile.getName());
         localStorage.setItem("myURL", profile.getImageUrl());
+        localStorage.setItem("state", "logged-in");
+        Navbar.show();
+        ElementList.refresh();
+        NewLogin.hide();
       }
     </script>
 
