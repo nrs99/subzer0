@@ -9,6 +9,6 @@
 	
 	<div class="g-signin2" data-onsuccess="onSignIn"></div>
 
-	<a href="#" onclick="signOut();">Sign out</a>
+	<a href="#" onclick="signOut;">Sign out</a>
 
 </div>
