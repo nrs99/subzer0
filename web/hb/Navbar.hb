@@ -19,7 +19,12 @@
                 <li>
                     <a class="btn btn-link" id="Navbar-add">
                         New Message
-                        <span class="glyphicon glyphicon-plus"></span><span class="sr-only">Show Trending Posts</span>
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </li>
+				<li>
+                    <a class="btn btn-link" id="Navbar-signOut">
+                        Sign Out
                     </a>
                 </li>
             </ul>

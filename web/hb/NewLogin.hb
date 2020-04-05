@@ -1,13 +1,14 @@
 <div id="NewLogin">
+
+	<!-- load the Google platform libray -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+
+    <!-- specifiy your app's client id -->
+    <meta name="google-signin-client_id" content="363085709256-27bcmvdo6sqga5b2nsk0ks1g4uh9nf52.apps.googleusercontent.com">
 	
-	<div class="container">
-		<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" id="NewLogin-signIn"></div>
-	</div>
-	<div class="container">
-			<button type="button" class="btn btn-default" id="NewLogin-signOut">Sign out
-				<span class="glyphicon glyphicon-send"></span>
-			</button>                       
-		</div>
-		
-	</div>
+	<div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+	<a href="#" onclick="signOut();">Sign out</a>
+
 </div>
