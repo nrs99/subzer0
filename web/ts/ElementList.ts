@@ -87,4 +87,12 @@ class ElementList {
         });
     }
 
+    public static hide() {
+        $("#" + ElementList.NAME).hide();
+    }
+
+    public static show() {
+        $("#" + ElementList.NAME).show();
+    }
+
 }

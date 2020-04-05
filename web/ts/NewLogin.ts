@@ -48,10 +48,8 @@ class NewLogin {
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
 
         // Don't show these things until logged in
-        ElementList.refresh();
-        Navbar.refresh();
-        NewEntryForm.refresh();
-        EditEntryForm.refresh();
+        ElementList.show();
+        Navbar.show();
     }
 
     public static signOut() {
@@ -59,5 +57,7 @@ class NewLogin {
         auth2.signOut().then(function () {
           console.log('User signed out.');
         });
+        ElementList.hide();
+        Navbar.hide();
       }
 }

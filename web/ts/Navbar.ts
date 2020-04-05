@@ -38,4 +38,12 @@ class Navbar {
     public static refresh() {
         Navbar.init();
     }
+
+    public static hide() {
+        $("#" + Navbar.NAME).hide();
+    }
+
+    public static show() {
+        $("#" + Navbar.NAME).show();
+    }
 }
