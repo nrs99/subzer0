@@ -6,6 +6,7 @@
 
 declare var gapi: any;
 declare var GoogleAuth: any; // Google Auth object.
+declare var googleUser: any;
 declare var Handlebars: any;
 declare var request: any;
 declare var profile: any;
@@ -22,6 +23,8 @@ class NewLogin {
      * Track if the Singleton has been initialized
      */
     private static isInit = false;
+
+    private static signedInID = "";
 
     /**
      * Initialize the NewEntryForm by creating its element in the DOM and 
@@ -40,26 +43,20 @@ class NewLogin {
         NewLogin.init();
     }
 
-    private static onSignIn(googleUser) {
-        var profile = googleUser.getBasicProfile();
-        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-
-        // Don't show these things until logged in
-        ElementList.show();
-        Navbar.show();
+    private static onSignIn() {
+        ElementList.show;
+        Navbar.show;
+        this.hide;
     }
 
     public static signOut() {
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
-          console.log('User signed out.');
+          console.log('User ' + localStorage.getItem("fullName") + ' signed out.');
         });
-        ElementList.hide();
-        Navbar.hide();
-        NewLogin.show();
+        ElementList.hide;
+        Navbar.hide;
+        this.show;
     }
 
     public static hide() {
@@ -68,5 +65,9 @@ class NewLogin {
 
     public static show() {
         $("#" + NewLogin.NAME).show();
+    }
+
+    public static getID() {
+        return this.signedInID;
     }
 }

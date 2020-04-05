@@ -72,13 +72,22 @@ class NewEntryForm {
             window.alert("Error: message longer than 250 characters");
         }
         NewEntryForm.hide();
+
+        $.ajax({
+            type: "POST",
+            url: "/user",
+            dataType: "json",
+            data: JSON.stringify({ userID: localStorage.getItem("ID"), displayName: localStorage.getItem("fullName"),
+            photoURL: localStorage.getItem("myURL")})
+
+        });
         // set up an AJAX post.  When the server replies, the result will go to
         // onSubmitResponse
         $.ajax({
             type: "POST",
             url: "/messages",
             dataType: "json",
-            data: JSON.stringify({ message: msg }),
+            data: JSON.stringify({ message: msg, userID: localStorage.getItem("ID") }),
             success: NewEntryForm.onSubmitResponse
         });
     }
