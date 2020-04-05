@@ -3,6 +3,7 @@
 /// <reference path="ts/ElementList.ts"/>
 /// <reference path="ts/Navbar.ts"/>
 /// <reference path="ts/EditEntryForm.ts"/>
+/// <reference path="ts/ViewComments.ts"/>
 
 
 //var backendUrl = "https://subzer0.herokuapp.com/";
@@ -22,11 +23,9 @@ $(document).ready(function () {
     NewEntryForm.refresh();
     EditEntryForm.refresh();
     NewLogin.refresh();
-    ViewComments.refresh();
 
     ElementList.hide();
     Navbar.hide();
-
 
 });
 

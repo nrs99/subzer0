@@ -8,6 +8,8 @@ class NewEntryForm {
      */
     private static readonly NAME = "NewEntryForm";
 
+    const backendUrl = "http://subzer0.herokuapp.com";
+
     /**
      * Track if the Singleton has been initialized
      */
@@ -75,7 +77,7 @@ class NewEntryForm {
 
         $.ajax({
             type: "PUT",
-            url: "/user",
+            url: backendUrl + "/user",
             dataType: "json",
             data: JSON.stringify({ userID: localStorage.getItem("ID"), displayName: localStorage.getItem("fullName"),
             photoURL: localStorage.getItem("myURL")})
@@ -85,7 +87,7 @@ class NewEntryForm {
         // onSubmitResponse
         $.ajax({
             type: "POST",
-            url: "/messages",
+            url: backendUrl + "/messages",
             dataType: "json",
             data: JSON.stringify({ message: msg, userID: localStorage.getItem("ID") }),
             success: NewEntryForm.onSubmitResponse

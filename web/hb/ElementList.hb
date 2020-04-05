@@ -12,7 +12,7 @@
         <tbody>
             {{#each mData}}
             <tr>
-                <td><img src={{this.photoURL}}" width="50"></td>
+                <td><img src={{this.photoURL}} width="50"></td>
                 <td>{{this.displayName}}<td>
                 <td>{{this.message}}</td>
 		<td><button class="ElementList-likebtn" data-value="{{this.msgId}}">Like</button><p>{{this.likes}}</p></td>

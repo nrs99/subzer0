@@ -2,7 +2,7 @@
  * The ElementList Singleton provides a way of displaying all of the data 
  * stored on the server as an HTML table.
  */
-const backendUrl = "https://subzer0.herokuapp.com/";
+const backendUrl = "http://subzer0.herokuapp.com";
 class ElementList {
     /**
      * The name of the DOM entry associated with ElementList
@@ -40,7 +40,7 @@ class ElementList {
         // Find all of the Dislike buttons, and set their behavior
         $("." + ElementList.NAME + "-dislikebtn").click(ElementList.clickDislike);
         // Find all of the Dislike buttons, and set their behavior
-        $("." + ElementList.NAME + "-commentbtn").click(ViewComments.show);
+        $("." + ElementList.NAME + "-commentbtn").click(ViewComments.show($(this).data("value")));
         // Refresh ElementList after the sort is updated
         $("#" + ElementList.NAME + "-sort").change(ElementList.refresh);
     }
