@@ -17,6 +17,7 @@
         localStorage.setItem("myURL", profile.getImageUrl());
         localStorage.setItem("state", "logged-in");
         Navbar.show();
+        Navbar.refresh();
         ElementList.refresh();
         NewLogin.hide();
       }

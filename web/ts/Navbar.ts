@@ -37,6 +37,7 @@ class Navbar {
      */
     public static refresh() {
         Navbar.init();
+        $("#"+ Navbar.NAME+ "-myProfile").text(localStorage.getItem("givenName"));
     }
 
     public static hide() {
