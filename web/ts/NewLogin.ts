@@ -46,6 +46,12 @@ class NewLogin {
         console.log('Name: ' + profile.getName());
         console.log('Image URL: ' + profile.getImageUrl());
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+        // Don't show these things until logged in
+        ElementList.refresh();
+        Navbar.refresh();
+        NewEntryForm.refresh();
+        EditEntryForm.refresh();
     }
 
     public static signOut() {
