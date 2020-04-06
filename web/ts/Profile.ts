@@ -20,7 +20,7 @@ class Profile {
         Profile.init();
         $.ajax({
             type: "GET",
-            url: backendUrl + "/messages/user/" + this.profiledID,
+            url: backendUrl + "/messages/user/" + Profile.getID(),
             dataType: "json",
             success: Profile.update
         });  
@@ -79,11 +79,16 @@ class Profile {
 
     private static goBack() {
         Profile.hide();
+        ElementList.refresh();
         ElementList.show();
     }
 
     public static setID(newID) {
-        this.init();
-        this.profiledID = newID;
+        Profile.init();
+        Profile.profiledID = newID;
+    }
+
+    private static getID(){
+        return Profile.profiledID;
     }
 }
