@@ -112,6 +112,7 @@ class ElementList {
         ViewComments.setMsgId(msgId);
         NewCommentForm.setID(msgId);
         ViewComments.refresh();
+        ViewComments.show();
         ElementList.hide();
     }
 

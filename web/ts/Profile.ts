@@ -37,6 +37,7 @@ class Profile {
         $("." + Profile.NAME + "-dislikebtn").click(Profile.clickDislike);
         // Set go back behavior
         $("." + Profile.NAME + "-goBack").click(Profile.goBack);
+        $("." + Profile.NAME + "-commentbtn").click(Profile.goToComments);
         
     }
 
@@ -90,5 +91,14 @@ class Profile {
 
     private static getID(){
         return Profile.profiledID;
+    }
+
+    private static goToComments() {
+        let msgId = $(this).data("value");
+        ViewComments.setMsgId(msgId);
+        NewCommentForm.setID(msgId);
+        ViewComments.refresh();
+        ViewComments.show();
+        Profile.hide();
     }
 }
