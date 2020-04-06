@@ -20,7 +20,6 @@
         Navbar.refresh();
         ElementList.refresh();
         NewLogin.hide();
-        Profile.refresh();
       }
     </script>
 

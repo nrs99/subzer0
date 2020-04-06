@@ -1,6 +1,7 @@
 <div class="panel panel-default" id="Profile">
     <div class="panel-heading">
         <h3 class="panel-title">Profile for User</h3>
+        <button class="Profile-goBack">Go Back</button>
     </div>
     <table class="table">
         <tbody>

@@ -24,6 +24,7 @@ class Navbar {
         if (!Navbar.isInit) {
             $("body").prepend(Handlebars.templates[Navbar.NAME + ".hb"]());
             $("#"+ Navbar.NAME+ "-add").click(NewEntryForm.show);
+            $("#"+ Navbar.NAME+ "-myProfile").click(Navbar.goToProfile);
             $("#"+ Navbar.NAME+ "-signOut").click(NewLogin.signOut);
             Navbar.isInit = true;
         }
@@ -46,5 +47,10 @@ class Navbar {
 
     public static show() {
         $(".navbar").show();
+    }
+
+    private static goToProfile() {
+        ElementList.hide();
+        Profile.show();
     }
 }

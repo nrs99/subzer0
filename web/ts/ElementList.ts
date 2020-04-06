@@ -42,6 +42,8 @@ class ElementList {
         // Find all of the comment buttons, and set their behavior
         // $("." + ElementList.NAME + "-commentbtn").click(ViewComments.show($(this).data("value")));
         // Refresh ElementList after the sort is updated
+        $("." + ElementList.NAME + "-photo").click(ElementList.goToProfile);
+        $("." + ElementList.NAME + "-displayName").click(ElementList.goToProfile);
         $("#" + ElementList.NAME + "-sort").change(ElementList.refresh);
     }
 
@@ -97,6 +99,11 @@ class ElementList {
 
     public static show() {
         $("#" + ElementList.NAME).show();
+    }
+
+    private static goToProfile() {
+        Profile.refresh();
+        ElementList.hide();
     }
 
 }

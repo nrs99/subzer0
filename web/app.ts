@@ -27,7 +27,6 @@ $(document).ready(function () {
     if(localStorage.getItem("state") === "logged-in") {
         NewLogin.hide();
         ElementList.refresh();
-        Profile.refresh();
     } else {
         Navbar.hide();
     }

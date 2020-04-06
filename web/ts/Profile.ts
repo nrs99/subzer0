@@ -15,7 +15,7 @@ class Profile {
     }
 
     public static refresh() {
-        let id = 117017900165252299426; // PLACEHOLDER
+        let id = "117017900165252299426"; // PLACEHOLDER
         Profile.init();
         $.ajax({
             type: "GET",
@@ -34,6 +34,8 @@ class Profile {
         $("." + Profile.NAME + "-likebtn").click(Profile.clickLike);
         // Find all of the Dislike buttons, and set their behavior
         $("." + Profile.NAME + "-dislikebtn").click(Profile.clickDislike);
+        // Set go back behavior
+        $("." + Profile.NAME + "-goBack").click(Profile.goBack);
         
     }
 
@@ -64,5 +66,18 @@ class Profile {
             data: JSON.stringify({ msgID : id }),
             success: Profile.refresh
         });
+    }
+
+    public static hide() {
+        $("#" + Profile.NAME).hide();
+    }
+
+    public static show() {
+        $("#" + Profile.NAME).show();
+    }
+
+    private static goBack() {
+        Profile.hide();
+        ElementList.show();
     }
 }
