@@ -39,6 +39,7 @@ class Navbar {
     public static refresh() {
         Navbar.init();
         $("#"+ Navbar.NAME+ "-myProfile").text(localStorage.getItem("givenName"));
+        $("#"+ Navbar.NAME+ "-myProfile").val(localStorage.getItem("ID"));
     }
 
     public static hide() {
@@ -51,6 +52,7 @@ class Navbar {
 
     private static goToProfile() {
         ElementList.hide();
-        Profile.show();
+        Profile.setID(localStorage.getItem("ID"));
+        Profile.refresh();
     }
 }

@@ -2,6 +2,8 @@ class Profile {
 
     private static readonly NAME = "Profile";
 
+    private static profiledID = "117017900165252299426";
+
     /**
      * Track if the Singleton has been initialized
      * 
@@ -15,11 +17,10 @@ class Profile {
     }
 
     public static refresh() {
-        let id = "117017900165252299426"; // PLACEHOLDER
         Profile.init();
         $.ajax({
             type: "GET",
-            url: backendUrl + "/messages/user/" + id,
+            url: backendUrl + "/messages/user/" + this.profiledID,
             dataType: "json",
             success: Profile.update
         });  
@@ -79,5 +80,10 @@ class Profile {
     private static goBack() {
         Profile.hide();
         ElementList.show();
+    }
+
+    public static setID(newID) {
+        this.init();
+        this.profiledID = newID;
     }
 }

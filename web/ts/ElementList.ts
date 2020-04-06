@@ -102,6 +102,8 @@ class ElementList {
     }
 
     private static goToProfile() {
+        let profiledID = $(this).data("value");
+        Profile.setID(profiledID);
         Profile.refresh();
         ElementList.hide();
     }
