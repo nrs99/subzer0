@@ -9,9 +9,13 @@
             {{#each mData}}
             <tr>
                 <td><img class="ViewComments-photo" data-value="{{this.userId}}" src={{this.photoURL}} width="50"></td>
-                <td><p class="ViewComments-displayName" data-value="{{this.userId}}">{{this.displayName}}</p></td>
+                <td>
+                    <p class="ViewComments-displayName" data-value="{{this.userId}}">{{this.displayName}}</p>
+                </td>
                 <td>{{breaklines this.comment}}</td>
+                {{#ifEquals this.userId}}
                 <td><button class="ViewComments-editbtn" data-value="{{this.commentId}}">Edit</button></td>
+                {{/ifEquals}}
             </tr>
             {{/each}}
         </tbody>
