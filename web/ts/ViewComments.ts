@@ -50,6 +50,8 @@ class ViewComments {
         $("." + ViewComments.NAME + "-goBack").click(ViewComments.goBack);
         $("." + ViewComments.NAME + "-newComment").click(NewCommentForm.show);
         $("." + ViewComments.NAME + "-editbtn").click(ViewComments.editComment);
+        $("." + ViewComments.NAME + "-photo").click(ViewComments.goToProfile);
+        $("." + ViewComments.NAME + "-displayName").click(ViewComments.goToProfile);
     }
 
     public static setMsgId(newId) {
@@ -66,6 +68,14 @@ class ViewComments {
         let cid = $(this).data("value");
         EditEntryForm.setID(cid);
         EditEntryForm.show();
+    }
+
+    private static goToProfile() {
+        let profiledID = $(this).data("value");
+        Profile.setID(profiledID);
+        Profile.refresh();
+        Profile.show();
+        ViewComments.hide();
     }
 
 

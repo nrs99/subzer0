@@ -97,6 +97,8 @@ class NewEntryForm {
         // listing of messages
         if (data.mStatus === "ok") {
             ElementList.refresh();
+            ViewComments.hide();
+            Profile.hide();
         }
         // Handle explicit errors with a detailed popup message
         else if (data.mStatus === "error") {
