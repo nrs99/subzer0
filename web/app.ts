@@ -4,6 +4,7 @@
 /// <reference path="ts/Navbar.ts"/>
 /// <reference path="ts/EditEntryForm.ts"/>
 /// <reference path="ts/ViewComments.ts"/>
+/// <reference path="ts/Profile.ts"/>
 
 
 //var backendUrl = "https://subzer0.herokuapp.com/";
@@ -26,6 +27,7 @@ $(document).ready(function () {
     if(localStorage.getItem("state") === "logged-in") {
         NewLogin.hide();
         ElementList.refresh();
+        Profile.refresh();
     } else {
         Navbar.hide();
     }
