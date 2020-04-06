@@ -111,7 +111,7 @@ class EditEntryForm {
         }
         // Handle explicit errors with a detailed popup message
         else if (data.mStatus === "error") {
-            window.alert("The server replied with an error:\n" + data.mMessage);
+            window.alert("You can only edit your own comment");
         }
         // Handle other errors with a less-detailed popup message
         else {
