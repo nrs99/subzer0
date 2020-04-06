@@ -39,9 +39,10 @@ class ElementList {
         $("." + ElementList.NAME + "-likebtn").click(ElementList.clickLike);
         // Find all of the Dislike buttons, and set their behavior
         $("." + ElementList.NAME + "-dislikebtn").click(ElementList.clickDislike);
-        // Refresh ElementList after the sort is updated
+        $("." + ElementList.NAME + "-commentbtn").click(ElementList.goToComments);
         $("." + ElementList.NAME + "-photo").click(ElementList.goToProfile);
         $("." + ElementList.NAME + "-displayName").click(ElementList.goToProfile);
+        // Refresh ElementList after the sort is updated
         $("#" + ElementList.NAME + "-sort").change(ElementList.refresh);
     }
 
@@ -53,13 +54,13 @@ class ElementList {
         ElementList.init();
         // Issue a GET, and then pass the result to update()
         let sort = "" + $("#" + ElementList.NAME + "-sort").val();
-        if(sort == "undefined") sort = "";
+        if (sort == "undefined") sort = "";
         $.ajax({
             type: "GET",
             url: backendUrl + "/messages" + sort,
             dataType: "json",
             success: ElementList.update
-        });    
+        });
     }
 
     /**
@@ -68,17 +69,17 @@ class ElementList {
     private static clickLike() {
         let id = $(this).data("value");
         let userID = localStorage.getItem("ID");
-	    $.ajax({
-		    type: "PUT",
-    		url: backendUrl + "/messages/" + id + "/like/" + userID,
+        $.ajax({
+            type: "PUT",
+            url: backendUrl + "/messages/" + id + "/like/" + userID,
             dataType: "json",
-            data: JSON.stringify({ msgID : id }),
-		    success: ElementList.refresh
-    	});
+            data: JSON.stringify({ msgID: id }),
+            success: ElementList.refresh
+        });
     }
     /** 
      * clickDislike is the code we run in response to a click of a like button
-     */ 
+     */
     private static clickDislike() {
         let id = $(this).data("value");
         let userID = localStorage.getItem("ID");
@@ -86,7 +87,7 @@ class ElementList {
             type: "PUT",
             url: backendUrl + "/messages/" + id + "/dislike/" + userID,
             dataType: "json",
-            data: JSON.stringify({ msgID : id }),
+            data: JSON.stringify({ msgID: id }),
             success: ElementList.refresh
         });
     }
@@ -103,6 +104,13 @@ class ElementList {
         let profiledID = $(this).data("value");
         Profile.setID(profiledID);
         Profile.refresh();
+        ElementList.hide();
+    }
+
+    private static goToComments() {
+        let msgId = $(this).data("value");
+        ViewComments.setMsgId(msgId);
+        ViewComments.refresh();
         ElementList.hide();
     }
 

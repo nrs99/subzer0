@@ -30,7 +30,6 @@
         Navbar.show();
         Navbar.refresh();
         ElementList.refresh();
-        ViewComments.refresh();
         NewLogin.hide();
       }
     </script>
