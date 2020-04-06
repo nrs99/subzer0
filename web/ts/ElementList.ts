@@ -110,6 +110,7 @@ class ElementList {
     private static goToComments() {
         let msgId = $(this).data("value");
         ViewComments.setMsgId(msgId);
+        NewCommentForm.setID(msgId);
         ViewComments.refresh();
         ElementList.hide();
     }

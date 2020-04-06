@@ -1,6 +1,7 @@
 <div class="panel panel-default" id="ViewComments">
     <div class="panel-heading">
         <h3 class="panel-title">Comments</h3>
+        <button class="ViewComments-newComment">New Comment</button>
         <button class="ViewComments-goBack">Go Back</button>
     </div>
     <table class="table">

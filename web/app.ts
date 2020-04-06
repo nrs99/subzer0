@@ -22,6 +22,7 @@ $(document).ready(function () {
 
     Navbar.refresh();
     NewEntryForm.refresh();
+    NewCommentForm.refresh();
     EditEntryForm.refresh();
     NewLogin.refresh();
 

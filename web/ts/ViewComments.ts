@@ -5,7 +5,7 @@ class ViewComments {
      */
     private static readonly NAME = "ViewComments";
 
-    private static msgid = "2";
+    private static msgid = 2;
 
     /**
      * Track if the Singleton has been initialized
@@ -48,10 +48,11 @@ class ViewComments {
         $("body").append(Handlebars.templates[ViewComments.NAME + ".hb"](data));
          // Set go back behavior
          $("." + ViewComments.NAME + "-goBack").click(ViewComments.goBack);
+         $("."+ ViewComments.NAME + "-newComment").click(NewCommentForm.show);
     }
 
     public static setMsgId(newId) {
-        this.msgid = newId;
+        ViewComments.msgid = newId;
     }
 
     private static goBack() {
