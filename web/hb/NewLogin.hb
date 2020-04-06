@@ -16,6 +16,17 @@
         localStorage.setItem("fullName", profile.getName());
         localStorage.setItem("myURL", profile.getImageUrl());
         localStorage.setItem("state", "logged-in");
+
+
+        $.ajax({
+            type: "PUT",
+            url: backendUrl + "/user",
+            dataType: "json",
+            data: JSON.stringify({ userID: localStorage.getItem("ID"), displayName: localStorage.getItem("fullName"),
+            photoURL: localStorage.getItem("myURL")})
+
+        });
+
         Navbar.show();
         Navbar.refresh();
         ElementList.refresh();

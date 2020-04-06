@@ -75,14 +75,6 @@ class NewEntryForm {
         }
         NewEntryForm.hide();
 
-        $.ajax({
-            type: "PUT",
-            url: backendUrl + "/user",
-            dataType: "json",
-            data: JSON.stringify({ userID: localStorage.getItem("ID"), displayName: localStorage.getItem("fullName"),
-            photoURL: localStorage.getItem("myURL")})
-
-        });
         // set up an AJAX post.  When the server replies, the result will go to
         // onSubmitResponse
         $.ajax({

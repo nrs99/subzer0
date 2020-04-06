@@ -52,6 +52,7 @@ class NewLogin {
         localStorage.setItem("state", "logged-out");
         ElementList.hide();
         Navbar.hide();
+        profile.hide();
         NewLogin.show();
     }
 
