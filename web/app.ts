@@ -5,6 +5,7 @@
 /// <reference path="ts/EditEntryForm.ts"/>
 /// <reference path="ts/ViewComments.ts"/>
 /// <reference path="ts/Profile.ts"/>
+/// <reference path="ts/NewCommentForm.ts"/>
 
 
 //var backendUrl = "https://subzer0.herokuapp.com/";
