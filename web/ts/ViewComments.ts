@@ -46,9 +46,10 @@ class ViewComments {
         $("#" + ViewComments.NAME).remove();
         // Use a template to re-generate the table, and then insert it
         $("body").append(Handlebars.templates[ViewComments.NAME + ".hb"](data));
-         // Set go back behavior
-         $("." + ViewComments.NAME + "-goBack").click(ViewComments.goBack);
-         $("."+ ViewComments.NAME + "-newComment").click(NewCommentForm.show);
+        // Set go back behavior
+        $("." + ViewComments.NAME + "-goBack").click(ViewComments.goBack);
+        $("." + ViewComments.NAME + "-newComment").click(NewCommentForm.show);
+        $("." + ViewComments.NAME + "-editbtn").click(ViewComments.editComment);
     }
 
     public static setMsgId(newId) {
@@ -59,6 +60,12 @@ class ViewComments {
         ViewComments.hide();
         ElementList.refresh();
         ElementList.show();
+    }
+
+    private static editComment() {
+        let cid = $(this).data("value");
+        EditEntryForm.setID(cid);
+        EditEntryForm.show();
     }
 
 
