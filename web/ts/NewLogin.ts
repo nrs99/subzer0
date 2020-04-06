@@ -53,6 +53,7 @@ class NewLogin {
         ElementList.hide();
         Navbar.hide();
         Profile.hide();
+        ViewComments.hide();
         NewLogin.show();
     }
 

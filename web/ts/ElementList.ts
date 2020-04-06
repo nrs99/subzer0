@@ -39,8 +39,6 @@ class ElementList {
         $("." + ElementList.NAME + "-likebtn").click(ElementList.clickLike);
         // Find all of the Dislike buttons, and set their behavior
         $("." + ElementList.NAME + "-dislikebtn").click(ElementList.clickDislike);
-        // Find all of the comment buttons, and set their behavior
-        // $("." + ElementList.NAME + "-commentbtn").click(ViewComments.show($(this).data("value")));
         // Refresh ElementList after the sort is updated
         $("." + ElementList.NAME + "-photo").click(ElementList.goToProfile);
         $("." + ElementList.NAME + "-displayName").click(ElementList.goToProfile);
