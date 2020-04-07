@@ -7,6 +7,10 @@
             <div class="modal-body">
                 <label for="NewEntryForm-message">Message</label>
                 <textarea class="form-control" id="NewEntryForm-message"></textarea>
+                <label for="NewEntryForm-link">Add a link (optional)</label>
+                <textarea class="form-control" id="NewEntryForm-link" rows="1"></textarea>
+                <label for="NewEntryForm-file">Add a file (optional)</label>
+                <input type="file" id="avatar" name="avatar" accept="image/*, .pdf">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" id="NewEntryForm-OK">OK</button>
