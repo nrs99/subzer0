@@ -186,10 +186,11 @@ public class App {
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
-                if (req.link != null) {
+                if (!req.link.equals(null)) {
                     db.insertLink(newId, req.link);
                 }
-                if (req.photoURL != null) {
+                if (!req.photoURL.equals(null)) {
+
 
                 }
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
