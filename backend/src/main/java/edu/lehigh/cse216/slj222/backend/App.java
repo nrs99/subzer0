@@ -42,6 +42,7 @@ public class App {
     private static final String APPLICATION_NAME = "Google Drive API Java Quickstart";
     private static final com.google.api.client.json.JsonFactory JSON_FACTORY = new JacksonFactory();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
+    private static String CREDENTIALS_CONTENT;
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -49,7 +50,7 @@ public class App {
      */
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
     // private static final String CREDENTIALS_FILE_PATH = "src/main/java/edu/lehigh/cse216/slj222/backend/credentials.json";
-    private static final String CREDENTIALS_FILE_PATH = "credentials.json";
+    private static final String CREDENTIALS_FILE_PATH = "./credentials.json";
 
     
     public static void main(String[] args) throws IOException, GeneralSecurityException {//easy fix. probably not good long term.
@@ -59,7 +60,7 @@ public class App {
   
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
-        // service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT)).setApplicationName(APPLICATION_NAME).build();	 	// Build a new authorized API client service
+        service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT)).setApplicationName(APPLICATION_NAME).build();	 	// Build a new authorized API client service
 
 
 
@@ -68,9 +69,11 @@ public class App {
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
  
-        String db_url = env.get("DATABASE_URL");
+        String db_url = env.get("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
  
         Hashtable <UUID, String> ht = new Hashtable<>();
+
+        System.out.println("db_url value: "+db_url);
  
         // Get a fully-configured connection to the database, or exit
         // immediately
@@ -252,7 +255,7 @@ public class App {
             response.status(200);
             response.type("application/json");
             // NB: createEntry checks for null title and message
-            int newId = db.insertComment(req.msgId, req.comment, req.userId);
+            int newId = db.insertComment(req.msgId, req.comment, req.userId);//would i do something here?
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
@@ -415,8 +418,8 @@ public class App {
     */
 
    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-        java.io.InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);//getting null here
 
+        java.io.InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);//getting null here
        // Load client secrets
        if (in == null) {
            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
