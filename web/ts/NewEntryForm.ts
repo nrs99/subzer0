@@ -43,6 +43,8 @@ class NewEntryForm {
      */
     private static hide() {
         $("#" + NewEntryForm.NAME + "-message").val("");
+        $("#" + NewEntryForm.NAME + "-link").val("");
+        $("#" + NewEntryForm.NAME + "-file").val("");
         $("#" + NewEntryForm.NAME).modal("hide");
     }
 
