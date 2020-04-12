@@ -357,12 +357,9 @@ public class App {
         return defaultVal;
     }
 
-    private static String uploadImage(String file_url,Drive service) throws IOException{
+    private static String uploadImage(String encodedString, Drive service, int msgid) throws IOException{
+        byte[] bytes = Base64.getDecoder().decode(encodedString.getBytes(StandardCharsets.UTF_8));
         String name = file_url;
-        int idx = file_url.lastIndexOf('/');
-        if(idx !=-1){
-            name = file_url.substring(idx);
-        }
         File fileMetadata = new File();
         fileMetadata.setName(name);
         java.io.File filePath = new java.io.File(file_url);
