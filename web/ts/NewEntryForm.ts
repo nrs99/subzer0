@@ -67,11 +67,18 @@ class NewEntryForm {
         // get the values of the two fields, force them to be strings, and check 
         // that neither is empty
         let msg = "" + $("#" + NewEntryForm.NAME + "-message").val();
+        let url = "" + $("#" + NewEntryForm.NAME + "-link").val();
+
+        if (url === "") {
+            url = null;
+        }
+
         if (msg === "") {
             window.alert("Error: message is empty");
             return;
         } else if (msg.length > 250) {
             window.alert("Error: message longer than 250 characters");
+            return;
         }
         NewEntryForm.hide();
 
@@ -81,7 +88,7 @@ class NewEntryForm {
             type: "POST",
             url: backendUrl + "/messages",
             dataType: "json",
-            data: JSON.stringify({ message: msg, userID: localStorage.getItem("ID") }),
+            data: JSON.stringify({ message: msg, userID: localStorage.getItem("ID"), link: url }),
             success: NewEntryForm.onSubmitResponse
         });
     }
