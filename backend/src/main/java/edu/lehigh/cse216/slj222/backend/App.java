@@ -44,7 +44,6 @@ public class App {
     private static final String APPLICATION_NAME = "Subzer0";
     private static final com.google.api.client.json.JsonFactory JSON_FACTORY = new JacksonFactory();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
-    private static String CREDENTIALS_CONTENT;
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -256,13 +255,16 @@ public class App {
             // describes the error.
             response.status(200);
             response.type("application/json");
+            
             // NB: createEntry checks for null title and message
             int newId = db.insertComment(req.msgId, req.comment, req.userId);//would i do something here?
+
+    
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
-            }
+                }
         });
  
         Spark.put("/comments/edit", (request, response) -> {
