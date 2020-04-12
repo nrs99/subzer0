@@ -71,6 +71,11 @@ class NewEntryForm {
 
         if (url === "") {
             url = null;
+        } else {
+            if (!NewEntryForm.validURL(url)) {
+                window.alert("Error: Invalid URL")
+                return;
+            }
         }
 
         if (msg === "") {
@@ -116,4 +121,18 @@ class NewEntryForm {
             window.alert("Unspecified error");
         }
     }
+
+    /**
+     * Regex found on StackOverflow to say whether a given URL is valid
+     * @param str The string that will be tested
+     */
+    private static validURL(str) {
+        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+          '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+          '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+          '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+          '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+          '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return !!pattern.test(str);
+      }
 }
