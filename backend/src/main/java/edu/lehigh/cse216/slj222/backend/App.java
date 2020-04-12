@@ -24,12 +24,14 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
+import com.google.common.io.Files;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.*;
  
@@ -69,7 +71,7 @@ public class App {
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
  
-        String db_url = env.get("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
+        String db_url = env.get("DATABASE_URL");
  
         Hashtable <UUID, String> ht = new Hashtable<>();
 
@@ -191,13 +193,13 @@ public class App {
             } else {
                 if (req.link != null) {
                     db.insertLink(newId, req.link);
-                }else{
-                    System.out.println(req.link);
                 }
                 if (req.photoURL != null) {
 
-
+                    String fileID = uploadImage(req.photoURL, service, newId);
+                    db.insertDocument(newId, fileID);
                 }
+    
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
             }
         });
@@ -357,15 +359,15 @@ public class App {
         return defaultVal;
     }
 
-    private static String uploadImage(String encodedString, Drive service, int msgid) throws IOException{
-        byte[] bytes = Base64.getDecoder().decode(encodedString.getBytes(StandardCharsets.UTF_8));
-        String name = file_url;
+    private static String uploadImage(String encodedString,Drive service, int msgid) throws IOException{
+        
+        byte[] decodedImg = Base64.getDecoder().decode(encodedString.getBytes(StandardCharsets.UTF_8));
+        java.io.File thisFile = new java.io.File("image");
+        Files.write(decodedImg, thisFile);
         File fileMetadata = new File();
-        fileMetadata.setName(name);
-        java.io.File filePath = new java.io.File(file_url);
-        FileContent mediaContent = new FileContent("image/jpeg", filePath);
+        fileMetadata.setName(msgid + "");
+        FileContent mediaContent = new FileContent("image/jpeg", thisFile);
         File file = service.files().create(fileMetadata, mediaContent).setFields("id").execute();
-        System.out.println("File ID: "+file.getId());
     return file.getId();
 
     }
@@ -415,7 +417,18 @@ public class App {
     */
 
    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-
+    // InputStream is = new FileInputStream("/credentials.json");
+    // BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+            
+    // String line = buf.readLine();
+    // StringBuilder sb = new StringBuilder();
+            
+    // while(line != null){
+    //    sb.append(line).append("\n");
+    //    line = buf.readLine();
+    // }
+    //     CREDENTIALS_CONTENT = sb.toString();
+    // System.out.println("Contents : " + CREDENTIALS_CONTENT);
         java.io.InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);//getting null here
        // Load client secrets
        if (in == null) {
