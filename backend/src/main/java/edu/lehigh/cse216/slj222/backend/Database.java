@@ -126,9 +126,9 @@ public class Database {
             // Standard CRUD operations
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
-            db.mSelectOne = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users where msgid = ?");
-            db.mSelectAllNewest = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users ORDER BY datecreated DESC");
-            db.mSelectAllOldest = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users ORDER BY datecreated ASC");
+            db.mSelectOne = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid where msgid = ?");
+            db.mSelectAllNewest = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid ORDER BY datecreated DESC");
+            db.mSelectAllOldest = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid ORDER BY datecreated ASC");
             db.mSelectAllPopular = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users ORDER BY (likes - dislikes) DESC");
             db.mInsertVote = db.mConnection.prepareStatement("INSERT INTO likes VALUES(?, ?, ?)");
             db.mRemoveVote = db.mConnection.prepareStatement("DELETE FROM likes where mid = ? and userid = ?");
@@ -137,7 +137,7 @@ public class Database {
                     Statement.RETURN_GENERATED_KEYS);
             db.mEditComment = db.mConnection.prepareStatement("UPDATE comments SET comment = ? WHERE commentid = ?");
             db.mGetComments = db.mConnection.prepareStatement("SELECT * from comments natural join users WHERE mid=? ORDER BY datecreated ASC");
-            db.mMessagesByUser = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users WHERE userid = ? ORDER BY datecreated DESC");
+            db.mMessagesByUser = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid WHERE userid = ? ORDER BY datecreated DESC");
             db.mUserLikes = db.mConnection.prepareStatement("SELECT mid, likes from likes where userid =?");
             db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
             db.mUserExists = db.mConnection.prepareStatement("SELECT * FROM users where userID = ?");
@@ -252,7 +252,7 @@ public class Database {
             ResultSet rs = mSelectAllNewest.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"), rs.getString("link")));
             }
             rs.close();
             return res;
@@ -273,7 +273,7 @@ public class Database {
             ResultSet rs = mSelectAllOldest.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"), rs.getString("link")));
             }
             rs.close();
             return res;
@@ -294,7 +294,7 @@ public class Database {
             ResultSet rs = mSelectAllPopular.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"), rs.getString("link")));
             }
             rs.close();
             return res;
@@ -318,7 +318,7 @@ public class Database {
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
                 res = new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"), rs.getString("link"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -442,7 +442,7 @@ public class Database {
             ResultSet rs = mMessagesByUser.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"), rs.getString("link")));
             }
             rs.close();
             return res;

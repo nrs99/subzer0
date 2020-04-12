@@ -36,10 +36,12 @@ public class Message {
         String displayName;
 
         String photoURL;
+
+        String link;
         /**
          * Construct a Message object by providing values for its fields
          */
-        public Message(int msgId, String message, String userId, Timestamp dateCreated, int likes, int dislikes, int comments, String displayName, String photoURL) {
+        public Message(int msgId, String message, String userId, Timestamp dateCreated, int likes, int dislikes, int comments, String displayName, String photoURL, String link) {
             this.msgId = msgId;
             this.message = message;
             this.userId = userId;
@@ -49,6 +51,7 @@ public class Message {
             this.comments = comments;
             this.displayName = displayName;
             this.photoURL = photoURL;
+            this.link = link;
         }
  
         /**
