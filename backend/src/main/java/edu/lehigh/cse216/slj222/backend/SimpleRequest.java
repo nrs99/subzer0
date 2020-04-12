@@ -17,6 +17,7 @@ public class SimpleRequest {
      */
     public String userID;
     
+    public String link;
 
     public String photoURL;
 }

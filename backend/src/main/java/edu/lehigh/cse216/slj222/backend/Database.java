@@ -67,6 +67,10 @@ public class Database {
     private PreparedStatement mUserExists;
 
     private PreparedStatement mCommentAuthor;
+
+    private PreparedStatement mInsertDocument;
+
+    private PreparedStatement mInsertLink;
  
     /**
      * The Database constructor is private: we only create Database objects through
@@ -120,7 +124,7 @@ public class Database {
         try {
  
             // Standard CRUD operations
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?,?,?)",
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             db.mSelectOne = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users where msgid = ?");
             db.mSelectAllNewest = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users ORDER BY datecreated DESC");
@@ -138,6 +142,8 @@ public class Database {
             db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
             db.mUserExists = db.mConnection.prepareStatement("SELECT * FROM users where userID = ?");
             db.mCommentAuthor = db.mConnection.prepareStatement("SELECT userid FROM comments WHERE commentid=?");
+            db.mInsertDocument =  db.mConnection.prepareStatement("INSERT INTO documents VALUES (?,?)");
+            db.mInsertLink = db.mConnection.prepareStatement("INSERT INTO links VALUES (?, ?)");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -190,7 +196,6 @@ public class Database {
             mInsertOne.setString(1, userId);
             mInsertOne.setTimestamp(2, new Timestamp(System.currentTimeMillis())); // Gets current time of system
             mInsertOne.setString(3, message);
-            mInsertOne.setString(4,null);
             mInsertOne.executeUpdate();
             ResultSet rs = mInsertOne.getGeneratedKeys();
             if (rs.next()) {
@@ -210,18 +215,26 @@ public class Database {
      *
      * @return The number of rows that were inserted
      */
-    int insertRow(String message, String userId,String file_id) {
+    int insertDocument(int msgid, String file_id) {
         int count = 0;
         try {
-            mInsertOne.setString(1, userId);
-            mInsertOne.setTimestamp(2, new Timestamp(System.currentTimeMillis())); // Gets current time of system
-            mInsertOne.setString(3, message);
-            mInsertOne.setString(4,file_id);
-            mInsertOne.executeUpdate();
-            ResultSet rs = mInsertOne.getGeneratedKeys();
-            if (rs.next()) {
-                count += rs.getInt(1);
-            }
+            mInsertDocument.setInt(1, msgid);
+            mInsertDocument.setString(2, file_id);
+            mInsertDocument.executeUpdate();
+            count = 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    int insertLink(int msgid, String url) {
+        int count = 0;
+        try {
+            mInsertLink.setInt(1, msgid);
+            mInsertLink.setString(2, url);
+            mInsertLink.executeUpdate();
+            count = 1;
         } catch (SQLException e) {
             e.printStackTrace();
         }

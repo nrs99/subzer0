@@ -7,9 +7,6 @@ import spark.Spark;
 // Import Google's JSON library
 import com.google.gson.*;
 
-import org.omg.CORBA.portable.InputStream;
-
-import com.fasterxml.jackson.core.JsonFactory;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -54,34 +51,7 @@ public class App {
     // private static final String CREDENTIALS_FILE_PATH = "src/main/java/edu/lehigh/cse216/slj222/backend/credentials.json";
     private static final String CREDENTIALS_FILE_PATH = "credentials.json";
 
-    /**
-     * Creates an authorized Credential object.
-     * @param HTTP_TRANSPORT The network HTTP Transport.
-     * @return An authorized Credential object.
-     * @throws IOException If the credentials.json file cannot be found.
-     */
-    // final DataStore dataStore = new DataStore();
-
-    // private final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
-
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-         java.io.InputStream in = App.class.getClass().getResourceAsStream(CREDENTIALS_FILE_PATH);//getting null here
-
-        // Load client secrets
-        if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-        }
-            GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-            
-        // Build flow and trigger user authorization request
-         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-            HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-            .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-           .setAccessType("offline").build();
-           
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-            return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
-        }
+    
     public static void main(String[] args) throws IOException, GeneralSecurityException {//easy fix. probably not good long term.
 
         Drive service;
@@ -211,23 +181,17 @@ public class App {
             // describes the error.
             response.status(200);
             response.type("application/json");
-            String result = "";
-            if(req.photoURL != null){//upload to google drive
-
-                //call upload function here.
-
-                    result  = uploadImage(req.photoURL,service);
-
-                    
-                
-                
-
-            }
             // NB: createEntry checks for null title and message
-            int newId = db.insertRow(req.message, req.userID,result);//
+            int newId = db.insertRow(req.message, req.userID);
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
+                if (req.link != null) {
+                    db.insertLink(newId, req.link);
+                }
+                if (req.photoURL != null) {
+
+                }
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
             }
         });
@@ -440,5 +404,30 @@ public class App {
             response.header("Access-Control-Allow-Headers", headers);
         });
     }
+
+   // * Creates an authorized Credential object.
+    /* @param HTTP_TRANSPORT The network HTTP Transport.
+    /* @return An authorized Credential object.
+    /* @throws IOException If the credentials.json file cannot be found.
+    */
+
+   private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+        java.io.InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);//getting null here
+
+       // Load client secrets
+       if (in == null) {
+           throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+       }
+           GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+           
+       // Build flow and trigger user authorization request
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+           HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+           .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+          .setAccessType("offline").build();
+          
+       LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+           return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+       }
  
 }
