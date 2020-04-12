@@ -52,7 +52,7 @@ public class App {
      */
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
     // private static final String CREDENTIALS_FILE_PATH = "src/main/java/edu/lehigh/cse216/slj222/backend/credentials.json";
-    private static final String CREDENTIALS_FILE_PATH = "./credentials.json";
+    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
     
     public static void main(String[] args) throws IOException, GeneralSecurityException {//easy fix. probably not good long term.
@@ -417,18 +417,7 @@ public class App {
     */
 
    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-    // InputStream is = new FileInputStream("/credentials.json");
-    // BufferedReader buf = new BufferedReader(new InputStreamReader(is));
-            
-    // String line = buf.readLine();
-    // StringBuilder sb = new StringBuilder();
-            
-    // while(line != null){
-    //    sb.append(line).append("\n");
-    //    line = buf.readLine();
-    // }
-    //     CREDENTIALS_CONTENT = sb.toString();
-    // System.out.println("Contents : " + CREDENTIALS_CONTENT);
+
         java.io.InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);//getting null here
        // Load client secrets
        if (in == null) {
