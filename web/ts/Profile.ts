@@ -38,7 +38,7 @@ class Profile {
         // Set go back behavior
         $("." + Profile.NAME + "-goBack").click(Profile.goBack);
         $("." + Profile.NAME + "-commentbtn").click(Profile.goToComments);
-        
+        $("." + Profile.NAME + "-linkbtn").click(Profile.openLink);
     }
 
     /**
@@ -100,5 +100,10 @@ class Profile {
         ViewComments.refresh();
         ViewComments.show();
         Profile.hide();
+    }
+
+    private static openLink() {
+        let url = $(this).data("value");
+        window.open(url, '_blank');
     }
 }

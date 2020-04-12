@@ -18,6 +18,9 @@
                 </td>
                 <td><button class="Profile-commentbtn" data-value="{{this.msgId}}">{{this.comments}}
                         comments</button></td>
+                {{#notNull this.link}}
+                <td><button class="Profile-linkbtn" data-value="{{this.link}}">Link</button></td>
+                {{/notNull}}
             </tr>
             {{/each}}
         </tbody>
