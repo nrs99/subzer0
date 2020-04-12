@@ -70,6 +70,8 @@ class NewEntryForm {
         // that neither is empty
         let msg = "" + $("#" + NewEntryForm.NAME + "-message").val();
         let url = "" + $("#" + NewEntryForm.NAME + "-link").val();
+        let file = "" + $("#" + NewEntryForm.NAME + "-file").prop('files')[0];
+        let fileStr = null;
 
         if (url === "") {
             url = null;
@@ -78,6 +80,10 @@ class NewEntryForm {
                 window.alert("Error: Invalid URL")
                 return;
             }
+        }
+
+        if (file !== null) {
+            fileStr = NewEntryForm.toBase64(file);
         }
 
         if (msg === "") {
@@ -95,7 +101,7 @@ class NewEntryForm {
             type: "POST",
             url: backendUrl + "/messages",
             dataType: "json",
-            data: JSON.stringify({ message: msg, userID: localStorage.getItem("ID"), link: url }),
+            data: JSON.stringify({ message: msg, userID: localStorage.getItem("ID"), link: url, photoURL: fileStr }),
             success: NewEntryForm.onSubmitResponse
         });
     }
@@ -129,12 +135,18 @@ class NewEntryForm {
      * @param str The string that will be tested
      */
     private static validURL(str) {
-        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-          '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-          '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-          '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-          '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-          '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+            '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
         return !!pattern.test(str);
-      }
+    }
+
+    private static toBase64(file) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        return reader.result;
+    }
 }
