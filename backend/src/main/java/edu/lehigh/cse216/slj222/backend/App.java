@@ -41,7 +41,7 @@ import java.util.*;
 public class App {
 
 
-    private static final String APPLICATION_NAME = "Google Drive API Java Quickstart";
+    private static final String APPLICATION_NAME = "Subzer0";
     private static final com.google.api.client.json.JsonFactory JSON_FACTORY = new JacksonFactory();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static String CREDENTIALS_CONTENT;
