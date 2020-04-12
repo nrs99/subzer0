@@ -6,22 +6,94 @@ import spark.Spark;
  
 // Import Google's JSON library
 import com.google.gson.*;
- 
+
+import org.omg.CORBA.portable.InputStream;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 // Google OAuth Imports
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.FileContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
- 
- 
+import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.File;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.util.*;
  
 /**
  * For now, our app creates an HTTP server that can only get and add data.
  */
 public class App {
-    public static void main(String[] args) {
+
+
+    private static final String APPLICATION_NAME = "Google Drive API Java Quickstart";
+    private static final com.google.api.client.json.JsonFactory JSON_FACTORY = new JacksonFactory();
+    private static final String TOKENS_DIRECTORY_PATH = "tokens";
+
+    /**
+     * Global instance of the scopes required by this quickstart.
+     * If modifying these scopes, delete your previously saved tokens/ folder.
+     */
+    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
+    // private static final String CREDENTIALS_FILE_PATH = "src/main/java/edu/lehigh/cse216/slj222/backend/credentials.json";
+    private static final String CREDENTIALS_FILE_PATH = "credentials.json";
+
+    /**
+     * Creates an authorized Credential object.
+     * @param HTTP_TRANSPORT The network HTTP Transport.
+     * @return An authorized Credential object.
+     * @throws IOException If the credentials.json file cannot be found.
+     */
+    // final DataStore dataStore = new DataStore();
+
+    // private final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
+
+    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+         java.io.InputStream in = App.class.getClass().getResourceAsStream(CREDENTIALS_FILE_PATH);//getting null here
+
+        // Load client secrets
+        if (in == null) {
+            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+        }
+            GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+            
+        // Build flow and trigger user authorization request
+         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+            HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+            .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+           .setAccessType("offline").build();
+           
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+            return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+        }
+    public static void main(String[] args) throws IOException, GeneralSecurityException {//easy fix. probably not good long term.
+
+        Drive service;
+
+  
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+
+        service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT)).setApplicationName(APPLICATION_NAME).build();	 	// Build a new authorized API client service
+
+
+
+
  
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
@@ -51,6 +123,8 @@ public class App {
         // NB: every time we shut down the server, we will lose all data, and
         // every time we start the server, we'll have an empty dataStore,
         // with IDs starting over from 0.
+
+
  
         Spark.port(getIntFromEnv("PORT", 4567));
  
@@ -137,8 +211,20 @@ public class App {
             // describes the error.
             response.status(200);
             response.type("application/json");
+            String result = "";
+            if(req.photoURL != null){//upload to google drive
+
+                //call upload function here.
+
+                    result  = uploadImage(req.photoURL,service);
+
+                    
+                
+                
+
+            }
             // NB: createEntry checks for null title and message
-            int newId = db.insertRow(req.message, req.userID);
+            int newId = db.insertRow(req.message, req.userID,result);//
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
@@ -299,6 +385,27 @@ public class App {
             return Integer.parseInt(processBuilder.environment().get(envar));
         }
         return defaultVal;
+    }
+
+    private static String uploadImage(String file_url,Drive service) throws IOException{
+        String name = file_url;
+        int idx = file_url.lastIndexOf('/');
+        if(idx !=-1){
+            name = file_url.substring(idx);
+        }
+        File fileMetadata = new File();
+        fileMetadata.setName(name);
+        java.io.File filePath = new java.io.File(file_url);
+        FileContent mediaContent = new FileContent("image/jpeg", filePath);
+        File file = service.files().create(fileMetadata, mediaContent).setFields("id").execute();
+        System.out.println("File ID: "+file.getId());
+    return file.getId();
+
+    }
+    private static String downloadImage(String file_ID, Drive service) throws IOException{
+        OutputStream outputStream = new ByteArrayOutputStream();
+        service.files().get(file_ID).executeMediaAndDownloadTo(outputStream);
+        return outputStream.toString();
     }
  
     /**

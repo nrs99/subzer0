@@ -16,4 +16,7 @@ public class SimpleRequest {
      * The user ID of the client
      */
     public String userID;
+    
+
+    public String photoURL;
 }

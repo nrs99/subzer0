@@ -120,7 +120,7 @@ public class Database {
         try {
  
             // Standard CRUD operations
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?, ?)",
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             db.mSelectOne = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users where msgid = ?");
             db.mSelectAllNewest = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users ORDER BY datecreated DESC");
@@ -190,6 +190,33 @@ public class Database {
             mInsertOne.setString(1, userId);
             mInsertOne.setTimestamp(2, new Timestamp(System.currentTimeMillis())); // Gets current time of system
             mInsertOne.setString(3, message);
+            mInsertOne.setString(4,null);
+            mInsertOne.executeUpdate();
+            ResultSet rs = mInsertOne.getGeneratedKeys();
+            if (rs.next()) {
+                count += rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+        /**
+     * Insert a row into the database
+     *
+     * @param message The message body in the new row
+     * @param userId  The user ID of the person who is posting the message
+     *
+     * @return The number of rows that were inserted
+     */
+    int insertRow(String message, String userId,String file_id) {
+        int count = 0;
+        try {
+            mInsertOne.setString(1, userId);
+            mInsertOne.setTimestamp(2, new Timestamp(System.currentTimeMillis())); // Gets current time of system
+            mInsertOne.setString(3, message);
+            mInsertOne.setString(4,file_id);
             mInsertOne.executeUpdate();
             ResultSet rs = mInsertOne.getGeneratedKeys();
             if (rs.next()) {
