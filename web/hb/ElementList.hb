@@ -25,6 +25,9 @@
                 </td>
                 <td><button class="ElementList-commentbtn" data-value="{{this.msgId}}">{{this.comments}}
                         comments</button></td>
+                {{#notNull this.link}}
+                <td><button class="ElementList-linkbtn" data-value="{{this.link}}">Link</button></td>
+                {{/notNull}}
             </tr>
             {{/each}}
         </tbody>

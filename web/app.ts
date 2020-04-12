@@ -48,3 +48,7 @@ Handlebars.registerHelper('ifEquals', function(arg1, options) {
     return (arg1 === localStorage.getItem("ID")) ? options.fn(this) : options.inverse(this);
 });
 
+Handlebars.registerHelper('notNull', function(arg1, options) {
+    return (arg1) ? options.fn(this) : options.inverse(this);
+});
+

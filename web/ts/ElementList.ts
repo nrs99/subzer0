@@ -42,6 +42,7 @@ class ElementList {
         $("." + ElementList.NAME + "-commentbtn").click(ElementList.goToComments);
         $("." + ElementList.NAME + "-photo").click(ElementList.goToProfile);
         $("." + ElementList.NAME + "-displayName").click(ElementList.goToProfile);
+        $("." + ElementList.NAME + "-linkbtn").click(ElementList.openLink);
         // Refresh ElementList after the sort is updated
         $("#" + ElementList.NAME + "-sort").change(ElementList.refresh);
     }
@@ -114,6 +115,11 @@ class ElementList {
         NewCommentForm.setID(msgId);
         ViewComments.show();
         ElementList.hide();
+    }
+
+    private static openLink() {
+        let url = $(this).data("value");
+        window.open(url, '_blank');
     }
 
 }
