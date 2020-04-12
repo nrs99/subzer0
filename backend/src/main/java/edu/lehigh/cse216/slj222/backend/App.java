@@ -188,6 +188,8 @@ public class App {
             } else {
                 if (!req.link.equals(null)) {
                     db.insertLink(newId, req.link);
+                }else{
+                    System.out.println(req.link);
                 }
                 if (!req.photoURL.equals(null)) {
 
