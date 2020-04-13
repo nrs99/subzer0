@@ -67,30 +67,30 @@ public class App {
     public static void main(String[] args) throws IOException, GeneralSecurityException {//easy fix. probably not good long term.
 //memcachier
 
-        List<InetSocketAddress> servers =
-        //AddrUtil.getAddresses(System.getenv("MEMCACHIER_SERVERS").replace(",", " "));
-        AddrUtil.getAddresses("mc5.dev.ec2.memcachier.com:11211".replace(",", " "));
-      AuthInfo authInfo =
-        AuthInfo.plain(System.getenv("MEMCACHIER_USERNAME"),
-                       System.getenv("MEMCACHIER_PASSWORD"));
+    //     List<InetSocketAddress> servers =
+    //     //AddrUtil.getAddresses(System.getenv("MEMCACHIER_SERVERS").replace(",", " "));
+    //     AddrUtil.getAddresses("mc5.dev.ec2.memcachier.com:11211".replace(",", " "));
+    //   AuthInfo authInfo =
+    //     AuthInfo.plain(System.getenv("MEMCACHIER_USERNAME"),
+    //                    System.getenv("MEMCACHIER_PASSWORD"));
   
-      MemcachedClientBuilder builder = new XMemcachedClientBuilder(servers);
+    //   MemcachedClientBuilder builder = new XMemcachedClientBuilder(servers);
   
-      // Configure SASL auth for each server
-      for(InetSocketAddress server : servers) {
-        builder.addAuthInfo(server, authInfo);
-      }
+    //   // Configure SASL auth for each server
+    //   for(InetSocketAddress server : servers) {
+    //     builder.addAuthInfo(server, authInfo);
+    //   }
   
-      // Use binary protocol
-      builder.setCommandFactory(new BinaryCommandFactory());
-      // Connection timeout in milliseconds (default: )
-      builder.setConnectTimeout(1000);
-      // Reconnect to servers (default: true)
-      builder.setEnableHealSession(true);
-      // Delay until reconnect attempt in milliseconds (default: 2000)
-      builder.setHealSessionInterval(2000);
+    //   // Use binary protocol
+    //   builder.setCommandFactory(new BinaryCommandFactory());
+    //   // Connection timeout in milliseconds (default: )
+    //   builder.setConnectTimeout(1000);
+    //   // Reconnect to servers (default: true)
+    //   builder.setEnableHealSession(true);
+    //   // Delay until reconnect attempt in milliseconds (default: 2000)
+    //   builder.setHealSessionInterval(2000);
   
-      MemcachedClient mc = builder.build(); //TODO: error proof this as per example
+    //   MemcachedClient mc = builder.build(); //TODO: error proof this as per example
       /** 
       try {
         mc = builder.build();
@@ -128,7 +128,7 @@ public class App {
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
  
-        String db_url = env.get("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngc");
+        String db_url = env.get("DATABASE_URL");
  
         Hashtable <UUID, String> ht = new Hashtable<>();
 
