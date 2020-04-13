@@ -68,7 +68,8 @@ public class App {
 //memcachier
 
         List<InetSocketAddress> servers =
-        AddrUtil.getAddresses(System.getenv("MEMCACHIER_SERVERS").replace(",", " "));
+        //AddrUtil.getAddresses(System.getenv("MEMCACHIER_SERVERS").replace(",", " "));
+        AddrUtil.getAddresses("mc5.dev.ec2.memcachier.com:11211".replace(",", " "));
       AuthInfo authInfo =
         AuthInfo.plain(System.getenv("MEMCACHIER_USERNAME"),
                        System.getenv("MEMCACHIER_PASSWORD"));
@@ -89,8 +90,10 @@ public class App {
       // Delay until reconnect attempt in milliseconds (default: 2000)
       builder.setHealSessionInterval(2000);
   
+      MemcachedClient mc = builder.build(); //TODO: error proof this as per example
+      /** 
       try {
-        MemcachedClient mc = builder.build();
+        mc = builder.build();
         try {
           mc.set("foo", 0, "bar");
           String val = mc.get("foo");
@@ -108,14 +111,15 @@ public class App {
       } catch (IOException ioe) {
         System.err.println("Couldn't create a connection to MemCachier: " +
                            ioe.getMessage());
-      }//memcachier
-
-        Drive service;
+      }
+      */
+      //memcachier
 
   
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
-        service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT)).setApplicationName(APPLICATION_NAME).build();	 	// Build a new authorized API client service
+        Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT)).setApplicationName(APPLICATION_NAME).build();	 	// Build a new authorized API client service
+
 
 
 
@@ -155,7 +159,6 @@ public class App {
 
  
         Spark.port(getIntFromEnv("PORT", 4567));
- 
         // Set up the location for serving static files. If the STATIC_LOCATION
         // environment variable is set, we will serve from it. Otherwise, serve
         // from "/web"
@@ -186,7 +189,14 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            return gson.toJson(new StructuredResponse("ok", null, db.selectAllNewest()));
+            String key =  "mSelectAllNewest";
+            
+            StructuredResponse results = mc.get(key);
+            if (results == null) {
+                results = new StructuredResponse("ok", null, db.selectAllNewest());
+                mc.set(key, 0, results);//check values later.
+            } 
+            return gson.toJson(results); 
         });
  
         // GET route that returns all message titles and Ids.
