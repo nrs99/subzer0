@@ -128,7 +128,7 @@ public class App {
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
  
-        String db_url = env.get("DATABASE_URL");
+        String db_url = env.get("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngc");
  
         Hashtable <UUID, String> ht = new Hashtable<>();
 
