@@ -1,8 +1,10 @@
 package edu.lehigh.cse216.slj222;
 
+import android.Manifest;
 import android.app.Activity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,8 +13,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+//import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -26,17 +30,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+
 public class MainActivity extends BaseActivity {
+
 
     /**
      * mData holds the data we get from Volley
      */
     ArrayList<Message> mData = new ArrayList<>();
     String message;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +53,6 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         getMessages(); // Run the script to get messages
-
         Button postButton = findViewById(R.id.post_button);
 
         final EditText textToSend = findViewById(R.id.textView);
@@ -58,8 +64,14 @@ public class MainActivity extends BaseActivity {
                 postMessage();
                 textToSend.getText().clear(); //Remove whatever's in there
                 hideKeyboard(this); // Hides the keyboard if clicked
+                //Go to camera activity
+                moveToCameraActivity();
+
+
+
             }
         });
+
 
         final SwipeRefreshLayout swipeContainer = findViewById(R.id.RefreshLayout);
         // Setup refresh listener which triggers new data loading
@@ -70,6 +82,11 @@ public class MainActivity extends BaseActivity {
             swipeContainer.setRefreshing(false);
         });
 
+
+    }
+    public void moveToCameraActivity() {
+        Intent intent = new Intent(MainActivity.this, Camera.class);
+        startActivity(intent);
     }
 
     /**
@@ -79,7 +96,7 @@ public class MainActivity extends BaseActivity {
      * @param menu
      * @return
      */
-    @Override
+    //@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         /* I want to hide the go back if they are on the main page.
         This makes it so they can only sign out if signout button is clicked.

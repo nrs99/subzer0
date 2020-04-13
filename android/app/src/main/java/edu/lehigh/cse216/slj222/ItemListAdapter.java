@@ -52,6 +52,8 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         TextView dislikeCount;
         TextView commentCount;
         TextView postedBy;
+        //Button postPhotoButton;
+        //ImageView imgView;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -65,6 +67,8 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             dislikeCount = itemView.findViewById(R.id.dislikeCount);
             commentCount = itemView.findViewById(R.id.commentCount);
             postedBy = itemView.findViewById(R.id.posted_by);
+            //postPhotoButton = itemView.findViewById(R.id.postImage);
+            //imgView = itemView.findViewById(R.id.imageView);
         }
     }
 
@@ -107,6 +111,8 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             viewHolder.thumbup.setBackgroundResource(R.drawable.ic_unlikebutton);
             viewHolder.thumbdown.setBackgroundResource(R.drawable.ic_no_thumbdown);
         }
+
+
 
         viewHolder.thumbup.setOnClickListener(b -> {
             likeMessage(d.msgId); // Send the HTTP request
@@ -161,6 +167,11 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
                 viewHolder.dislikeCount.setText(String.valueOf(oldDislikes - 1));
             }
         });
+//        viewHolder.postPhotoButton.setOnClickListener(b -> {
+//            //Go to individual camera activity
+//            Intent intent = new Intent(b.getContext(), Camera.class);
+//            context.startActivity(intent);
+//        });
 
         viewHolder.commentCount.setOnClickListener(b -> {
             // Go to individual message activity

@@ -38,6 +38,7 @@ public class MessageComments extends BaseActivity {
 
         final EditText textToSend = findViewById(R.id.newComment);
         final Button sendComment = findViewById(R.id.button);
+        //final Button
 
         // HTTP get request for the one message
         String url = "http://subzer0.herokuapp.com/messages/" + msgId;
