@@ -70,7 +70,7 @@ class NewEntryForm {
         // that neither is empty
         let msg = "" + $("#" + NewEntryForm.NAME + "-message").val();
         let url = "" + $("#" + NewEntryForm.NAME + "-link").val();
-        let file = "" + $("#" + NewEntryForm.NAME + "-file").prop('files')[0];
+        let file = $("#" + NewEntryForm.NAME + "-file")[0].files[0];
         let fileStr = null;
 
         if (url === "") {
