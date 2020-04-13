@@ -82,7 +82,7 @@ class NewEntryForm {
             }
         }
 
-        if (file !== null) {
+        if ($("#" + NewEntryForm.NAME + "-file").val() !== "") {
             fileStr = NewEntryForm.toBase64(file);
         }
 
