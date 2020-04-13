@@ -1,4 +1,12 @@
 package edu.lehigh.cse216.slj222.backend;
+
+import net.rubyeye.xmemcached.MemcachedClient;
+import net.rubyeye.xmemcached.MemcachedClientBuilder;
+import net.rubyeye.xmemcached.XMemcachedClientBuilder;
+import net.rubyeye.xmemcached.auth.AuthInfo;
+import net.rubyeye.xmemcached.command.BinaryCommandFactory;
+import net.rubyeye.xmemcached.exception.MemcachedException;
+import net.rubyeye.xmemcached.utils.AddrUtil;
  
 // Import the Spark package, so that we can make use of the "get" function to
 // create an HTTP GET route
@@ -31,9 +39,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
  
 /**
  * For now, our app creates an HTTP server that can only get and add data.
@@ -55,6 +65,50 @@ public class App {
 
     
     public static void main(String[] args) throws IOException, GeneralSecurityException {//easy fix. probably not good long term.
+//memcachier
+
+        List<InetSocketAddress> servers =
+        AddrUtil.getAddresses(System.getenv("MEMCACHIER_SERVERS").replace(",", " "));
+      AuthInfo authInfo =
+        AuthInfo.plain(System.getenv("MEMCACHIER_USERNAME"),
+                       System.getenv("MEMCACHIER_PASSWORD"));
+  
+      MemcachedClientBuilder builder = new XMemcachedClientBuilder(servers);
+  
+      // Configure SASL auth for each server
+      for(InetSocketAddress server : servers) {
+        builder.addAuthInfo(server, authInfo);
+      }
+  
+      // Use binary protocol
+      builder.setCommandFactory(new BinaryCommandFactory());
+      // Connection timeout in milliseconds (default: )
+      builder.setConnectTimeout(1000);
+      // Reconnect to servers (default: true)
+      builder.setEnableHealSession(true);
+      // Delay until reconnect attempt in milliseconds (default: 2000)
+      builder.setHealSessionInterval(2000);
+  
+      try {
+        MemcachedClient mc = builder.build();
+        try {
+          mc.set("foo", 0, "bar");
+          String val = mc.get("foo");
+          System.out.println(val);
+        } catch (TimeoutException te) {
+          System.err.println("Timeout during set or get: " +
+                             te.getMessage());
+        } catch (InterruptedException ie) {
+          System.err.println("Interrupt during set or get: " +
+                             ie.getMessage());
+        } catch (MemcachedException me) {
+          System.err.println("Memcached error during get or set: " +
+                             me.getMessage());
+        }
+      } catch (IOException ioe) {
+        System.err.println("Couldn't create a connection to MemCachier: " +
+                           ioe.getMessage());
+      }//memcachier
 
         Drive service;
 
