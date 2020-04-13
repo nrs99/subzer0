@@ -188,15 +188,18 @@ public class App {
         Spark.get("/messages", (request, response) -> {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
-            response.type("application/json");
-            String key =  "mSelectAllNewest";
+            // response.type("application/json");
+            // String key =  "mSelectAllNewest";
             
-            StructuredResponse results = mc.get(key);
-            if (results == null) {
-                results = new StructuredResponse("ok", null, db.selectAllNewest());
-                mc.set(key, 0, results);//check values later.
-            } 
-            return gson.toJson(results); 
+            // StructuredResponse results = mc.get(key);
+            // if (results == null) {
+            //     results = new StructuredResponse("ok", null, db.selectAllNewest());
+            //     mc.set(key, 0, results);//check values later.
+            // } 
+            // return gson.toJson(results); 
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllNewest()));
         });
  
         // GET route that returns all message titles and Ids.
