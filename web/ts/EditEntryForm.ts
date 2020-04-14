@@ -10,15 +10,17 @@ class EditEntryForm {
      */
     private static readonly NAME = "EditEntryForm";
 
+    const backendUrl = "http://subzer0.herokuapp.com";
+
     /**
      * Track if the Singleton has been initialized
      */
     private static isInit = false;
 
     /**
-     * Track ID of message that gets passed in from click of Edit Message button on ElementList
+     * Track ID of comment that gets passed in from click of Edit Message button on ViewComments
      */
-    private static messageID: any;
+    private static commentID: any;
 
     /**
      * Initialize the EditEntryForm by creating its element in the DOM and 
@@ -54,8 +56,7 @@ class EditEntryForm {
      * 
      * @param ID The id of the message
      */
-    public static show(ID: any) {
-        EditEntryForm.messageID = ID;
+    public static show() {
         $("#" + EditEntryForm.NAME + "-message").val("");
         $("#" + EditEntryForm.NAME).modal("show");
     }
@@ -89,9 +90,9 @@ class EditEntryForm {
 		//url: backendUrl + ...
         $.ajax({
             type: "PUT",
-            url: "/messages/" + EditEntryForm.messageID,
+            url: backendUrl + "/comments/edit",
             dataType: "json",
-            data: JSON.stringify({mMessage: msg}),
+            data: JSON.stringify({cid: EditEntryForm.commentID, comment: msg, userid: localStorage.getItem("ID")}),
             success: EditEntryForm.onSubmitResponse
         });
     }
@@ -106,16 +107,20 @@ class EditEntryForm {
         // If we get an "ok" message, clear the form and refresh the main 
         // listing of messages
         if (data.mStatus === "ok") {
-            ElementList.refresh();
+            ViewComments.refresh();
         }
         // Handle explicit errors with a detailed popup message
         else if (data.mStatus === "error") {
-            window.alert("The server replied with an error:\n" + data.mMessage);
+            window.alert("You can only edit your own comment");
         }
         // Handle other errors with a less-detailed popup message
         else {
             window.alert("Unspecified error");
         }
+    }
+
+    public static setID (cID: any) {
+        EditEntryForm.commentID = cID;
     }
 } // end class EditEntryForm
 

@@ -9,10 +9,10 @@
     "dependencies": {
         "@types/jquery": "^3.3.34",
         "bootstrap": "^3.4.1",
-        "handlebars": "^4.7.3",
+        "handlebars": "^4.7.6",
         "http-server": "^0.12.1",
         "jasmine-core": "^3.5.0",
-        "jquery": "^3.4.1",
+        "jquery": "^3.5.0",
         "typescript": "^3.8.3"
     }
 }

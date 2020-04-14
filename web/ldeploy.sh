@@ -77,7 +77,7 @@ node_modules/typescript/bin/tsc app.ts --strict --outFile $TARGETFOLDER/$WEBFOLD
 
 # step 5: copy css files
 ## Didn't add one for EditEntryForm
-cat app.css css/ElementList.css css/NewEntryForm.css css/Navbar.css css/NewLogin.css > $TARGETFOLDER/$WEBFOLDERNAME/app.css
+cat app.css css/ElementList.css css/NewEntryForm.css css/Navbar.css css/NewLogin.css css/ViewComments.css css/Profile.css css/NewCommentForm.css > $TARGETFOLDER/$WEBFOLDERNAME/app.css
 
 # step 6: compile handlebars templates to the deploy folder
 node_modules/handlebars/bin/handlebars hb/ElementList.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
@@ -85,6 +85,9 @@ node_modules/handlebars/bin/handlebars hb/NewEntryForm.hb >> $TARGETFOLDER/$WEBF
 node_modules/handlebars/bin/handlebars hb/Navbar.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
 node_modules/handlebars/bin/handlebars hb/NewLogin.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
 node_modules/handlebars/bin/handlebars hb/EditEntryForm.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
+node_modules/handlebars/bin/handlebars hb/ViewComments.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
+node_modules/handlebars/bin/handlebars hb/Profile.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
+node_modules/handlebars/bin/handlebars hb/NewCommentForm.hb >> $TARGETFOLDER/$WEBFOLDERNAME/templates.js
 
 
 # there are many more steps to be done.  For now, we will just copy an HTML file
