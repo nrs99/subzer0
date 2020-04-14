@@ -638,7 +638,7 @@ try {
      * @return The number of rows that were inserted
      */
     // int insertRowLikes(int userid, int like,int mid) {//unsure!
-        int insertRowLikes(String userid, int like) {//unsure!
+    int insertRowLikes(String userid, int like) {//unsure!
         int count = 0;
         try {
             lInsertOne.setString(1, userid);
