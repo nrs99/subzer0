@@ -1,5 +1,13 @@
 package edu.lehigh.cse216.slj222.backend;
  
+import net.rubyeye.xmemcached.MemcachedClient;
+import net.rubyeye.xmemcached.MemcachedClientBuilder;
+import net.rubyeye.xmemcached.XMemcachedClientBuilder;
+import net.rubyeye.xmemcached.auth.AuthInfo;
+import net.rubyeye.xmemcached.command.BinaryCommandFactory;
+import net.rubyeye.xmemcached.exception.MemcachedException;
+import net.rubyeye.xmemcached.utils.AddrUtil;
+ 
 // Import the Spark package, so that we can make use of the "get" function to
 // create an HTTP GET route
 import spark.Spark;
@@ -7,28 +15,70 @@ import spark.Spark;
 // Import Google's JSON library
 import com.google.gson.*;
  
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 // Google OAuth Imports
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.FileContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.File;
+import com.google.common.io.Files;
  
- 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
  
 /**
  * For now, our app creates an HTTP server that can only get and add data.
  */
 public class App {
-    public static void main(String[] args) {
+ 
+    private static final String APPLICATION_NAME = "Subzer0";
+    private static final com.google.api.client.json.JsonFactory JSON_FACTORY = new JacksonFactory();
+    private static final String TOKENS_DIRECTORY_PATH = "tokens";
+ 
+    /**
+     * Global instance of the scopes required by this quickstart. If modifying these
+     * scopes, delete your previously saved tokens/ folder.
+     */
+    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
+    // private static final String CREDENTIALS_FILE_PATH =
+    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+ 
+    public static void main(String[] args) throws IOException, GeneralSecurityException {// easy fix. probably not good
+                                                                                         // long term.
+ 
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+ 
+        Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                .setApplicationName(APPLICATION_NAME).build(); // Build a new authorized API client service
  
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
  
         String db_url = env.get("DATABASE_URL");
  
-        Hashtable <UUID, String> ht = new Hashtable<>();
+        Hashtable<UUID, String> ht = new Hashtable<>();
+ 
+        System.out.println("db_url value: " + db_url);
  
         // Get a fully-configured connection to the database, or exit
         // immediately
@@ -53,7 +103,6 @@ public class App {
         // with IDs starting over from 0.
  
         Spark.port(getIntFromEnv("PORT", 4567));
- 
         // Set up the location for serving static files. If the STATIC_LOCATION
         // environment variable is set, we will serve from it. Otherwise, serve
         // from "/web"
@@ -82,6 +131,16 @@ public class App {
         // Standard call will have newest messages first
         Spark.get("/messages", (request, response) -> {
             // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            // response.type("application/json");
+            // String key = "mSelectAllNewest";
+ 
+            // StructuredResponse results = mc.get(key);
+            // if (results == null) {
+            // results = new StructuredResponse("ok", null, db.selectAllNewest());
+            // mc.set(key, 0, results);//check values later.
+            // }
+            // return gson.toJson(results);
             response.status(200);
             response.type("application/json");
             return gson.toJson(new StructuredResponse("ok", null, db.selectAllNewest()));
@@ -142,6 +201,15 @@ public class App {
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
+                if (req.link != null) {
+                    db.insertLink(newId, req.link);
+                }
+                if (req.photoURL != null) {
+ 
+                    String fileID = uploadImage(req.photoURL, service, newId);
+                    db.insertDocument(newId, fileID);
+                }
+ 
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
             }
         });
@@ -198,8 +266,10 @@ public class App {
             // describes the error.
             response.status(200);
             response.type("application/json");
+ 
             // NB: createEntry checks for null title and message
-            int newId = db.insertComment(req.msgId, req.comment, req.userId);
+            int newId = db.insertComment(req.msgId, req.comment, req.userId);// would i do something here?
+ 
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
@@ -208,12 +278,12 @@ public class App {
         });
  
         Spark.put("/comments/edit", (request, response) -> {
-           
+ 
             EditCommentRequest req = gson.fromJson(request.body(), EditCommentRequest.class);
  
             response.status(200);
             response.type("application/json");
-           
+ 
             int result = db.editComment(req.cid, req.comment, req.userid);
  
             if (result == 1) {
@@ -237,15 +307,15 @@ public class App {
             response.type("applicaiton/json");
             return gson.toJson(new StructuredResponse("ok", null, db.getMyLikes(userID)));
         });
-       
+ 
         Spark.post("/login/:token", (request, response) -> {
             final String CLIENT_ID = "363085709256-vl89523mj1pv792ngp4sin2e717motg7.apps.googleusercontent.com";
             // final String CLIENT_SECRET = "zXSIfOxfMUoHugSkfaPKdBtk";
-           
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
-            // Specify the CLIENT_ID of the app that accesses the backend:
-            .setAudience(Collections.singletonList(CLIENT_ID))
-            .build();
+ 
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
+                    new JacksonFactory())
+                            // Specify the CLIENT_ID of the app that accesses the backend:
+                            .setAudience(Collections.singletonList(CLIENT_ID)).build();
  
             String idTokenString = request.params("token");
  
@@ -274,9 +344,9 @@ public class App {
                 return gson.toJson(new StructuredResponse("error", "login error", null));
             }
         });
-
+ 
         Spark.put("/user", (request, response) -> {
-            NewUserRequest req = gson.fromJson(request.body(), NewUserRequest.class); 
+            NewUserRequest req = gson.fromJson(request.body(), NewUserRequest.class);
             response.status(200);
             response.type("application/json");
             // NB: createEntry checks for null title and message
@@ -286,12 +356,10 @@ public class App {
             } else {
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
             }
-
+ 
         });
  
     }
- 
- 
  
     static int getIntFromEnv(String envar, int defaultVal) {
         ProcessBuilder processBuilder = new ProcessBuilder();
@@ -299,6 +367,25 @@ public class App {
             return Integer.parseInt(processBuilder.environment().get(envar));
         }
         return defaultVal;
+    }
+ 
+    private static String uploadImage(String encodedString, Drive service, int msgid) throws IOException {
+ 
+        byte[] decodedImg = Base64.getDecoder().decode(encodedString.getBytes(StandardCharsets.UTF_8));
+        java.io.File thisFile = new java.io.File("image");
+        Files.write(decodedImg, thisFile);
+        File fileMetadata = new File();
+        fileMetadata.setName(msgid + "");
+        FileContent mediaContent = new FileContent("image/jpeg", thisFile);
+        File file = service.files().create(fileMetadata, mediaContent).setFields("id").execute();
+        return file.getId();
+ 
+    }
+ 
+    private static String downloadImage(String file_ID, Drive service) throws IOException {
+        OutputStream outputStream = new ByteArrayOutputStream();
+        service.files().get(file_ID).executeMediaAndDownloadTo(outputStream);
+        return outputStream.toString();
     }
  
     /**
@@ -334,4 +421,18 @@ public class App {
         });
     }
  
+    // * Creates an authorized Credential object.
+    /*
+     * @param HTTP_TRANSPORT The network HTTP Transport. /* @return An authorized
+     * Credential object. /* @throws IOException If the credentials.json file cannot
+     * be found.
+     */
+ 
+    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+ 
+        java.io.InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);// getting null here
+        return GoogleCredential.fromStream(in);
+    }
+ 
 }
+ 

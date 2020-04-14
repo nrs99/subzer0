@@ -6,4 +6,8 @@ public class NewCommentRequest {
     public String userId;
 
     public String comment;
+
+    public String photoURL;
+
+    public String link;
 }
