@@ -141,6 +141,91 @@ public class Database {
 
 
 
+//Documents
+    /**
+     * A prepared statement for getting all data in the database
+     */
+    private PreparedStatement dSelectAll;
+
+    /**
+     * A prepared statement for getting one row from the database
+     */
+    private PreparedStatement dSelectOne;
+
+    /**
+     * A prepared statement for deleting a row from the database
+     */
+    private PreparedStatement dDeleteOne;
+
+    private PreparedStatement dDeleteChosen;
+
+    /**
+     * A prepared statement for inserting into the database
+     */
+    private PreparedStatement dInsertOne;
+    /**
+     * A prepared statemeting for trigger
+     */
+    //private PreparedStatmet mTrigger;
+    /**
+     * A prepared statement for updating a single row in the database
+     */
+    private PreparedStatement dUpdateOne;
+
+    /**
+     * A prepared statement for creating the table in our database
+     */
+    private PreparedStatement dCreateTable;
+
+    /**
+     * A prepared statement for dropping the table in our database
+     */
+    private PreparedStatement dDropTable;
+
+
+    //Documents
+    /**
+     * A prepared statement for getting all data in the database
+     */
+    private PreparedStatement linkSelectAll;
+
+    /**
+     * A prepared statement for getting one row from the database
+     */
+    private PreparedStatement linkSelectOne;
+
+    /**
+     * A prepared statement for deleting a row from the database
+     */
+    private PreparedStatement linkDeleteOne;
+
+    private PreparedStatement linkDeleteChosen;
+
+    /**
+     * A prepared statement for inserting into the database
+     */
+    private PreparedStatement linkInsertOne;
+    /**
+     * A prepared statemeting for trigger
+     */
+    //private PreparedStatmet mTrigger;
+    /**
+     * A prepared statement for updating a single row in the database
+     */
+    private PreparedStatement linkUpdateOne;
+
+    /**
+     * A prepared statement for creating the table in our database
+     */
+    private PreparedStatement linkCreateTable;
+
+    /**
+     * A prepared statement for dropping the table in our database
+     */
+    private PreparedStatement linkDropTable;
+
+
+
 
 
 
@@ -168,10 +253,15 @@ public class Database {
          */
         int cMsgid;
         /**
+         * The userid of this row of the document database
+         */
+        int dMsgid;
+
+
+        /**
          * The userid of this row of the database
          */
         String mUserid;
-        
         /**
          * The userid of this row of the database
          */
@@ -181,6 +271,12 @@ public class Database {
          */
         String cUserid;
         /**
+         * The userid of this row of the document database
+         */
+        String dUserid;
+
+        
+        /**
          * The datecreated
          */
         String mDatecreated;
@@ -189,12 +285,19 @@ public class Database {
          */
         String cDatecreated;
         /**
+         * The datecreated
+         */
+        String dDatecreated;
+
+
+        /**
          * The number of likes/dislikes
          */
         int mLike;
-
-
         int lLikes;
+        int dLikes;
+
+
         /**
          * The message stored in this row
          */
@@ -204,9 +307,25 @@ public class Database {
          */
         int cCommentID;
         /**
+         * The document id
+         */
+        long documentID;
+
+        /**
          * The message stored in this row
          */
         String  cComment;
+
+        String documentURL;
+
+        /**
+         * For link table
+         */
+        long linkMsgid;
+        String linkUserid;
+        String linkDateCreated;
+        String linkUrl;
+
         
         /**
          * Construct a RowData object by providing values for its fields
@@ -228,7 +347,7 @@ public class Database {
             lLikes = likes;
         }
 
-        //COMMENTS LATER
+        //COMMENTS LATER, comment
 
         public RowData(int msgid, int commentid, String userid, String datecreated, String comment) {
             cMsgid = msgid;
@@ -236,6 +355,30 @@ public class Database {
             cUserid = userid;
             cDatecreated = datecreated;
             cComment = comment;
+        }
+
+        public RowData(long msgid, String userid, String datecreated, String linkurl) {
+            linkMsgid = msgid;
+            linkUserid = userid;
+            linkDateCreated = datecreated;
+            linkUrl = linkurl;
+        }
+
+        /**
+         * 
+         * @param msgid
+         * @param documentid
+         * @param userid
+         * @param datecreated
+         * @param documenturl
+         * document
+         */
+        public RowData(int msgid, long documentid, String userid, String datecreated, String documenturl) {
+            dMsgid =msgid;
+            documentID = documentid;
+            dUserid = userid;
+            dDatecreated = datecreated;
+            documentURL = documenturl;
         }
 
     }
@@ -371,6 +514,37 @@ try {
             db.cSelectOne = db.Connection.prepareStatement("SELECT * from comments WHERE comment=?;");
             db.cUpdateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentID = ?;");
         
+        
+        //Documents
+            db.dCreateTable = db.Connection.prepareStatement("CREATE TABLE documents(msgid SERIAL PRIMARY KEY, documentid integer, userid VARCHAR(50), datecreated TIMESTAMP, documenturl VARCHAR(100));");
+            db.dDropTable = db.Connection.prepareStatement("DROP TABLE documents;");
+            db.dDeleteOne = db.Connection.prepareStatement("delete from documents  where documents.msgid in (select msgid  from (select msgid,  row_number() over (order by datecreated desc) as seqnum_desc from documents ) e where e.seqnum_desc <= 1 );");
+            db.dInsertOne = db.Connection.prepareStatement("INSERT INTO documents(msgid, documentid, userid, datecreated, documenturl) VALUES (default, 100, ?, ?, ?);");
+            db.dSelectAll = db.Connection.prepareStatement("SELECT * FROM documents;");
+            db.dSelectOne = db.Connection.prepareStatement("SELECT * from documents WHERE msgid=?;");
+            //db.dUpdateOne = db.Connection.prepareStatement("UPDATE documents SET documentrul = ? WHERE msgid = ?;");
+            db.dDeleteChosen = db.Connection.prepareStatement("DELETE FROM documents WHERE msgid = ?;");
+
+
+        //Links
+            //Documents
+            db.linkCreateTable = db.Connection.prepareStatement("CREATE TABLE link(msgid SERIAL PRIMARY KEY, userid VARCHAR(50), datecreated TIMESTAMP, linkurl VARCHAR(200));");
+            db.linkDropTable = db.Connection.prepareStatement("DROP TABLE link;");
+            db.linkDeleteOne = db.Connection.prepareStatement("delete from link  where link.msgid in (select msgid  from (select msgid,  row_number() over (order by datecreated desc) as seqnum_desc from link ) e where e.seqnum_desc <= 1 );");
+            db.linkInsertOne = db.Connection.prepareStatement("INSERT INTO link(msgid, userid, datecreated, linkurl) VALUES (default, ?, ?, ?);");
+            db.linkSelectAll = db.Connection.prepareStatement("SELECT * FROM link;");
+            db.linkSelectOne = db.Connection.prepareStatement("SELECT * from link WHERE msgid=?;");
+            db.linkDeleteChosen = db.Connection.prepareStatement("DELETE FROM link WHERE msgid = ?;");
+
+
+
+
+
+
+
+
+
+
 
 
         } catch (SQLException e) {
@@ -431,6 +605,28 @@ try {
         return count;
     }
 
+    /**
+     * insert link
+     * @param userid
+     * @param message
+     * @return
+     */
+    int insertRowLink(String userid, String link) {
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        int count = 0;
+        try {
+            mInsertOne.setString(1, userid);
+
+            mInsertOne.setTimestamp(2, ts);
+
+            mInsertOne.setString(3, link);
+            count += mInsertOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
      /**
      * Insert a row into the database
      *
@@ -480,6 +676,21 @@ try {
         return count;
     }
 
+    int insertRowDocument(String userid, String document) {
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        int count = 0;
+        try {
+            dInsertOne.setString(1, userid);
+            dInsertOne.setTimestamp(2, ts);
+            dInsertOne.setString(3, document);
+            count += dInsertOne.executeUpdate();
+            System.out.println("Rows inserted");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
     /**
      * Query the database for a list of all subjects and their IDs
      * 
@@ -491,6 +702,21 @@ try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
                 res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"),rs.getString("message")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    ArrayList<RowData> selectAllLinks() {
+        ArrayList<RowData> res = new ArrayList<RowData>();
+        try {
+            ResultSet rs = linkSelectAll.executeQuery();
+            while (rs.next()) {
+                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"),rs.getString("linkurl")));
             }
             rs.close();
             return res;
@@ -536,6 +762,21 @@ try {
         }
     }
 
+    ArrayList<RowData> selectAllDocuments() {
+        ArrayList<RowData> res = new ArrayList<RowData>();
+        try {
+            ResultSet rs = dSelectAll.executeQuery();
+            while (rs.next()) {
+                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"),rs.getString("documenturl")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Get all data for a specific row, by ID
      * 
@@ -557,6 +798,24 @@ try {
         return res;
     }
 
+    /**
+     * select one link
+     * @param id
+     * @return
+     */
+    RowData selectOneLink(int id) {
+        RowData res = null;
+        try {
+            linkSelectOne.setInt(1, id);
+            ResultSet rs = linkSelectOne.executeQuery();
+            if (rs.next()) {
+                res = new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"), rs.getString("link"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
 
     /**
      * Get all data for a specific row, by ID
@@ -600,6 +859,21 @@ try {
         }
         return res;
     }
+
+    RowData selectOneDocument(int id) {
+        RowData res = null;
+        try {
+            dSelectOne.setInt(1, id);
+            ResultSet rs = dSelectOne.executeQuery();
+            if (rs.next()) {
+                res = new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"), rs.getString("documenturl"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 
     /**
      * Delete a row by ID
@@ -654,6 +928,53 @@ try {
         }
         return res;
     }
+
+    int deleteRowDocument() {
+        int res = -1;
+        try {
+            //dDeleteOne.setInt(1, id);
+            res = dDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
+    int deleteRowDocument(int id) {
+        int res = -1;
+        try {
+            dDeleteChosen.setInt(1, id);
+            res = dDeleteChosen.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int deleteRowLink() {
+        int res = -1;
+        try {
+            //dDeleteOne.setInt(1, id);
+            res = linkDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
+    int deleteRowLink(int id) {
+        int res = -1;
+        try {
+            linkDeleteChosen.setInt(1, id);
+            res = linkDeleteChosen.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 
     
 
@@ -751,17 +1072,42 @@ try {
         }
     }
 
+    /**
+     * create document table
+     */
+    void createTableDocuments() {
+        try {
+            dCreateTable.execute();
+            System.out.println("Document table created.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * create document table
+     */
+    void createTableLink() {
+        try {
+            linkCreateTable.execute();
+            System.out.println("Link table created.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Remove tblData from the database.  If it does not exist, this will print
      * an error.
      */
-    // void dropTable() {
-    //     try {
-    //         mDropTable.execute();
-    //     } catch (SQLException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+     void dropTable() {
+         try {
+             dDropTable.execute();
+             System.out.println("Table dropped");
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+     }
 }
 
