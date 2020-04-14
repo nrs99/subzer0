@@ -74,6 +74,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+<!--        <Button-->
+<!--            android:id="@+id/postImage"-->
+<!--            android:layout_width="200dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:padding="6dp"-->
+<!--            android:textSize="15dp"-->
+<!--            android:text="Add an Image"/>-->
 
         <TextView
             android:id="@+id/commentCount"
@@ -112,4 +119,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:id="@+id/imageView"/>
 </LinearLayout>
