@@ -1,3 +1,13 @@
+/// <reference path="ts/NewLogin.ts"/>
+/// <reference path="ts/NewEntryForm.ts"/>
+/// <reference path="ts/ElementList.ts"/>
+/// <reference path="ts/Navbar.ts"/>
+/// <reference path="ts/EditEntryForm.ts"/>
+/// <reference path="ts/ViewComments.ts"/>
+/// <reference path="ts/Profile.ts"/>
+/// <reference path="ts/NewCommentForm.ts"/>
+
+
 var describe: any;
 var it: any;
 var expect: any;
@@ -22,19 +32,4 @@ describe("Tests of basic math functions", function() {
         $("#NewEntryForm-Close").click();
     });
 
-    it("UI Test: Add Button Hides Listing", function(){
-        // click the button for showing the add button
-        $('#showFormButton').click();
-        // expect that the add form is not hidden
-        expect($("#addElement").attr("style").indexOf("display: none;")).toEqual(-1);
-        // expect tha tthe element listing is hidden
-        expect($("#showElements").attr("style").indexOf("display: none;")).toEqual(0);
-        // reset the UI, so we don't mess up the next test
-        $('#addCancel').click();        
-    });
-
-    it("Login Test: sign in shows sign off", function() {
-        $('#signOn').click();
-        expect($("#signOff").attr("style").indexOf("display: none;")).toEqual(0);
-    })
 });
