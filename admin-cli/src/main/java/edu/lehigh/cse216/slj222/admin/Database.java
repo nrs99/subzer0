@@ -1,4 +1,5 @@
 package edu.lehigh.cse216.slj222.admin;
+import java.sql.Timestamp;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -480,6 +481,7 @@ try {
             // Standard CRUD operations
             db.lDeleteOne = db.Connection.prepareStatement("DELETE FROM likes WHERE msgid = ?;");
             //create sequence
+
             //db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
 
             db.lInsertOne = db.Connection.prepareStatement("INSERT INTO likes(userid, likes, mid) VALUES (?, ?, default);");
@@ -514,7 +516,6 @@ try {
             db.cSelectOne = db.Connection.prepareStatement("SELECT * from comments WHERE comment=?;");
             db.cUpdateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentID = ?;");
         
-        
         //Documents
             db.dCreateTable = db.Connection.prepareStatement("CREATE TABLE documents(msgid SERIAL PRIMARY KEY, documentid integer, userid VARCHAR(50), datecreated TIMESTAMP, documenturl VARCHAR(100));");
             db.dDropTable = db.Connection.prepareStatement("DROP TABLE documents;");
@@ -535,15 +536,6 @@ try {
             db.linkSelectAll = db.Connection.prepareStatement("SELECT * FROM link;");
             db.linkSelectOne = db.Connection.prepareStatement("SELECT * from link WHERE msgid=?;");
             db.linkDeleteChosen = db.Connection.prepareStatement("DELETE FROM link WHERE msgid = ?;");
-
-
-
-
-
-
-
-
-
 
 
 
@@ -592,6 +584,7 @@ try {
     int insertRowMessages(String userid, String message) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         int count = 0;
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
         try {
             mInsertOne.setString(1, userid);
 

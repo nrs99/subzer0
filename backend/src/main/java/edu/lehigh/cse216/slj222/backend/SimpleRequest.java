@@ -9,12 +9,15 @@ package edu.lehigh.cse216.slj222.backend;
  */
 public class SimpleRequest {
     /**
-     * The title being provided by the client.
-     */
-    public String mTitle;
-
-    /**
      * The message being provided by the client.
      */
-    public String mMessage;
+    public String message;
+    /**
+     * The user ID of the client
+     */
+    public String userID;
+    
+    public String link;
+
+    public String photoURL;
 }

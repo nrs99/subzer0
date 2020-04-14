@@ -1,16 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/listItemIndex"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
+    android:id="@+id/llCardBack"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="4dp">
 
-    <TextView
-        android:id="@+id/listItemText"
+    <LinearLayout
+        android:id="@+id/LinearLayout03"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/profilePic"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="60dp"
+            android:layout_height="60dp" />
+
+        <TextView
+            android:id="@+id/listItemText"
+            android:layout_width="343dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|fill_horizontal"
+            android:background="@android:color/transparent"
+            android:padding="6dp"
+            android:textColor="@android:color/black"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout02"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:id="@+id/posted_by"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:clickable="true"
+            android:onClick="onClick"
+            android:padding="6dp"
+            android:text="Null user"
+            android:textColor="@android:color/black"
+            android:textSize="17dp" />
+
+        <ImageButton
+            android:id="@+id/like_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:layout_marginLeft="188dp"
+            android:background="@drawable/ic_unlikebutton" />
+
+        <ImageButton
+            android:id="@+id/dislike_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:background="@drawable/ic_no_thumbdown" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+<!--        <Button-->
+<!--            android:id="@+id/postImage"-->
+<!--            android:layout_width="200dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:padding="6dp"-->
+<!--            android:textSize="15dp"-->
+<!--            android:text="Add an Image"/>-->
+
+        <TextView
+            android:id="@+id/commentCount"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:layout_gravity="left"
+            android:padding="6dp"
+            android:text="0 comments"
+            android:textColor="@android:color/black"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/likeCount"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:layout_marginLeft="138dp"
+            android:gravity="center_horizontal"
+            android:text="likes"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/dislikeCount"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:gravity="center_horizontal"
+            android:text="dislikes"
+            android:textColor="@android:color/black" />
+
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:id="@+id/imageView"/>
 </LinearLayout>
