@@ -49,7 +49,6 @@ public class App {
         System.out.println("  [~] Update a message row");
         System.out.println("  [X] Update a like row");
         System.out.println("  [Z] Update a comment row");
-        
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }
@@ -343,7 +342,8 @@ public class App {
                 System.out.println("  Current Link Table Contents");
                 System.out.println("  -------------------------");
                 for (final Database.RowData rd : res) {
-                    System.out.println("  [" + rd.linkMsgid + "] "  + " date: " + rd.linkDateCreated + " user id: " + rd.linkUserid + " document url: " + rd.linkUrl);
+                   System.out.println("  [" + rd.linkMsgid + "] "  + " date: " + rd.linkDateCreated + " user id: " + rd.linkUserid + " document url: " + rd.linkUrl);
+                    //System.out.println("  [" + rd.mMsgid + "] "  + " date: " + rd.mDatecreated + " user id: " + rd.mUserid + " document url: " + rd.mMessage);
                 }
             }else if(action == '(') {           //Delete a document row
                 //int id = getInt(in, "Enter the row ID");
