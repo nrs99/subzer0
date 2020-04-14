@@ -66,9 +66,6 @@ public class MainActivity extends BaseActivity {
                 hideKeyboard(this); // Hides the keyboard if clicked
                 //Go to camera activity
                 moveToCameraActivity();
-
-
-
             }
         });
 

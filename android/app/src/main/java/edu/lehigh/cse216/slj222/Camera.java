@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 //import com.google.firebase.storage.FirebaseStorage;
@@ -26,6 +28,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import android.Manifest;
@@ -39,6 +43,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 //import kotlinx.android.synthetic.main.activity_main.*;
 
 public class Camera extends  AppCompatActivity{
@@ -48,6 +55,8 @@ public class Camera extends  AppCompatActivity{
     private String pictureFilePath;
 //    private FirebaseStorage firebaseStorage;
     private String deviceIdentifier;
+    private  Button imgToSend;
+    private String pic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +71,18 @@ public class Camera extends  AppCompatActivity{
         }
 
         findViewById(R.id.save_local).setOnClickListener(saveGallery);
-//        findViewById(R.id.save_cloud).setOnClickListener(saveCloud);
+        findViewById(R.id.save_cloud).setOnClickListener(saveCloud);
+
+        imgToSend = findViewById(R.id.save_cloud);
+
+        if(!imgToSend.getText().toString().equals("")) { // If it's blank, don't send anything
+            pic = imgToSend.getText().toString().trim();
+            //saveCloud();
+            findViewById(R.id.save_cloud).setOnClickListener(saveCloud);
+
+
+        }
+
 
 //        firebaseStorage = FirebaseStorage.getInstance();
         getInstallationIdentifier();
@@ -135,18 +155,13 @@ public class Camera extends  AppCompatActivity{
         galleryIntent.setData(picUri);
         this.sendBroadcast(galleryIntent);
     }
-//    //save captured picture on cloud storage
-//    private View.OnClickListener saveCloud = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View view) {
-//            addToCloudStorage();
-//        }
-//    };
-//    private void addToCloudStorage() {
-//        File f = new File(pictureFilePath);
-//        Uri picUri = Uri.fromFile(f);
-//        final String cloudFilePath = deviceIdentifier + picUri.getLastPathSegment();
-//
+    private void addToCloudStorage() {
+        String url = "https://subzer0.herokuapp.com/messages";
+        Map<String, String> params = new HashMap<>();
+        File f = new File(pictureFilePath);
+        Uri picUri = Uri.fromFile(f);
+        final String cloudFilePath = deviceIdentifier + picUri.getLastPathSegment();
+
 //        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
 //        StorageReference storageRef = firebaseStorage.getReference();
 //        StorageReference uploadeRef = storageRef.child(cloudFilePath);
@@ -163,7 +178,37 @@ public class Camera extends  AppCompatActivity{
 //                        Toast.LENGTH_SHORT).show();
 //            }
 //        });
-//    }
+
+        params.put("photourl", cloudFilePath);
+
+        JSONObject request = new JSONObject(params);
+
+        // Request a string response from the provided URL.
+        JsonObjectRequest getReq = new JsonObjectRequest(Request.Method.POST, url, request,
+                response -> {
+                    try {
+                        response.getString("mStatus");  //if its working or not
+                    } catch (final JSONException e) {
+                        Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
+                    }
+                },
+                error -> {
+                    // if there's an error
+                    Log.d("slj222", "error:" + error.getMessage());
+                    error.printStackTrace();
+                }) {
+        };
+        VolleySingleton.getInstance(this).addToRequestQueue(getReq);
+    }
+
+    //save captured picture on cloud storage
+    private View.OnClickListener saveCloud = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            addToCloudStorage();
+        }
+    };
+
     protected synchronized String getInstallationIdentifier() {
         if (deviceIdentifier == null) {
             SharedPreferences sharedPrefs = this.getSharedPreferences(
