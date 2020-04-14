@@ -16,6 +16,12 @@ describe("Tests of basic math functions", function() {
         expect(foo).toEqual(-1);
     });
 
+    it("UI Test: New Entry Form", function() {
+        $("#Navbar-add").click();
+        expect($("#NewEntryForm-messages").val()).toEqual("");
+        $("#NewEntryForm-Close").click();
+    });
+
     it("UI Test: Add Button Hides Listing", function(){
         // click the button for showing the add button
         $('#showFormButton').click();
