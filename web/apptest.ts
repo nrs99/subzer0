@@ -12,6 +12,7 @@ var describe: any;
 var it: any;
 var expect: any;
 var $: any;
+var jasmine: any;
 
 describe("Tests of basic math functions", function() {
     it("Adding 1 should work", function() {
@@ -26,10 +27,19 @@ describe("Tests of basic math functions", function() {
         expect(foo).toEqual(-1);
     });
 
-    it("UI Test: New Entry Form", function() {
+    it("UI Test: New Entry Form is Empty", function() {
         $("#Navbar-add").click();
-        expect($("#NewEntryForm-messages").val()).toEqual("");
+        expect($("#NewEntryForm-message").val()).toEqual("");
+        expect($("#NewEntryForm-link").val()).toEqual("");
+        expect($("#NewEntryForm-file").val()).toEqual("");
         $("#NewEntryForm-Close").click();
+    });
+
+    it("UI Test: Visit My Profile and Go Back", function() {
+        expect($("#ElementList-sort").is(":visible")).toEqual(true); 
+        $("#Navbar-myProfile").click();
+        expect($("#ElementList-sort").is(":visible")).toEqual(false);
+        $(".Profile-goBack").click();
     });
 
 });
