@@ -262,8 +262,9 @@ public class Database {
                         rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"),
                         rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
                         rs.getString("link"));
-                if (rs.getString("fileID")) {
-                    m.setPhotoString(App.getFileEncoding(rs.getString("fileID")));
+                String fileID = rs.getString("fileID");
+                if (!rs.wasNull()) {
+                    m.setPhotoString(App.getFileEncoding(fileID));
                 }
                 res.add(m);
             }
@@ -289,8 +290,9 @@ public class Database {
                         rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"),
                         rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
                         rs.getString("link"));
-                if (rs.getString("fileID")) {
-                    m.setPhotoString(App.getFileEncoding(rs.getString("fileID")));
+                String fileID = rs.getString("fileID");
+                if (!rs.wasNull()) {
+                    m.setPhotoString(App.getFileEncoding(fileID));
                 }
                 res.add(m);
             }
@@ -316,8 +318,9 @@ public class Database {
                         rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"),
                         rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
                         rs.getString("link"));
-                if (rs.getString("fileID")) {
-                    m.setPhotoString(App.getFileEncoding(rs.getString("fileID")));
+                String fileID = rs.getString("fileID");
+                if (!rs.wasNull()) {
+                    m.setPhotoString(App.getFileEncoding(fileID));
                 }
                 res.add(m);
             }
@@ -346,10 +349,11 @@ public class Database {
                         rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"),
                         rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
                         rs.getString("link"));
-                if (rs.getString("fileID")) {
-                    m.setPhotoString(App.getFileEncoding(rs.getString("fileID")));
+                String fileID = rs.getString("fileID");
+                if (!rs.wasNull()) {
+                    m.setPhotoString(App.getFileEncoding(fileID));
                 }
-                res.add(m);
+                res = m;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -476,8 +480,9 @@ public class Database {
                         rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"),
                         rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
                         rs.getString("link"));
-                if (rs.getString("fileID")) {
-                    m.setPhotoString(App.getFileEncoding(rs.getString("fileID")));
+                String fileID = rs.getString("fileID");
+                if (!rs.wasNull()) {
+                    m.setPhotoString(App.getFileEncoding(fileID));
                 }
                 res.add(m);
             }

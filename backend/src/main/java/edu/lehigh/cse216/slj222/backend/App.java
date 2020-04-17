@@ -58,12 +58,14 @@ public class App {
     // private static final String CREDENTIALS_FILE_PATH =
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
+    public static Drive service;
+
     public static void main(String[] args) throws IOException, GeneralSecurityException {// easy fix. probably not good
                                                                                          // long term.
 
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
-        Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+        service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME).build(); // Build a new authorized API client service
 
         // get the Postgres configuration from the environment
@@ -430,7 +432,11 @@ public class App {
 
     public static String getFileEncoding(String fileID) {
         OutputStream outputStream = new ByteArrayOutputStream();
-        driveService.files().get(fileId).executeMediaAndDownloadTo(outputStream);
+        try {
+            service.files().get(fileID).executeMediaAndDownloadTo(outputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return outputStream.toString();
     }
 
