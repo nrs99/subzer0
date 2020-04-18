@@ -382,8 +382,8 @@ public class App {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         service.files().get(file_ID).executeMediaAndDownloadTo(outputStream);
         byte[] bytes = outputStream.toByteArray();
-        byte[] decoded = Base64.getDecoder().decode(bytes);
-        return new String(decoded);
+        String encoded = Base64.getEncoder().encodeToString(bytes);
+        return encoded;
     }
 
     /**
