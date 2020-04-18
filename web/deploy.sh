@@ -5,9 +5,9 @@ WEBFOLDERNAME=web
 
 # step 1: make sure we have someplace to put everything.  We will delete the
 #         old folder tree, and then make it from scratch
-rm -rf $TARGETFOLDER
-mkdir $TARGETFOLDER
-mkdir $TARGETFOLDER/$WEBFOLDERNAME
+
+mkdir -p $TARGETFOLDER
+mkdir -p $TARGETFOLDER/$WEBFOLDERNAME
 
 # step 2: update our npm dependencies
 npm update
