@@ -65,7 +65,7 @@ class NewEntryForm {
      * Immediately hide the form when we send data, so that the user knows that 
      * their click was received.
      */
-    private static submitForm() {
+    private static async submitForm() {
         // get the values of the two fields, force them to be strings, and check 
         // that neither is empty
         let msg = "" + $("#" + NewEntryForm.NAME + "-message").val();
@@ -83,9 +83,13 @@ class NewEntryForm {
         }
 
         if ($("#" + NewEntryForm.NAME + "-file").val() !== "") {
-            fileStr = NewEntryForm.toBase64(file);
-            var splitStr = fileStr.split(",");
+
+            fileStr = await NewEntryForm.toBase64(file);
+
+            console.log("Original: " + fileStr);
+            let splitStr = fileStr.split(",");
             fileStr = splitStr[1];
+            console.log("After split: " + fileStr);
         }
 
         if (msg === "") {
@@ -146,9 +150,17 @@ class NewEntryForm {
         return !!pattern.test(str);
     }
 
+    // Adapted from https://simon-schraeder.de/posts/filereader-async/
     private static toBase64(file) {
-        var reader = new FileReader();
-        reader.readAsDataURL(file);
-        return reader.result;
+        return new Promise((resolve, reject) => {
+            let reader = new FileReader();
+
+            reader.onload = () => {
+                resolve(reader.result);
+            };
+
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        })
     }
 }
