@@ -30,7 +30,7 @@
                 {{/notNull}}
             </tr>
             <tr>
-                <td><img src="https://pbs.twimg.com/profile_images/1100094772142841858/r8P4QTkz_400x400.jpg" alt = "Maxim Veznov"></td>
+                <td><img src={{this.photoString}}></td>
             </tr>
             {{/each}}
         </tbody>

@@ -379,9 +379,11 @@ public class App {
     }
 
     private static String downloadImage(String file_ID, Drive service) throws IOException {
-        OutputStream outputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         service.files().get(file_ID).executeMediaAndDownloadTo(outputStream);
-        return outputStream.toString();
+        byte[] bytes = outputStream.toByteArray();
+        byte[] decoded = Base64.getDecoder().decode(bytes);
+        return new String(decoded);
     }
 
     /**
