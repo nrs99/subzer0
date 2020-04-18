@@ -84,6 +84,8 @@ class NewEntryForm {
 
         if ($("#" + NewEntryForm.NAME + "-file").val() !== "") {
             fileStr = NewEntryForm.toBase64(file);
+            var splitStr = fileStr.split(",");
+            fileStr = splitStr[1];
         }
 
         if (msg === "") {
