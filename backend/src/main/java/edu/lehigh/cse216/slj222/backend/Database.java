@@ -263,7 +263,7 @@ public class Database {
                         rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
-                if (!rs.wasNull()) {
+                if (fileID != null) {
                     m.setPhotoString(App.getFileEncoding(fileID));
                 }
                 res.add(m);
@@ -291,7 +291,7 @@ public class Database {
                         rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
-                if (!rs.wasNull()) {
+                if (fileID != null) {
                     m.setPhotoString(App.getFileEncoding(fileID));
                 }
                 res.add(m);
@@ -319,7 +319,7 @@ public class Database {
                         rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
-                if (!rs.wasNull()) {
+                if (fileID != null) {
                     m.setPhotoString(App.getFileEncoding(fileID));
                 }
                 res.add(m);
@@ -350,7 +350,7 @@ public class Database {
                         rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
-                if (!rs.wasNull()) {
+                if (fileID != null) {
                     m.setPhotoString(App.getFileEncoding(fileID));
                 }
                 res = m;
@@ -481,7 +481,7 @@ public class Database {
                         rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
-                if (!rs.wasNull()) {
+                if (fileID != null) {
                     m.setPhotoString(App.getFileEncoding(fileID));
                 }
                 res.add(m);
