@@ -203,7 +203,7 @@ public class App {
                 }
                 if (req.photoURL != null) {
 
-                    String fileID = uploadImage(req.photoURL, service, newId);
+                    String fileID = uploadImage(req.photoURL, service, newId, req.mimeType);
                     db.insertDocument(newId, fileID, req.mimeType);
                 }
 
@@ -366,13 +366,13 @@ public class App {
         return defaultVal;
     }
 
-    private static String uploadImage(String encodedString, Drive service, int msgid) throws IOException {
+    private static String uploadImage(String encodedString, Drive service, int msgid, String mime) throws IOException {
         byte[] decodedImg = Base64.getDecoder().decode(encodedString);
         java.io.File thisFile = new java.io.File("image");
         Files.write(decodedImg, thisFile);
         File fileMetadata = new File();
         fileMetadata.setName(msgid + ".jpeg");
-        FileContent mediaContent = new FileContent("image/jpeg", thisFile);
+        FileContent mediaContent = new FileContent(mime, thisFile);
         File file = service.files().create(fileMetadata, mediaContent).setFields("id").execute();
         return file.getId();
 

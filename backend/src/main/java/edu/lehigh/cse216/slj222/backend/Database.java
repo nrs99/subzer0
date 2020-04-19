@@ -265,7 +265,6 @@ public class Database {
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
                 if (fileID != null) {
-                    System.err.println("Hitting this!");
                     m.setPhotoString(App.getFileEncoding(fileID), rs.getString("mimeType"));
                 }
                 res.add(m);

@@ -33,7 +33,15 @@
             <tr>
                 <td></td>
                 <td></td>
-                <td><img src="data:image/jpeg;base64,{{this.photoString}}" height=200px></td>
+                <td>
+                    {{#isPDF this.mimeType}}
+                    <embed src="data:{{this.mimeType}};base64,{{this.photoString}}" width="500" height="375"
+                        type="application/pdf">
+                    {{else}}
+                    <img src="data:{{this.mimeType}};base64,{{this.photoString}}" height = 200px>
+                    {{/isPDF}}
+                </td>
+                <td>
             </tr>
             {{/notNull}}
             {{/each}}

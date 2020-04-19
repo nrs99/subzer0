@@ -26,7 +26,7 @@ $(document).ready(function () {
     EditEntryForm.refresh();
     NewLogin.refresh();
 
-    if(localStorage.getItem("state") === "logged-in") {
+    if (localStorage.getItem("state") === "logged-in") {
         NewLogin.hide();
         ElementList.refresh();
     } else {
@@ -38,20 +38,20 @@ $(document).ready(function () {
 /**
  * This allows line breaks to be displayed correctly
  */
-Handlebars.registerHelper('breaklines', function(text) {
+Handlebars.registerHelper('breaklines', function (text) {
     text = Handlebars.Utils.escapeExpression(text);
     text = text.replace(/(\r\n|\n|\r)/gm, '<br>');
     return new Handlebars.SafeString(text);
 });
 
-Handlebars.registerHelper('ifEquals', function(arg1, options) {
+Handlebars.registerHelper('ifEquals', function (arg1, options) {
     return (arg1 === localStorage.getItem("ID")) ? options.fn(this) : options.inverse(this);
 });
 
-Handlebars.registerHelper('notNull', function(arg1, options) {
+Handlebars.registerHelper('notNull', function (arg1, options) {
     return (arg1) ? options.fn(this) : options.inverse(this);
 });
 
-Handlebars.registerHelper('parseMjme', function(text)) {
-
-}
+Handlebars.registerHelper('isPDF', function (mimeType, options) {
+    return (mimeType === "application/pdf") ? options.fn(this) : options.inverse(this);
+});
