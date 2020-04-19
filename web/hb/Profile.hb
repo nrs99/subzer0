@@ -22,9 +22,21 @@
                 <td><button class="Profile-linkbtn" data-value="{{this.link}}">Link</button></td>
                 {{/notNull}}
             </tr>
+            {{#notNull this.photoString}}
             <tr>
-                <td><img src="https://pbs.twimg.com/profile_images/1100094772142841858/r8P4QTkz_400x400.jpg" alt = "Maxim Veznov"></td>
+                <td></td>
+                <td></td>
+                <td>
+                    {{#isPDF this.mimeType}}
+                    <embed src="data:{{this.mimeType}};base64,{{this.photoString}}" width="500" height="375"
+                        type="application/pdf">
+                    {{else}}
+                    <img src="data:{{this.mimeType}};base64,{{this.photoString}}" height=200px>
+                    {{/isPDF}}
+                </td>
+                <td>
             </tr>
+            {{/notNull}}
             {{/each}}
         </tbody>
     </table>

@@ -92,6 +92,11 @@ class NewEntryForm {
             mime = file.type;
         }
 
+        if (mime !== null && mime !== "application/pdf" && !mime.startsWith("image/")) {
+            window.alert("Error: Invalid file type");
+            return;
+        }
+
         if (msg === "") {
             window.alert("Error: message is empty");
             return;

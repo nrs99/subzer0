@@ -38,7 +38,7 @@
                     <embed src="data:{{this.mimeType}};base64,{{this.photoString}}" width="500" height="375"
                         type="application/pdf">
                     {{else}}
-                    <img src="data:{{this.mimeType}};base64,{{this.photoString}}" height = 200px>
+                    <img src="data:{{this.mimeType}};base64,{{this.photoString}}" height=200px>
                     {{/isPDF}}
                 </td>
                 <td>
