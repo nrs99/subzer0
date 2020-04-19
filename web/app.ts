@@ -52,3 +52,6 @@ Handlebars.registerHelper('notNull', function(arg1, options) {
     return (arg1) ? options.fn(this) : options.inverse(this);
 });
 
+Handlebars.registerHelper('parseMjme', function(text)) {
+
+}

@@ -29,9 +29,13 @@
                 <td><button class="ElementList-linkbtn" data-value="{{this.link}}">Link</button></td>
                 {{/notNull}}
             </tr>
+            {{#notNull this.photoString}}
             <tr>
-                <td><img src={{this.photoString}}></td>
+                <td></td>
+                <td></td>
+                <td><img src="data:image/jpeg;base64,{{this.photoString}}" height=200px></td>
             </tr>
+            {{/notNull}}
             {{/each}}
         </tbody>
     </table>

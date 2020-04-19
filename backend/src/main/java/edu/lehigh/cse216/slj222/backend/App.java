@@ -204,7 +204,7 @@ public class App {
                 if (req.photoURL != null) {
 
                     String fileID = uploadImage(req.photoURL, service, newId);
-                    db.insertDocument(newId, fileID);
+                    db.insertDocument(newId, fileID, req.mimeType);
                 }
 
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
@@ -378,14 +378,6 @@ public class App {
 
     }
 
-    private static String downloadImage(String file_ID, Drive service) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        service.files().get(file_ID).executeMediaAndDownloadTo(outputStream);
-        byte[] bytes = outputStream.toByteArray();
-        String encoded = Base64.getEncoder().encodeToString(bytes);
-        return encoded;
-    }
-
     /**
      * Set up CORS headers for the OPTIONS verb, and for every response that the
      * server sends. This only needs to be called once.
@@ -433,13 +425,18 @@ public class App {
     }
 
     public static String getFileEncoding(String fileID) {
-        OutputStream outputStream = new ByteArrayOutputStream();
         try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             service.files().get(fileID).executeMediaAndDownloadTo(outputStream);
+            byte[] bytes = outputStream.toByteArray();
+            outputStream.flush();
+            outputStream.close();
+            String encoded = Base64.getEncoder().encodeToString(bytes);
+            return encoded;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return outputStream.toString();
+        return null;
     }
 
 }

@@ -72,6 +72,7 @@ class NewEntryForm {
         let url = "" + $("#" + NewEntryForm.NAME + "-link").val();
         let file = $("#" + NewEntryForm.NAME + "-file")[0].files[0];
         let fileStr = null;
+        let mime = null;
 
         if (url === "") {
             url = null;
@@ -86,10 +87,9 @@ class NewEntryForm {
 
             fileStr = await NewEntryForm.toBase64(file);
 
-            console.log("Original: " + fileStr);
             let splitStr = fileStr.split(",");
             fileStr = splitStr[1];
-            console.log("After split: " + fileStr);
+            mime = file.type;
         }
 
         if (msg === "") {
@@ -107,7 +107,7 @@ class NewEntryForm {
             type: "POST",
             url: backendUrl + "/messages",
             dataType: "json",
-            data: JSON.stringify({ message: msg, userID: localStorage.getItem("ID"), link: url, photoURL: fileStr }),
+            data: JSON.stringify({ message: msg, userID: localStorage.getItem("ID"), link: url, photoURL: fileStr, mimeType: mime }),
             success: NewEntryForm.onSubmitResponse
         });
     }

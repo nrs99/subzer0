@@ -128,11 +128,11 @@ public class Database {
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             db.mSelectOne = db.mConnection.prepareStatement(
-                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link, fileid from messages natural join users natural join documents left join links on messages.msgid = links.msgid where messages.msgid = ?");
+                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link, fileid, mime as mimetype from messages natural join users natural join documents left join links on messages.msgid = links.msgid where messages.msgid = ?");
             db.mSelectAllNewest = db.mConnection.prepareStatement(
-                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link, fileid from messages natural join users natural join documents left join links on messages.msgid = links.msgid ORDER BY datecreated DESC");
+                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link, fileid, mime as mimetype from messages natural join users natural join documents left join links on messages.msgid = links.msgid ORDER BY datecreated DESC");
             db.mSelectAllOldest = db.mConnection.prepareStatement(
-                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link, fileid from messages natural join users natural join documents left join links on messages.msgid = links.msgid ORDER BY datecreated ASC");
+                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link, fileid, mime as mimetype from messages natural join users natural join documents left join links on messages.msgid = links.msgid ORDER BY datecreated ASC");
             db.mSelectAllPopular = db.mConnection.prepareStatement(
                     "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users ORDER BY (likes - dislikes) DESC");
             db.mInsertVote = db.mConnection.prepareStatement("INSERT INTO likes VALUES(?, ?, ?)");
@@ -144,12 +144,12 @@ public class Database {
             db.mGetComments = db.mConnection
                     .prepareStatement("SELECT * from comments natural join users WHERE mid=? ORDER BY datecreated ASC");
             db.mMessagesByUser = db.mConnection.prepareStatement(
-                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link, fileid from messages natural join users natural join documents left join links on messages.msgid = links.msgid WHERE userid = ? ORDER BY datecreated DESC");
+                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link, fileid, mime as mimetype from messages natural join users natural join documents left join links on messages.msgid = links.msgid WHERE userid = ? ORDER BY datecreated DESC");
             db.mUserLikes = db.mConnection.prepareStatement("SELECT mid, likes from likes where userid =?");
             db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
             db.mUserExists = db.mConnection.prepareStatement("SELECT * FROM users where userID = ?");
             db.mCommentAuthor = db.mConnection.prepareStatement("SELECT userid FROM comments WHERE commentid=?");
-            db.mInsertDocument = db.mConnection.prepareStatement("INSERT INTO documents VALUES (?,?)");
+            db.mInsertDocument = db.mConnection.prepareStatement("INSERT INTO documents VALUES (?,?, ?)");
             db.mInsertLink = db.mConnection.prepareStatement("INSERT INTO links VALUES (?, ?)");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -222,11 +222,12 @@ public class Database {
      *
      * @return The number of rows that were inserted
      */
-    int insertDocument(int msgid, String file_id) {
+    int insertDocument(int msgid, String file_id, String mimeType) {
         int count = 0;
         try {
             mInsertDocument.setInt(1, msgid);
             mInsertDocument.setString(2, file_id);
+            mInsertDocument.setString(3, mimeType);
             mInsertDocument.executeUpdate();
             count = 1;
         } catch (SQLException e) {
@@ -264,7 +265,8 @@ public class Database {
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
                 if (fileID != null) {
-                    m.setPhotoString(App.getFileEncoding(fileID));
+                    System.err.println("Hitting this!");
+                    m.setPhotoString(App.getFileEncoding(fileID), rs.getString("mimeType"));
                 }
                 res.add(m);
             }
@@ -292,7 +294,7 @@ public class Database {
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
                 if (fileID != null) {
-                    m.setPhotoString(App.getFileEncoding(fileID));
+                    m.setPhotoString(App.getFileEncoding(fileID), rs.getString("mimeType"));
                 }
                 res.add(m);
             }
@@ -320,7 +322,7 @@ public class Database {
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
                 if (fileID != null) {
-                    m.setPhotoString(App.getFileEncoding(fileID));
+                    m.setPhotoString(App.getFileEncoding(fileID), rs.getString("mimeType"));
                 }
                 res.add(m);
             }
@@ -351,7 +353,7 @@ public class Database {
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
                 if (fileID != null) {
-                    m.setPhotoString(App.getFileEncoding(fileID));
+                    m.setPhotoString(App.getFileEncoding(fileID), rs.getString("mimeType"));
                 }
                 res = m;
             }
@@ -482,7 +484,7 @@ public class Database {
                         rs.getString("link"));
                 String fileID = rs.getString("fileID");
                 if (fileID != null) {
-                    m.setPhotoString(App.getFileEncoding(fileID));
+                    m.setPhotoString(App.getFileEncoding(fileID), rs.getString("mimeType"));
                 }
                 res.add(m);
             }

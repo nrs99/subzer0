@@ -20,4 +20,6 @@ public class SimpleRequest {
     public String link;
 
     public String photoURL;
+
+    public String mimeType;
 }
