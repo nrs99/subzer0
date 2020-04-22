@@ -535,7 +535,7 @@ public class Database {
             db.createTableFollowing = db.Connection.prepareStatement(
                     "CREATE TABLE following(usera varchar(30), userb varchar(30), FOREIGN KEY (usera) references users (userid), FOREIGN KEY (userb) references users (userid)) ");
             db.createTablePreferences = db.Connection.prepareStatement(
-                    "CREATE TABLE preferences(userid varchar(30) primary key, followsMe boolean, commentsOnPost boolean, FOREGIN KEY (userid) references users (userid))");
+                    "CREATE TABLE preferences(userid varchar(30) primary key, followsMe boolean, commentsOnPost boolean, FOREIGN KEY (userid) references users (userid))");
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
