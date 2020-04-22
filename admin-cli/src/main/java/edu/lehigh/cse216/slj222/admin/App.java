@@ -64,7 +64,7 @@ public class App {
      */
     static char prompt(final BufferedReader in) {
         // The valid actions:
-        final String actions = "MLCND1234*&$%-#^(+@!)~XZVqB5_KI=?";
+        final String actions = "MLCNDPF1234*&$%-#^(+@!)~XZVqB5_KI=?";
 
         // We repeat until a valid single-character option is selected
         while (true) {
