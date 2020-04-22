@@ -1,4 +1,5 @@
 package edu.lehigh.cse216.slj222.admin;
+
 import java.sql.Timestamp;
 
 import java.sql.Connection;
@@ -12,10 +13,10 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class Database {
-    //messages
+    // messages
     /**
-     * The connection to the database.  When there is no connection, it should
-     * be null.  Otherwise, there is a valid open connection
+     * The connection to the database. When there is no connection, it should be
+     * null. Otherwise, there is a valid open connection
      */
     private Connection Connection;
 
@@ -41,7 +42,7 @@ public class Database {
     /**
      * A prepared statemeting for trigger
      */
-    //private PreparedStatmet mTrigger;
+    // private PreparedStatmet mTrigger;
     /**
      * A prepared statement for updating a single row in the database
      */
@@ -57,12 +58,8 @@ public class Database {
      */
     private PreparedStatement mDropTable;
 
-    
-
-
-
-//likes
-        /**
+    // likes
+    /**
      * A prepared statement for getting all data in the database
      */
     private PreparedStatement lSelectAll;
@@ -84,7 +81,7 @@ public class Database {
     /**
      * A prepared statemeting for trigger
      */
-    //private PreparedStatmet mTrigger;
+    // private PreparedStatmet mTrigger;
     /**
      * A prepared statement for updating a single row in the database
      */
@@ -100,9 +97,8 @@ public class Database {
      */
     private PreparedStatement lDropTable;
 
-
-//Comments
-        /**
+    // Comments
+    /**
      * A prepared statement for getting all data in the database
      */
     private PreparedStatement cSelectAll;
@@ -124,7 +120,7 @@ public class Database {
     /**
      * A prepared statemeting for trigger
      */
-    //private PreparedStatmet mTrigger;
+    // private PreparedStatmet mTrigger;
     /**
      * A prepared statement for updating a single row in the database
      */
@@ -140,9 +136,7 @@ public class Database {
      */
     private PreparedStatement cDropTable;
 
-
-
-//Documents
+    // Documents
     /**
      * A prepared statement for getting all data in the database
      */
@@ -167,7 +161,7 @@ public class Database {
     /**
      * A prepared statemeting for trigger
      */
-    //private PreparedStatmet mTrigger;
+    // private PreparedStatmet mTrigger;
     /**
      * A prepared statement for updating a single row in the database
      */
@@ -183,8 +177,7 @@ public class Database {
      */
     private PreparedStatement dDropTable;
 
-
-    //Documents
+    // Documents
     /**
      * A prepared statement for getting all data in the database
      */
@@ -209,7 +202,7 @@ public class Database {
     /**
      * A prepared statemeting for trigger
      */
-    //private PreparedStatmet mTrigger;
+    // private PreparedStatmet mTrigger;
     /**
      * A prepared statement for updating a single row in the database
      */
@@ -225,29 +218,34 @@ public class Database {
      */
     private PreparedStatement linkDropTable;
 
-
-
-
-
+    /**
+     * PreparedStatement to create preferences table
+     */
+    private PreparedStatement createTablePreferences;
 
     /**
-     * RowData is like a struct in C: we use it to hold data, and we allow 
-     * direct access to its fields.  In the context of this Database, RowData 
-     * represents the data we'd see in a row.
-     * 
-     * We make RowData a static class of Database because we don't really want
-     * to encourage users to think of RowData as being anything other than an
-     * abstract representation of a row of the database.  RowData and the 
-     * Database are tightly coupled: if one changes, the other should too.
+     * PreparedStatement to create following table
      */
-    public static class RowData{
+    private PreparedStatement createTableFollowing;
+
+    /**
+     * RowData is like a struct in C: we use it to hold data, and we allow direct
+     * access to its fields. In the context of this Database, RowData represents the
+     * data we'd see in a row.
+     * 
+     * We make RowData a static class of Database because we don't really want to
+     * encourage users to think of RowData as being anything other than an abstract
+     * representation of a row of the database. RowData and the Database are tightly
+     * coupled: if one changes, the other should too.
+     */
+    public static class RowData {
         /**
          * The msgid of this row of the database
          */
         int mMsgid;
-         /**
+        /**
          * The msgid of this row of the database
-         */       
+         */
         int lMsgid;
         /**
          * The msgid of this row of the database
@@ -258,7 +256,6 @@ public class Database {
          */
         int dMsgid;
 
-
         /**
          * The userid of this row of the database
          */
@@ -267,7 +264,7 @@ public class Database {
          * The userid of this row of the database
          */
         String lUserid;
-         /**
+        /**
          * The userid of this row of the database
          */
         String cUserid;
@@ -276,7 +273,6 @@ public class Database {
          */
         String dUserid;
 
-        
         /**
          * The datecreated
          */
@@ -290,7 +286,6 @@ public class Database {
          */
         String dDatecreated;
 
-
         /**
          * The number of likes/dislikes
          */
@@ -298,13 +293,12 @@ public class Database {
         int lLikes;
         int dLikes;
 
-
         /**
          * The message stored in this row
          */
-        String  mMessage;
+        String mMessage;
         /**
-         * The Comment id 
+         * The Comment id
          */
         int cCommentID;
         /**
@@ -315,7 +309,7 @@ public class Database {
         /**
          * The message stored in this row
          */
-        String  cComment;
+        String cComment;
 
         String documentURL;
 
@@ -327,10 +321,8 @@ public class Database {
         String linkDateCreated;
         String linkUrl;
 
-        
         /**
-         * Construct a RowData object by providing values for its fields
-         * messages---
+         * Construct a RowData object by providing values for its fields messages---
          */
         public RowData(int msgid, String userid, String datecreated, String message) {
             mMsgid = msgid;
@@ -338,17 +330,17 @@ public class Database {
             mDatecreated = datecreated;
             mMessage = message;
         }
+
         /**
-         * Construct a RowData object by providing values for its fields
-         * likes---
+         * Construct a RowData object by providing values for its fields likes---
          */
-        public RowData( String userid, int likes, int mid) {
-            lMsgid = mid;//not sure about this
+        public RowData(String userid, int likes, int mid) {
+            lMsgid = mid;// not sure about this
             lUserid = userid;
             lLikes = likes;
         }
 
-        //COMMENTS LATER, comment
+        // COMMENTS LATER, comment
 
         public RowData(int msgid, int commentid, String userid, String datecreated, String comment) {
             cMsgid = msgid;
@@ -371,11 +363,10 @@ public class Database {
          * @param documentid
          * @param userid
          * @param datecreated
-         * @param documenturl
-         * document
+         * @param documenturl document
          */
         public RowData(int msgid, long documentid, String userid, String datecreated, String documenturl) {
-            dMsgid =msgid;
+            dMsgid = msgid;
             documentID = documentid;
             dUserid = userid;
             dDatecreated = datecreated;
@@ -384,19 +375,19 @@ public class Database {
 
     }
 
-       /**
-     * RowData is like a struct in C: we use it to hold data, and we allow 
-     * direct access to its fields.  In the context of this Database, RowData 
-     * represents the data we'd see in a row.
+    /**
+     * RowData is like a struct in C: we use it to hold data, and we allow direct
+     * access to its fields. In the context of this Database, RowData represents the
+     * data we'd see in a row.
      * 
-     * We make RowData a static class of Database because we don't really want
-     * to encourage users to think of RowData as being anything other than an
-     * abstract representation of a row of the database.  RowData and the 
-     * Database are tightly coupled: if one changes, the other should too.
+     * We make RowData a static class of Database because we don't really want to
+     * encourage users to think of RowData as being anything other than an abstract
+     * representation of a row of the database. RowData and the Database are tightly
+     * coupled: if one changes, the other should too.
      */
     /**
-     * The Database constructor is private: we only create Database objects 
-     * through the getDatabase() method.
+     * The Database constructor is private: we only create Database objects through
+     * the getDatabase() method.
      */
     private Database() {
     }
@@ -416,128 +407,135 @@ public class Database {
         // Create an un-configured Database object
         Database db = new Database();
 
-
-
-
         // Give the Database object a connection, fail if we cannot get one
-try {
-    Class.forName("org.postgresql.Driver");
-    URI dbUri = new URI(db_url);
-    String username = dbUri.getUserInfo().split(":")[0];
-    String password = dbUri.getUserInfo().split(":")[1];
-    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
-    Connection conn = DriverManager.getConnection(dbUrl, username, password);
-    if (conn == null) {
-        System.err.println("Error: DriverManager.getConnection() returned a null object");
-        return null;
-    }
-    db.Connection = conn;
-} catch (SQLException e) {
-    System.err.println("Error: DriverManager.getConnection() threw a SQLException");
-    e.printStackTrace();
-    return null;
-} catch (ClassNotFoundException cnfe) {
-    System.out.println("Unable to find postgresql driver");
-    return null;
-} catch (URISyntaxException s) {
-    System.out.println("URI Syntax Error");
-    return null;
-}
+        try {
+            Class.forName("org.postgresql.Driver");
+            URI dbUri = new URI(db_url);
+            String username = dbUri.getUserInfo().split(":")[0];
+            String password = dbUri.getUserInfo().split(":")[1];
+            String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath()
+                    + "?sslmode=require";
+            Connection conn = DriverManager.getConnection(dbUrl, username, password);
+            if (conn == null) {
+                System.err.println("Error: DriverManager.getConnection() returned a null object");
+                return null;
+            }
+            db.Connection = conn;
+        } catch (SQLException e) {
+            System.err.println("Error: DriverManager.getConnection() threw a SQLException");
+            e.printStackTrace();
+            return null;
+        } catch (ClassNotFoundException cnfe) {
+            System.out.println("Unable to find postgresql driver");
+            return null;
+        } catch (URISyntaxException s) {
+            System.out.println("URI Syntax Error");
+            return null;
+        }
         try {
             // NB: we can easily get ourselves in trouble here by typing the
-            //     SQL incorrectly.  We really should have things like "tblData"
-            //     as constants, and then build the strings for the statements
-            //     from those constants.
+            // SQL incorrectly. We really should have things like "tblData"
+            // as constants, and then build the strings for the statements
+            // from those constants.
 
-            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
+            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
-            db.mCreateTable = db.Connection.prepareStatement("CREATE TABLE messages(msgid SERIAL PRIMARY KEY, userid VARCHAR(30), datecreated TIMESTAMP, message VARCHAR(250));");
+            db.mCreateTable = db.Connection.prepareStatement(
+                    "CREATE TABLE messages(msgid SERIAL PRIMARY KEY, userid VARCHAR(30), datecreated TIMESTAMP, message VARCHAR(250));");
             // db.mDropTable = db.Connection.prepareStatement("DROP TABLE messages;");
 
             // Standard CRUD operations
             db.mDeleteOne = db.Connection.prepareStatement("DELETE FROM messages WHERE msgid = ?;");
-            //create sequence
-            //db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
-            db.mInsertOne = db.Connection.prepareStatement("INSERT INTO messages(msgid, userid, datecreated, message) VALUES (default,?, ?, ?);");
+            // create sequence
+            // db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
+            db.mInsertOne = db.Connection.prepareStatement(
+                    "INSERT INTO messages(msgid, userid, datecreated, message) VALUES (default,?, ?, ?);");
             db.mSelectAll = db.Connection.prepareStatement("SELECT * FROM messages;");
             db.mSelectOne = db.Connection.prepareStatement("SELECT * from messages WHERE msgid=?;");
             db.mUpdateOne = db.Connection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?;");
 
-
-             // NB: we can easily get ourselves in trouble here by typing the
-            //     SQL incorrectly.  We really should have things like "tblData"
-            //     as constants, and then build the strings for the statements
-            //     from those constants.
-            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
+            // NB: we can easily get ourselves in trouble here by typing the
+            // SQL incorrectly. We really should have things like "tblData"
+            // as constants, and then build the strings for the statements
+            // from those constants.
+            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
 
-
-            //LIKES
-            db.lCreateTable = db.Connection.prepareStatement("CREATE TABLE likes(userid VARCHAR(30), likes INT);"
-            +"ALTER TABLE likes ADD COLUMN mid INT;"
-            +" ALTER TABLE likes ADD CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES messages(msgid);");
+            // LIKES
+            db.lCreateTable = db.Connection.prepareStatement(
+                    "CREATE TABLE likes(userid VARCHAR(30), likes INT);" + "ALTER TABLE likes ADD COLUMN mid INT;"
+                            + " ALTER TABLE likes ADD CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES messages(msgid);");
             // db.mDropTable = db.Connection.prepareStatement("DROP TABLE like;");
 
             // Standard CRUD operations
             db.lDeleteOne = db.Connection.prepareStatement("DELETE FROM likes WHERE msgid = ?;");
-            //create sequence
+            // create sequence
 
-            //db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
+            // db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
 
-            db.lInsertOne = db.Connection.prepareStatement("INSERT INTO likes(userid, likes, mid) VALUES (?, ?, default);");
+            db.lInsertOne = db.Connection
+                    .prepareStatement("INSERT INTO likes(userid, likes, mid) VALUES (?, ?, default);");
             db.lSelectAll = db.Connection.prepareStatement("SELECT * FROM likes;");
             db.lSelectOne = db.Connection.prepareStatement("SELECT * FROM likes WHERE userid=?;");
             db.lUpdateOne = db.Connection.prepareStatement("UPDATE likes SET like = ? WHERE mid = ?;");
 
-
-        // //Comments
+            // //Comments
             // NB: we can easily get ourselves in trouble here by typing the
-            //     SQL incorrectly.  We really should have things like "tblData"
-            //     as constants, and then build the strings for the statements
-            //     from those constants.
+            // SQL incorrectly. We really should have things like "tblData"
+            // as constants, and then build the strings for the statements
+            // from those constants.
 
-            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
+            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
-            db.cCreateTable = db.Connection.prepareStatement("CREATE TABLE comments();"
-            +"ALTER TABLE comments ADD COLUMN mid INT;"
-            +"ALTER TABLE comments ADD CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES messages(msgid);"
-            +"ALTER TABLE comments ADD COLUMN commentID SERIAL PRIMARY KEY;"
-            +"ALTER TABLE comments ADD COLUMN userID VARCHAR(30);"
-            +"ALTER TABLE comments ADD COLUMN datecreated TIMESTAMP;"
-            +"ALTER TABLE comments ADD COLUMN comment VARCHAR(250);");
+            db.cCreateTable = db.Connection
+                    .prepareStatement("CREATE TABLE comments();" + "ALTER TABLE comments ADD COLUMN mid INT;"
+                            + "ALTER TABLE comments ADD CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES messages(msgid);"
+                            + "ALTER TABLE comments ADD COLUMN commentID SERIAL PRIMARY KEY;"
+                            + "ALTER TABLE comments ADD COLUMN userID VARCHAR(30);"
+                            + "ALTER TABLE comments ADD COLUMN datecreated TIMESTAMP;"
+                            + "ALTER TABLE comments ADD COLUMN comment VARCHAR(250);");
             // db.mDropTable = db.Connection.prepareStatement("DROP TABLE messages;");
 
             // Standard CRUD operations
             db.cDeleteOne = db.Connection.prepareStatement("DELETE FROM comments WHERE commentID = ?");
-            //create sequence
-            //db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
-            db.cInsertOne = db.Connection.prepareStatement("INSERT INTO comments(mid, commentID, userID, datecreated, comment) VALUES (default, default, ?, ?, ?);");
+            // create sequence
+            // db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
+            db.cInsertOne = db.Connection.prepareStatement(
+                    "INSERT INTO comments(mid, commentID, userID, datecreated, comment) VALUES (default, default, ?, ?, ?);");
             db.cSelectAll = db.Connection.prepareStatement("SELECT * FROM comments;");
             db.cSelectOne = db.Connection.prepareStatement("SELECT * from comments WHERE comment=?;");
             db.cUpdateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentID = ?;");
-        
-        //Documents
-            db.dCreateTable = db.Connection.prepareStatement("CREATE TABLE documents(msgid SERIAL PRIMARY KEY, documentid integer, userid VARCHAR(50), datecreated TIMESTAMP, documenturl VARCHAR(100));");
+
+            // Documents
+            db.dCreateTable = db.Connection.prepareStatement(
+                    "CREATE TABLE documents(msgid int PRIMARY KEY, fileid varchar(50), mime varchar(20))");
             db.dDropTable = db.Connection.prepareStatement("DROP TABLE documents;");
-            db.dDeleteOne = db.Connection.prepareStatement("delete from documents  where documents.msgid in (select msgid  from (select msgid,  row_number() over (order by datecreated desc) as seqnum_desc from documents ) e where e.seqnum_desc <= 1 );");
-            db.dInsertOne = db.Connection.prepareStatement("INSERT INTO documents(msgid, documentid, userid, datecreated, documenturl) VALUES (default, 100, ?, ?, ?);");
+            db.dDeleteOne = db.Connection.prepareStatement(
+                    "delete from documents  where documents.msgid in (select msgid  from (select msgid,  row_number() over (order by datecreated desc) as seqnum_desc from documents ) e where e.seqnum_desc <= 1 );");
+            db.dInsertOne = db.Connection.prepareStatement(
+                    "INSERT INTO documents(msgid, documentid, userid, datecreated, documenturl) VALUES (default, 100, ?, ?, ?);");
             db.dSelectAll = db.Connection.prepareStatement("SELECT * FROM documents;");
             db.dSelectOne = db.Connection.prepareStatement("SELECT * from documents WHERE msgid=?;");
-            //db.dUpdateOne = db.Connection.prepareStatement("UPDATE documents SET documentrul = ? WHERE msgid = ?;");
+            // db.dUpdateOne = db.Connection.prepareStatement("UPDATE documents SET
+            // documentrul = ? WHERE msgid = ?;");
             db.dDeleteChosen = db.Connection.prepareStatement("DELETE FROM documents WHERE msgid = ?;");
 
-
-        //Links
-            //Documents
-            db.linkCreateTable = db.Connection.prepareStatement("CREATE TABLE link(msgid SERIAL PRIMARY KEY, userid VARCHAR(50), datecreated TIMESTAMP, linkurl VARCHAR(200));");
+            // Links
+            // Documents
+            db.linkCreateTable = db.Connection
+                    .prepareStatement("CREATE TABLE links(msgid int PRIMARY KEY, url varchar(100))");
             db.linkDropTable = db.Connection.prepareStatement("DROP TABLE link;");
-            db.linkDeleteOne = db.Connection.prepareStatement("delete from link  where link.msgid in (select msgid  from (select msgid,  row_number() over (order by datecreated desc) as seqnum_desc from link ) e where e.seqnum_desc <= 1 );");
-            db.linkInsertOne = db.Connection.prepareStatement("INSERT INTO link(msgid, userid, datecreated, linkurl) VALUES (default, ?, ?, ?);");
+            db.linkDeleteOne = db.Connection.prepareStatement(
+                    "delete from link where link.msgid in (select msgid  from (select msgid,  row_number() over (order by datecreated desc) as seqnum_desc from link ) e where e.seqnum_desc <= 1 );");
+            db.linkInsertOne = db.Connection.prepareStatement(
+                    "INSERT INTO link(msgid, userid, datecreated, linkurl) VALUES (default, ?, ?, ?);");
             db.linkSelectAll = db.Connection.prepareStatement("SELECT * FROM link;");
             db.linkSelectOne = db.Connection.prepareStatement("SELECT * from link WHERE msgid=?;");
             db.linkDeleteChosen = db.Connection.prepareStatement("DELETE FROM link WHERE msgid = ?;");
-
-
+            db.createTableFollowing = db.Connection.prepareStatement(
+                    "CREATE TABLE following(usera varchar(30), userb varchar(30), FOREIGN KEY (usera) references users (userid), FOREIGN KEY (userb) references users (userid)) ");
+            db.createTablePreferences = db.Connection.prepareStatement(
+                    "CREATE TABLE preferences(userid varchar(30) primary key, followsMe boolean, commentsOnPost boolean, FOREGIN KEY (userid) references users (userid))");
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -551,8 +549,8 @@ try {
     /**
      * Close the current connection to the database, if one exists.1
      * 
-     * NB: The connection will always be null after this call, even if an 
-     *     error occurred during the closing operation.
+     * NB: The connection will always be null after this call, even if an error
+     * occurred during the closing operation.
      * 
      * @return True if the connection was cleanly closed, false otherwise
      */
@@ -584,7 +582,6 @@ try {
     int insertRowMessages(String userid, String message) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         int count = 0;
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
         try {
             mInsertOne.setString(1, userid);
 
@@ -600,6 +597,7 @@ try {
 
     /**
      * insert link
+     * 
      * @param userid
      * @param message
      * @return
@@ -620,18 +618,18 @@ try {
         return count;
     }
 
-     /**
+    /**
      * Insert a row into the database
      *
      * @param subject The subject for this new row
-     * @param like the value of the boolean like 
+     * @param like    the value of the boolean like
      * 
      * 
      * 
      * @return The number of rows that were inserted
      */
     // int insertRowLikes(int userid, int like,int mid) {//unsure!
-    int insertRowLikes(String userid, int like) {//unsure!
+    int insertRowLikes(String userid, int like) {// unsure!
         int count = 0;
         try {
             lInsertOne.setString(1, userid);
@@ -644,12 +642,11 @@ try {
         return count;
     }
 
-
-     /**
+    /**
      * Insert a row into the database
      * 
      * @param subject The subject for this new row
-     * @param like the value of the boolean like 
+     * @param like    the value of the boolean like
      * 
      * 
      * 
@@ -694,7 +691,8 @@ try {
         try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"),rs.getString("message")));
+                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
+                        rs.getString("message")));
             }
             rs.close();
             return res;
@@ -709,7 +707,8 @@ try {
         try {
             ResultSet rs = linkSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"),rs.getString("linkurl")));
+                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
+                        rs.getString("linkurl")));
             }
             rs.close();
             return res;
@@ -719,7 +718,7 @@ try {
         }
     }
 
-    //LIKES
+    // LIKES
     /**
      * Query the database for a list of all subjects and their IDs
      * 
@@ -730,7 +729,7 @@ try {
         try {
             ResultSet rs = lSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getString("userid"),rs.getInt("likes"),rs.getInt("mid")));
+                res.add(new RowData(rs.getString("userid"), rs.getInt("likes"), rs.getInt("mid")));
             }
             rs.close();
             return res;
@@ -745,7 +744,8 @@ try {
         try {
             ResultSet rs = cSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("mid"), rs.getInt("commentID"),rs.getString("userid"),rs.getString("datecreated"),rs.getString("comment")));
+                res.add(new RowData(rs.getInt("mid"), rs.getInt("commentID"), rs.getString("userid"),
+                        rs.getString("datecreated"), rs.getString("comment")));
             }
             rs.close();
             return res;
@@ -760,7 +760,8 @@ try {
         try {
             ResultSet rs = dSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"),rs.getString("documenturl")));
+                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
+                        rs.getString("documenturl")));
             }
             rs.close();
             return res;
@@ -783,7 +784,8 @@ try {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"), rs.getString("message"));
+                res = new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
+                        rs.getString("message"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -793,6 +795,7 @@ try {
 
     /**
      * select one link
+     * 
      * @param id
      * @return
      */
@@ -802,7 +805,8 @@ try {
             linkSelectOne.setInt(1, id);
             ResultSet rs = linkSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"), rs.getString("link"));
+                res = new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
+                        rs.getString("link"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -823,14 +827,13 @@ try {
             lSelectOne.setString(1, id);
             ResultSet rs = lSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getString("userid"), rs.getInt("likes"),rs.getInt("mid"));
+                res = new RowData(rs.getString("userid"), rs.getInt("likes"), rs.getInt("mid"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
     }
-
 
     /**
      * Get all data for a specific row, by ID
@@ -845,7 +848,8 @@ try {
             cSelectOne.setString(1, id);
             ResultSet rs = cSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("mid"), rs.getInt("commentID"),rs.getString("userid"),rs.getString("datecreated"),rs.getString("comment"));
+                res = new RowData(rs.getInt("mid"), rs.getInt("commentID"), rs.getString("userid"),
+                        rs.getString("datecreated"), rs.getString("comment"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -859,7 +863,8 @@ try {
             dSelectOne.setInt(1, id);
             ResultSet rs = dSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getString("userid"),rs.getString("datecreated"), rs.getString("documenturl"));
+                res = new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
+                        rs.getString("documenturl"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -867,13 +872,12 @@ try {
         return res;
     }
 
-
     /**
      * Delete a row by ID
      * 
      * @param id The id of the row to delete
      * 
-     * @return The number of rows that were deleted.  -1 indicates an error.
+     * @return The number of rows that were deleted. -1 indicates an error.
      */
     int deleteRowMessages(int id) {
         int res = -1;
@@ -891,7 +895,7 @@ try {
      * 
      * @param id The id of the row to delete
      * 
-     * @return The number of rows that were deleted.  -1 indicates an error.
+     * @return The number of rows that were deleted. -1 indicates an error.
      */
     int deleteRowLikes(int id) {
         int res = -1;
@@ -904,12 +908,12 @@ try {
         return res;
     }
 
-        /**
+    /**
      * Delete a row by ID
      * 
      * @param id The id of the row to delete
      * 
-     * @return The number of rows that were deleted.  -1 indicates an error.
+     * @return The number of rows that were deleted. -1 indicates an error.
      */
     int deleteRowComments(int id) {
         int res = -1;
@@ -925,14 +929,13 @@ try {
     int deleteRowDocument() {
         int res = -1;
         try {
-            //dDeleteOne.setInt(1, id);
+            // dDeleteOne.setInt(1, id);
             res = dDeleteOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
     }
-
 
     int deleteRowDocument(int id) {
         int res = -1;
@@ -948,14 +951,13 @@ try {
     int deleteRowLink() {
         int res = -1;
         try {
-            //dDeleteOne.setInt(1, id);
+            // dDeleteOne.setInt(1, id);
             res = linkDeleteOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
     }
-
 
     int deleteRowLink(int id) {
         int res = -1;
@@ -968,16 +970,13 @@ try {
         return res;
     }
 
-
-    
-
     /**
      * Update the message for a row in the database
      * 
-     * @param id The id of the row to update
+     * @param id      The id of the row to update
      * @param message The new message contents
      * 
-     * @return The number of rows that were updated.  -1 indicates an error.
+     * @return The number of rows that were updated. -1 indicates an error.
      */
     int updateOneMessages(int id, String message) {
         int res = -1;
@@ -991,13 +990,13 @@ try {
         return res;
     }
 
-        /**
+    /**
      * Update the Like for a row in the database
      * 
-     * @param id The id of the row to update
+     * @param id      The id of the row to update
      * @param message The new message contents
      * 
-     * @return The number of rows that were updated.  -1 indicates an error.
+     * @return The number of rows that were updated. -1 indicates an error.
      */
     int updateOneLikes(int like, int id) {
         int res = -1;
@@ -1011,13 +1010,13 @@ try {
         return res;
     }
 
-        /**
+    /**
      * Update the Comments for a row in the database
      * 
-     * @param id The id of the row to update
+     * @param id      The id of the row to update
      * @param message The new message contents
      * 
-     * @return The number of rows that were updated.  -1 indicates an error.
+     * @return The number of rows that were updated. -1 indicates an error.
      */
     int updateOneComments(String comment, int id) {
         int res = -1;
@@ -1031,9 +1030,8 @@ try {
         return res;
     }
 
-
     /**
-     * Create tblData.  If it already exists, this will print an error
+     * Create tblData. If it already exists, this will print an error
      */
     void createTableMessages() {
         try {
@@ -1043,8 +1041,8 @@ try {
         }
     }
 
-        /**
-     * Create tblData.  If it already exists, this will print an error
+    /**
+     * Create tblData. If it already exists, this will print an error
      */
     void createTableLikes() {
         try {
@@ -1054,8 +1052,8 @@ try {
         }
     }
 
-        /**
-     * Create tblData.  If it already exists, this will print an error
+    /**
+     * Create tblData. If it already exists, this will print an error
      */
     void createTableComments() {
         try {
@@ -1077,7 +1075,6 @@ try {
         }
     }
 
-
     /**
      * create document table
      */
@@ -1091,16 +1088,34 @@ try {
     }
 
     /**
-     * Remove tblData from the database.  If it does not exist, this will print
-     * an error.
+     * Remove tblData from the database. If it does not exist, this will print an
+     * error.
      */
-     void dropTable() {
-         try {
-             dDropTable.execute();
-             System.out.println("Table dropped");
-         } catch (SQLException e) {
-             e.printStackTrace();
-         }
-     }
-}
+    void dropTable() {
+        try {
+            dDropTable.execute();
+            System.out.println("Table dropped");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    void createTablePreferences() {
+        try {
+            createTablePreferences.execute();
+            System.out.println("Preferences table created");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void createTableFollowing() {
+        try {
+            createTableFollowing.execute();
+            System.out.println("Following table created");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
