@@ -52,6 +52,7 @@ public class App {
         System.out.println("  [X] Update a like row");
         System.out.println("  [Z] Update a comment row");
         System.out.println("  [q] Quit Program");
+        System.out.println("  [E] Send an email with SendGrid");
         System.out.println("  [?] Help (this message)");
     }
 
@@ -64,7 +65,7 @@ public class App {
      */
     static char prompt(final BufferedReader in) {
         // The valid actions:
-        final String actions = "MLCNDPF1234*&$%-#^(+@!)~XZVqB5_KI=?";
+        final String actions = "MLCNDPF1234*&$%-#^(+@!)~XZVqB5_KI=?E";
 
         // We repeat until a valid single-character option is selected
         while (true) {
@@ -180,8 +181,7 @@ public class App {
                         db.createTablePreferences();
                     } else if (action == 'F') {
                         db.createTableFollowing();
-                    }
-                    else if (action == 'D') {
+                    } else if (action == 'D') {
                         db.dropTable();
                     } else if (action == '1') {
                         final int id = getInt(in, "Enter the row ID");
@@ -406,6 +406,11 @@ public class App {
                         if (res == -1)
                             continue;
                         System.out.println("  " + res + " rows deleted");
+                    } else if (action == 'M') {
+                        final String email = getString(in, "Enter the email address you'd like to send to");
+                        final String subject = getString(in, "Enter the subject of the message");
+                        final String content = getString(in, "Enter the content of the message");
+                        SendGridEmail.sendEmail(email, subject, content);
                     } else {
                         System.out.println("Invalid");
                     }
