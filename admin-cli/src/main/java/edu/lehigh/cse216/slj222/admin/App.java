@@ -406,7 +406,7 @@ public class App {
                         if (res == -1)
                             continue;
                         System.out.println("  " + res + " rows deleted");
-                    } else if (action == 'M') {
+                    } else if (action == 'E') {
                         final String email = getString(in, "Enter the email address you'd like to send to");
                         final String subject = getString(in, "Enter the subject of the message");
                         final String content = getString(in, "Enter the content of the message");

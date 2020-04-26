@@ -11,7 +11,7 @@ public class SendGridEmail {
     private SendGridEmail() {
     } // Don't have constructor
 
-    public static sendEmail(String email, String subject, String myContent) {
+    public static void sendEmail(String email, String subject, String myContent) {
         Email from = new Email("subzer0.cse216@gmail.com");
         Email to = new Email(email);
         Content content = new Content("text/plain", "myContent");
