@@ -14,7 +14,7 @@ public class SendGridEmail {
     public static void sendEmail(String email, String subject, String myContent) {
         Email from = new Email("subzer0.cse216@gmail.com");
         Email to = new Email(email);
-        Content content = new Content("text/plain", "myContent");
+        Content content = new Content("text/plain", myContent);
         Mail mail = new Mail(from, subject, to, content);
 
         Request request = new Request();
@@ -23,9 +23,6 @@ public class SendGridEmail {
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
             Response response = sg.api(request);
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getBody());
-            System.out.println(response.getHeaders());
         } catch (IOException ex) {
             ex.printStackTrace();
         }
