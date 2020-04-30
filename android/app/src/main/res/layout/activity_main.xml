@@ -37,21 +37,13 @@
             android:layout_marginTop="55dp"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/textView"
-                android:layout_width="314dp"
-                android:layout_height="55dp"
-                android:hint="Type a new message..."
-                android:textColor="#000000"
-                android:textSize="25dp" />
-
             <Button
                 android:id="@+id/post_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="0dp"
-                android:layout_marginTop="-5dp"
-                android:text="post" />
+                android:layout_marginTop="0dp"
+                android:text="New Message" />
         </LinearLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

@@ -43,7 +43,6 @@ public class MainActivity extends BaseActivity {
      * mData holds the data we get from Volley
      */
     ArrayList<Message> mData = new ArrayList<>();
-    String message;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,18 +54,8 @@ public class MainActivity extends BaseActivity {
         getMessages(); // Run the script to get messages
         Button postButton = findViewById(R.id.post_button);
 
-        final EditText textToSend = findViewById(R.id.textView);
-        textToSend.setCursorVisible(false); // Disable blinking cursor
-
         postButton.setOnClickListener(view -> {
-            if (!textToSend.getText().toString().equals("")) { // If it's blank, don't send anything
-                message = textToSend.getText().toString().trim();
-                postMessage();
-                textToSend.getText().clear(); //Remove whatever's in there
-                hideKeyboard(this); // Hides the keyboard if clicked
-                //Go to camera activity
-                moveToCameraActivity();
-            }
+            moveToNewMessageActivity();
         });
 
 
@@ -81,8 +70,8 @@ public class MainActivity extends BaseActivity {
 
 
     }
-    public void moveToCameraActivity() {
-        Intent intent = new Intent(MainActivity.this, Camera.class);
+    public void moveToNewMessageActivity() {
+        Intent intent = new Intent(MainActivity.this, NewMessage.class);
         startActivity(intent);
     }
 
@@ -133,7 +122,8 @@ public class MainActivity extends BaseActivity {
                 int comments = json.getJSONObject(i).getInt("comments");
                 String displayName = json.getJSONObject(i).getString("displayName");;
                 String photoURL = json.getJSONObject(i).getString("photoURL");
-                mData.add(new Message(msgId, message, userId, likes, dislikes, comments, displayName, photoURL));
+                String link = json.getJSONObject(i).getString("link");
+                mData.add(new Message(msgId, message, userId, likes, dislikes, comments, displayName, photoURL, link));
             }
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
@@ -158,6 +148,7 @@ public class MainActivity extends BaseActivity {
     /**
      * HTTP POST a new message
      */
+    /*
     public void postMessage() {
         String url = "https://subzer0.herokuapp.com/messages";
         Map<String, String> params = new HashMap<>();
@@ -186,6 +177,7 @@ public class MainActivity extends BaseActivity {
         };
         VolleySingleton.getInstance(this).addToRequestQueue(getReq);
     }
+     */
 
     /**
      * HTTP GET the current messages

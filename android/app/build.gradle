@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-       buildToolsVersion "28.0.3"
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "edu.lehigh.cse216.slj222"
@@ -60,14 +60,11 @@ dependencies {
     implementation "androidx.camera:camera-camera2:${camerax_version}"
 
 
-
     implementation 'androidx.core:core:1.0.1'
     androidTestCompile('com.android.support.test.espresso:espresso-intents:2.2') {
         // Necessary to avoid version conflicts
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-
-
 
 
 }

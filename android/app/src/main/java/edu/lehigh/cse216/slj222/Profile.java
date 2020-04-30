@@ -48,7 +48,7 @@ public class Profile extends BaseActivity {
 
     // Get messages that the current user posted
     private void getMessages() {
-        String url = "http://subzer0.herokuapp.com/messages/user/" + profiledUserID;
+        String url = "https://subzer0.herokuapp.com/messages/user/" + profiledUserID;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     mData = MainActivity.getMData(response);

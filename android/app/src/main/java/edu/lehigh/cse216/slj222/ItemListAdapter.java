@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,13 +48,12 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
         ImageButton thumbdown;
         ImageButton profilePic;
         Button postButton;
-        EditText textToSend;
         TextView likeCount;
         TextView dislikeCount;
         TextView commentCount;
         TextView postedBy;
-        //Button postPhotoButton;
-        //ImageView imgView;
+        ImageView imgView;
+        TextView link;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -61,14 +61,13 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             thumbup = itemView.findViewById(R.id.like_button);
             thumbdown = itemView.findViewById(R.id.dislike_button);
             postButton = itemView.findViewById(R.id.post_button);
-            textToSend = itemView.findViewById(R.id.textView);
             likeCount = itemView.findViewById(R.id.likeCount);
             profilePic = itemView.findViewById(R.id.profilePic);
             dislikeCount = itemView.findViewById(R.id.dislikeCount);
             commentCount = itemView.findViewById(R.id.commentCount);
             postedBy = itemView.findViewById(R.id.posted_by);
-            //postPhotoButton = itemView.findViewById(R.id.postImage);
-            //imgView = itemView.findViewById(R.id.imageView);
+            imgView = itemView.findViewById(R.id.imageView);
+            link = itemView.findViewById((R.id.link));
         }
     }
 
@@ -89,6 +88,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         final Message d = myData.get(position);
         viewHolder.mText.setText(d.message);
+        viewHolder.link.setText(d.link);
         viewHolder.likeCount.setText(String.valueOf(d.likes));
         viewHolder.dislikeCount.setText(String.valueOf(d.dislikes));
         if(Integer.parseInt(String.valueOf(d.commentCount)) == 1) { // Set number of comments display
@@ -211,7 +211,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     public void likeMessage(int msgId) {
         JSONObject request = new JSONObject();
 
-        String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/like/";
+        String url = "https://subzer0.herokuapp.com/messages/" + msgId + "/like/";
 
         if (context instanceof BaseActivity) {
             url += ((BaseActivity) context).userId;
@@ -243,7 +243,7 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     public void dislikeMessage(int msgId) {
         JSONObject request = new JSONObject();
 
-        String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/dislike/";
+        String url = "https://subzer0.herokuapp.com/messages/" + msgId + "/dislike/";
 
         if (context instanceof BaseActivity) {
             url += ((BaseActivity) context).userId;

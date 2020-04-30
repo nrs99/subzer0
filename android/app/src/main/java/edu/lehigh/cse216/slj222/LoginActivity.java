@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
             // Send to login backend route
             String myToken = account.getIdToken(); // This is a post, backend responds that it is valid
 
-            String url = "http://subzer0.herokuapp.com/login/" + myToken;
+            String url = "https://subzer0.herokuapp.com/login/" + myToken;
 
             JSONObject request = new JSONObject();
 

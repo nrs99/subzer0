@@ -41,7 +41,7 @@ public class MessageComments extends BaseActivity {
         //final Button
 
         // HTTP get request for the one message
-        String url = "http://subzer0.herokuapp.com/messages/" + msgId;
+        String url = "https://subzer0.herokuapp.com/messages/" + msgId;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     mData = getMessage(response);
@@ -107,7 +107,8 @@ public class MessageComments extends BaseActivity {
             int comments = json.getInt("comments");
             String displayName = json.getString("displayName");
             String photoURL = json.getString("photoURL");
-            mData.add(new Message(msgId, message, userId, likes, dislikes, comments, displayName, photoURL));
+            String link = json.getString("link");
+            mData.add(new Message(msgId, message, userId, likes, dislikes, comments, displayName, photoURL, link));
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
             e.printStackTrace();
@@ -146,7 +147,7 @@ public class MessageComments extends BaseActivity {
 
     // get Comments based on current message
     void getComments() {
-        String url = "http://subzer0.herokuapp.com/messages/" + msgId + "/comments";
+        String url = "https://subzer0.herokuapp.com/messages/" + msgId + "/comments";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
             cData = getComments(response);
             populateCommentFromVolley(findViewById(R.id.recycler4));
