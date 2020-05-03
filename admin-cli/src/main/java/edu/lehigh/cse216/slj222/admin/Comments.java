@@ -56,13 +56,13 @@ public class Comments {
 
         try {
             createTable = db.Connection.prepareStatement(
-                    "CREATE TABLE comments(mid foreign key references messages(msgid), commentid SERIAL PRIMARY KEY, userid varchar(30) foreign key references users, datecreated timestamp, comment varchar(250))");
+                    "CREATE TABLE IF NOT EXISTS comments(mid foreign key references messages(msgid), commentid SERIAL PRIMARY KEY, userid varchar(30) foreign key references users, datecreated timestamp, comment varchar(250))");
             selectAll = db.Connection.prepareStatement("SELECT * FROM comments ORDER BY commentid");
             selectOne = db.Connection.prepareStatement("SELECT * FROM comments where commentid = ?");
             addOne = db.Connection.prepareStatement("INSERT INTO comments VALUES (?, default, ?, ?, ?)");
             deleteOne = db.Connection.prepareStatement("DELETE FROM comments where commentid = ?");
             updateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentid = ?");
-            dropTable = db.Connection.prepareStatement("DROP TABLE comments");
+            dropTable = db.Connection.prepareStatement("DROP TABLE IF EXISTS comments");
         } catch (SQLException e) {
             e.printStackTrace();
         }
