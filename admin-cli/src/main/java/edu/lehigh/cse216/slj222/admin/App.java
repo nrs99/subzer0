@@ -133,13 +133,15 @@ public class App {
         if (db == null)
             return;
 
-        
-
         // Start our basic command-line interpreter:
         final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         // Add menus to the app
+        Comments comments = new Comments(db, in);
+        Documents documents = new Documents(db, in);
         Following following = new Following(db, in);
+        Likes likes = new Likes(db, in);
+        Links links = new Links(db, in);
         Messages messages = new Messages(db, in);
         Preferences preferences = new Preferences(db, in);
         try {
@@ -260,7 +262,7 @@ public class App {
                             continue;
                         final int res = db.insertRowComments(id, comment);
                         System.out.println(res + " row added");
-                    
+
                     } else if (action == 'X') {
                         // ...and here.
                         final int id = getInt(in, "Enter the row ID :> ");
