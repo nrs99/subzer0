@@ -19,40 +19,12 @@ public class Database {
      */
     Connection Connection;
 
-    /**
-     * A prepared statement for getting all data in the database
-     */
-    private PreparedStatement mSelectAll;
 
-    /**
-     * A prepared statement for getting one row from the database
-     */
-    private PreparedStatement mSelectOne;
-
-    /**
-     * A prepared statement for deleting a row from the database
-     */
-    private PreparedStatement mDeleteOne;
 
     /**
      * A prepared statement for inserting into the database
      */
     private PreparedStatement mInsertOne;
-
-    /*
-     * A prepared statement for updating a single row in the database
-     */
-    private PreparedStatement mUpdateOne;
-
-    /**
-     * A prepared statement for creating the table in our database
-     */
-    private PreparedStatement mCreateTable;
-
-    /**
-     * A prepared statement for dropping the table in our database
-     */
-    private PreparedStatement mDropTable;
 
     // likes
     /**
@@ -75,10 +47,6 @@ public class Database {
      */
     private PreparedStatement lInsertOne;
     /**
-     * A prepared statemeting for trigger
-     */
-    // private PreparedStatmet mTrigger;
-    /**
      * A prepared statement for updating a single row in the database
      */
     private PreparedStatement lUpdateOne;
@@ -88,10 +56,6 @@ public class Database {
      */
     private PreparedStatement lCreateTable;
 
-    /**
-     * A prepared statement for dropping the table in our database
-     */
-    private PreparedStatement lDropTable;
 
     // Comments
     /**
@@ -113,10 +77,7 @@ public class Database {
      * A prepared statement for inserting into the database
      */
     private PreparedStatement cInsertOne;
-    /**
-     * A prepared statemeting for trigger
-     */
-    // private PreparedStatmet mTrigger;
+
     /**
      * A prepared statement for updating a single row in the database
      */
@@ -127,40 +88,9 @@ public class Database {
      */
     private PreparedStatement cCreateTable;
 
-    /**
-     * A prepared statement for dropping the table in our database
-     */
-    private PreparedStatement cDropTable;
 
-    // Documents
-    /**
-     * A prepared statement for getting all data in the database
-     */
-    private PreparedStatement dSelectAll;
 
-    /**
-     * A prepared statement for getting one row from the database
-     */
-    private PreparedStatement dSelectOne;
-
-    /**
-     * A prepared statement for deleting a row from the database
-     */
-    private PreparedStatement dDeleteOne;
-
-    private PreparedStatement dDeleteChosen;
-
-    /**
-     * A prepared statement for inserting into the database
-     */
-    private PreparedStatement dInsertOne;
-
-    /**
-     * A prepared statement for creating the table in our database
-     */
-    private PreparedStatement dCreateTable;
-
-    // Documents
+    // Links
     /**
      * A prepared statement for getting all data in the database
      */
@@ -183,10 +113,6 @@ public class Database {
      */
     private PreparedStatement linkCreateTable;
 
-    /**
-     * PreparedStatement to create preferences table
-     */
-    private PreparedStatement createTablePreferences;
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow direct
@@ -307,34 +233,8 @@ public class Database {
             linkUrl = linkurl;
         }
 
-        /**
-         * 
-         * @param msgid
-         * @param documentid
-         * @param userid
-         * @param datecreated
-         * @param documenturl document
-         */
-        public RowData(int msgid, long documentid, String userid, String datecreated, String documenturl) {
-            dMsgid = msgid;
-            documentID = documentid;
-            dUserid = userid;
-            dDatecreated = datecreated;
-            documentURL = documenturl;
-        }
-
     }
 
-    /**
-     * RowData is like a struct in C: we use it to hold data, and we allow direct
-     * access to its fields. In the context of this Database, RowData represents the
-     * data we'd see in a row.
-     * 
-     * We make RowData a static class of Database because we don't really want to
-     * encourage users to think of RowData as being anything other than an abstract
-     * representation of a row of the database. RowData and the Database are tightly
-     * coupled: if one changes, the other should too.
-     */
     /**
      * The Database constructor is private: we only create Database objects through
      * the getDatabase() method.
@@ -440,34 +340,14 @@ public class Database {
             db.cSelectOne = db.Connection.prepareStatement("SELECT * from comments WHERE comment=?;");
             db.cUpdateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentID = ?;");
 
-            // Documents
-            db.dCreateTable = db.Connection.prepareStatement(
-                    "CREATE TABLE documents(msgid int PRIMARY KEY, fileid varchar(50), mime varchar(20))");
-            db.dDropTable = db.Connection.prepareStatement("DROP TABLE documents;");
-            db.dDeleteOne = db.Connection.prepareStatement(
-                    "delete from documents  where documents.msgid in (select msgid  from (select msgid,  row_number() over (order by datecreated desc) as seqnum_desc from documents ) e where e.seqnum_desc <= 1 );");
-            db.dInsertOne = db.Connection.prepareStatement(
-                    "INSERT INTO documents(msgid, documentid, userid, datecreated, documenturl) VALUES (default, 100, ?, ?, ?);");
-            db.dSelectAll = db.Connection.prepareStatement("SELECT * FROM documents;");
-            db.dSelectOne = db.Connection.prepareStatement("SELECT * from documents WHERE msgid=?;");
-
-            db.dDeleteChosen = db.Connection.prepareStatement("DELETE FROM documents WHERE msgid = ?;");
-
             // Links
-            // Documents
             db.linkCreateTable = db.Connection
                     .prepareStatement("CREATE TABLE links(msgid int PRIMARY KEY, url varchar(100))");
-            db.linkDropTable = db.Connection.prepareStatement("DROP TABLE link;");
             db.linkDeleteOne = db.Connection.prepareStatement(
                     "delete from link where link.msgid in (select msgid  from (select msgid,  row_number() over (order by datecreated desc) as seqnum_desc from link ) e where e.seqnum_desc <= 1 );");
-            db.linkInsertOne = db.Connection.prepareStatement(
-                    "INSERT INTO link(msgid, userid, datecreated, linkurl) VALUES (default, ?, ?, ?);");
             db.linkSelectAll = db.Connection.prepareStatement("SELECT * FROM link;");
             db.linkSelectOne = db.Connection.prepareStatement("SELECT * from link WHERE msgid=?;");
             db.linkDeleteChosen = db.Connection.prepareStatement("DELETE FROM link WHERE msgid = ?;");
-            db.createTablePreferences = db.Connection.prepareStatement(
-                    "CREATE TABLE preferences(userid varchar(30) primary key, followsMe boolean, commentsOnPost boolean, FOREIGN KEY (userid) references users (userid))");
-
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -573,20 +453,7 @@ public class Database {
         return count;
     }
 
-    int insertRowDocument(String userid, String document) {
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
-        int count = 0;
-        try {
-            dInsertOne.setString(1, userid);
-            dInsertOne.setTimestamp(2, ts);
-            dInsertOne.setString(3, document);
-            count += dInsertOne.executeUpdate();
-            System.out.println("Rows inserted");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return count;
-    }
+
 
     ArrayList<RowData> selectAllLinks() {
         ArrayList<RowData> res = new ArrayList<RowData>();
@@ -632,22 +499,6 @@ public class Database {
             while (rs.next()) {
                 res.add(new RowData(rs.getInt("mid"), rs.getInt("commentID"), rs.getString("userid"),
                         rs.getString("datecreated"), rs.getString("comment")));
-            }
-            rs.close();
-            return res;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    ArrayList<RowData> selectAllDocuments() {
-        ArrayList<RowData> res = new ArrayList<RowData>();
-        try {
-            ResultSet rs = dSelectAll.executeQuery();
-            while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
-                        rs.getString("documenturl")));
             }
             rs.close();
             return res;
@@ -721,21 +572,6 @@ public class Database {
         return res;
     }
 
-    RowData selectOneDocument(int id) {
-        RowData res = null;
-        try {
-            dSelectOne.setInt(1, id);
-            ResultSet rs = dSelectOne.executeQuery();
-            if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
-                        rs.getString("documenturl"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
     /**
      * Delete a row by ID
      * 
@@ -766,28 +602,6 @@ public class Database {
         try {
             cDeleteOne.setInt(1, id);
             res = cDeleteOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    int deleteRowDocument() {
-        int res = -1;
-        try {
-            // dDeleteOne.setInt(1, id);
-            res = dDeleteOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    int deleteRowDocument(int id) {
-        int res = -1;
-        try {
-            dDeleteChosen.setInt(1, id);
-            res = dDeleteChosen.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -879,19 +693,7 @@ public class Database {
     }
 
     /**
-     * create document table
-     */
-    void createTableDocuments() {
-        try {
-            dCreateTable.execute();
-            System.out.println("Document table created.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * create document table
+     * create link table
      */
     void createTableLink() {
         try {

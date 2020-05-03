@@ -20,27 +20,21 @@ public class App {
         System.out.println("  [M] Messages Menu");
         System.out.println("  [L] Create like table");
         System.out.println("  [C] Create comments table");
-        System.out.println("  [N] Create documents table");
+        System.out.println("  [D] Documents Menu");
         System.out.println("  [B] Create link table");
         System.out.println("  [P] Preferences Menu");
         System.out.println("  [F] Following menu");
         System.out.println("  [2] Query for a specific row from Likes");
         System.out.println("  [3] Query for a specific row from Comments");
-        System.out.println("  [4] Query for a specific row from Documents");
-        System.out.println("  [5] Query for a specific row from Documents");
         System.out.println("  [&] Query for all like rows");
         System.out.println("  [$] Query for all comment rows");
-        System.out.println("  [%] Query for all document rows");
         System.out.println("  [_] Query for all link rows");
         System.out.println("  [#] Delete a like row");
         System.out.println("  [^] Delete a comment row");
-        System.out.println("  [(] Delete the last document row");
-        System.out.println("  [V] Delete a document row");
         System.out.println("  [=] Delete the last link row");
         System.out.println("  [K] Delete a link row");
         System.out.println("  [@] Insert a new like row");
         System.out.println("  [!] Insert a new comment row");
-        System.out.println("  [)] Insert a new document row");
         System.out.println("  [I] Insert a new link row");
         System.out.println("  [X] Update a like row");
         System.out.println("  [Z] Update a comment row");
@@ -154,7 +148,7 @@ public class App {
                 // function call
                 try {
 
-                    final char action = prompt(in, "MLCNDPF234&$%#^(+@!)XZVqB5_KI=E?"); // get the option
+                    final char action = prompt(in, "MLCDBPF234&$%#^(+@!)XZVqB5_KI=E?"); // get the option
 
                     if (action == '?') {
                         menu();
@@ -166,6 +160,8 @@ public class App {
                         db.createTableLikes();
                     } else if (action == 'C') {
                         db.createTableComments();
+                    } else if (action == 'D') {
+                        documents.execute();
                     } else if (action == 'B') {
                         db.createTableLink();
                     } else if (action == 'P') {
@@ -190,16 +186,6 @@ public class App {
                         if (res != null) {
                             System.out.println("  [" + res.cMsgid + "] " + res.cComment);
                             System.out.println("  --> " + res.cComment);
-                        }
-                    } else if (action == '4') {
-                        final int id = getInt(in, "Enter the user ID"); // ???? userid or row id??
-                        if (id == -1)
-                            continue;
-                        final Database.RowData res = db.selectOneDocument(id);
-
-                        if (res != null) {
-                            System.out.println("  [" + res.dMsgid + "] " + res.documentURL);
-                            System.out.println("  --> " + res.documentURL);
                         }
                     } else if (action == '&') {
                         final ArrayList<Database.RowData> res = db.selectAllLikes();
@@ -239,14 +225,6 @@ public class App {
                         if (res == -1)
                             continue;
                         System.out.println("  " + res + " rows deleted");
-                    } else if (action == '+') {
-                        // insert new row in messages table
-                        final String id = getString(in, "Enter the userid");
-                        final String message = getString(in, "Enter the message");
-                        if (message.equals(""))
-                            continue;
-                        final int res = db.insertRowMessages(id, message);
-                        System.out.println(res + " row added");
                     } else if (action == '@') {
                         // insert new row in likes table
                         final String id = getString(in, "Enter the userid");
@@ -283,20 +261,6 @@ public class App {
                         if (res == -1)
                             continue;
                         System.out.println("  " + res + " rows updated");
-                    }
-
-                    else if (action == 'N') { // Create a document table
-                        db.createTableDocuments();
-                    } else if (action == '%') { // Query for all document rows
-                        final ArrayList<Database.RowData> res = db.selectAllDocuments();
-                        if (res == null)
-                            continue;
-                        System.out.println("  Current Document Table Contents");
-                        System.out.println("  -------------------------");
-                        for (final Database.RowData rd : res) {
-                            System.out.println("  [" + rd.dMsgid + "] " + " date: " + rd.dDatecreated + " user id: "
-                                    + rd.dUserid + " document url: " + rd.documentURL);
-                        }
                     } else if (action == '_') { // Query for all link rows
                         final ArrayList<Database.RowData> res = db.selectAllLinks();
                         if (res == null)
@@ -309,51 +273,11 @@ public class App {
                             // System.out.println(" [" + rd.mMsgid + "] " + " date: " + rd.mDatecreated + "
                             // user id: " + rd.mUserid + " document url: " + rd.mMessage);
                         }
-                    } else if (action == '(') { // Delete a document row
-                        // int id = getInt(in, "Enter the row ID");
-                        // if (id == -1)
-                        // continue;
-                        final int res = db.deleteRowDocument();
-                        if (res == -1)
-                            continue;
-                        System.out.println("  " + res + " rows deleted");
                     } else if (action == '=') { // Delete a link row
                         // int id = getInt(in, "Enter the row ID");
                         // if (id == -1)
                         // continue;
                         final int res = db.deleteRowLink();
-                        if (res == -1)
-                            continue;
-                        System.out.println("  " + res + " rows deleted");
-                    } else if (action == ')') { // Insert a document row
-                        // insert new row in documents table
-                        final String id = getString(in, "Enter the userid");
-                        final String document = getString(in, "Enter the document url");
-                        if (document.equals(""))
-                            continue;
-                        final int res = db.insertRowDocument(id, document);
-                        System.out.println(res + " row added");
-                    } else if (action == 'I') { // Insert a link row
-                        // insert new row in documents table
-                        final String id = getString(in, "Enter the userid");
-                        final String link = getString(in, "Enter the link url");
-                        if (link.equals(""))
-                            continue;
-                        final int res = db.insertRowDocument(id, link);
-                        System.out.println(res + " row added");
-                    } else if (action == 'V') { // delete a document row
-                        final int id = getInt(in, "Enter the row ID");
-                        if (id == -1)
-                            continue;
-                        final int res = db.deleteRowDocument(id);
-                        if (res == -1)
-                            continue;
-                        System.out.println("  " + res + " rows deleted");
-                    } else if (action == 'K') { // delete a link row
-                        final int id = getInt(in, "Enter the row ID");
-                        if (id == -1)
-                            continue;
-                        final int res = db.deleteRowLink(id);
                         if (res == -1)
                             continue;
                         System.out.println("  " + res + " rows deleted");

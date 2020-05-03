@@ -52,6 +52,45 @@ public class Documents {
         }
     }
 
+    public void createTable() {
+        try {
+            createTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void selectAll() {
+        try {
+            ResultSet rs = selectAll.executeQuery();
+            System.out.println("  Current Documents Table Contents");
+            System.out.printf("%-10s %-50s %-20s\n", "Message ID", "File ID (from Google Drive)", "MIME Type");
+            System.out.println("  -------------------------");
+            while (rs.next()) {
+                System.out.printf("%10d %-50s %-20s\n", rs.getInt(1), rs.getString(2), rs.getString(3));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteOne(int msgid) {
+        try {
+            deleteOne.setInt(1, msgid);
+            deleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void dropTable() {
+        try {
+            dropTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Print menu for documents table
      */
