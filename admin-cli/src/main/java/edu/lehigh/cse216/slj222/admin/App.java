@@ -19,21 +19,17 @@ public class App {
         System.out.println("Main Menu");
         System.out.println("  [M] Messages Menu");
         System.out.println("  [L] Links Menu");
-        System.out.println("  [C] Create comments table");
+        System.out.println("  [C] Comments Menu");
         System.out.println("  [D] Documents Menu");
         System.out.println("  [P] Preferences Menu");
-        System.out.println("  [F] Following menu");
+        System.out.println("  [F] Following Menu");
+        System.out.println("  [K] Likes Menu")
         System.out.println("  [U] Users menu");
         System.out.println("  [2] Query for a specific row from Likes");
-        System.out.println("  [3] Query for a specific row from Comments");
         System.out.println("  [&] Query for all like rows");
-        System.out.println("  [$] Query for all comment rows");
         System.out.println("  [#] Delete a like row");
-        System.out.println("  [^] Delete a comment row");
-        System.out.println("  [!] Insert a new comment row");
-        System.out.println("  [Z] Update a comment row");
-        System.out.println("  [q] Quit Program");
         System.out.println("  [E] Send an email with SendGrid");
+        System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }
 
@@ -143,7 +139,7 @@ public class App {
                 // function call
                 try {
 
-                    final char action = prompt(in, "MLCDPFU23&$_#^!ZqE?"); // get the option
+                    final char action = prompt(in, "MLCDPFUKEq?"); // get the option
 
                     if (action == '?') {
                         menu();
@@ -163,52 +159,8 @@ public class App {
                         following.execute();
                     } else if (action == 'U') {
                         users.execute();
-                    } else if (action == '2') {
-                        final String id = getString(in, "Enter the user ID");
-                        if (id.equals(""))
-                            continue;
-                        final Database.RowData res = db.selectOneLikes(id);
-                        if (res != null) {
-                            System.out.println(
-                                    "  [" + res.lMsgid + "] " + "user id: " + res.lUserid + " like: " + res.lLikes);
-                            System.out.println("  --> " + res.lLikes);
-                        }
-                    } else if (action == '&') {
-                        final ArrayList<Database.RowData> res = db.selectAllLikes();
-                        if (res == null)
-                            continue;
-                        System.out.println("  Current Like Table Contents");
-                        System.out.println("  -------------------------");
-                        for (final Database.RowData rd : res) {
-                            System.out.println(
-                                    "  [" + rd.lMsgid + "] " + "user id: " + rd.lUserid + " like: " + rd.lLikes);
-                        }
-                    } else if (action == '#') {
-                        // ...same here
-                        final int id = getInt(in, "Enter the row ID");
-                        if (id == -1)
-                            continue;
-                        final int res = db.deleteRowLikes(id);
-                        if (res == -1)
-                            continue;
-                        System.out.println("  " + res + " rows deleted");
-                    } else if (action == '@') {
-                        // insert new row in likes table
-                        final String id = getString(in, "Enter the userid");
-                        final int like = getInt(in, "Enter like or dislike? (0 or 1)");
-                        // int mid = getInt(in, "Enter Msg id");
-                        final int res = db.insertRowLikes(id, like);
-                        System.out.println(res + " row added");
-                    } else if (action == 'X') {
-                        // ...and here.
-                        final int id = getInt(in, "Enter the row ID :> ");
-                        if (id == -1)
-                            continue;
-                        final int newLike = getInt(in, "Enter the new like");
-                        final int res = db.updateOneLikes(id, newLike);
-                        if (res == -1)
-                            continue;
-                        System.out.println("  " + res + " rows updated");
+                    } else if (action == 'K') {
+                        likes.execute();
                     } else if (action == 'E') {
                         final String email = getString(in, "Enter the email address you'd like to send to");
                         final String subject = getString(in, "Enter the subject of the message");
