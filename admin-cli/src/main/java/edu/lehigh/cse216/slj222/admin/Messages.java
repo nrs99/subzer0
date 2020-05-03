@@ -159,9 +159,9 @@ public class Messages {
     /**
      * Update a row with given msgid with new msg
      */
-    public void updateOne(int msgid, String msg) { //TODO
+    public void updateOne(int msgid, String msg) {
         try {
-            updateOne.setString(1, message);
+            updateOne.setString(1, msg);
             updateOne.setInt(2, msgid);
             updateOne.executeUpdate();
         } catch (SQLException e) {
