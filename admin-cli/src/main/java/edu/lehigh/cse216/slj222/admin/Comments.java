@@ -56,12 +56,12 @@ public class Comments {
 
         try {
             createTable = db.Connection.prepareStatement(
-                    "CREATE TABLE comments(mid foreign key references messages(msgid), cid SERIAL PRIMARY KEY, userid varchar(30) foreign key references users, datecreated timestamp, comment varchar(250))");
-            selectAll = db.Connection.prepareStatement("SELECT * FROM comments ORDER BY cid");
-            selectOne = db.Connection.prepareStatement("SELECT * FROM comments where cid = ?");
+                    "CREATE TABLE comments(mid foreign key references messages(msgid), commentid SERIAL PRIMARY KEY, userid varchar(30) foreign key references users, datecreated timestamp, comment varchar(250))");
+            selectAll = db.Connection.prepareStatement("SELECT * FROM comments ORDER BY commentid");
+            selectOne = db.Connection.prepareStatement("SELECT * FROM comments where commentid = ?");
             addOne = db.Connection.prepareStatement("INSERT INTO comments VALUES (?, default, ?, ?, ?)");
-            deleteOne = db.Connection.prepareStatement("DELETE FROM comments where cid = ?");
-            updateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE cid = ?");
+            deleteOne = db.Connection.prepareStatement("DELETE FROM comments where commentid = ?");
+            updateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentid = ?");
             dropTable = db.Connection.prepareStatement("DROP TABLE comments");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -168,14 +168,14 @@ public class Comments {
      * Print menu for messages table
      */
     public void menu() {
-        System.out.println("Messages Menu");
-        System.out.println("  [C] Create messages table");
+        System.out.println("Comments Menu");
+        System.out.println("  [C] Create comments table");
         System.out.println("  [*] Select all rows");
         System.out.println("  [1] Select a specific row");
-        System.out.println("  [+] Add a message");
-        System.out.println("  [-] Delete a message");
-        System.out.println("  [~] Update a message row");
-        System.out.println("  [D] Drop messages table");
+        System.out.println("  [+] Add a comment");
+        System.out.println("  [-] Delete a comment");
+        System.out.println("  [~] Update a comment row");
+        System.out.println("  [D] Drop comments table");
         System.out.println("  [?] Help - this menu");
     }
 
