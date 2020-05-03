@@ -59,6 +59,41 @@ public class AppTest extends TestCase {
         assertEquals(three, true);
     }
 
+    public void testAddDeleteFollow() {
+        Database db = Database.getDatabase(
+                "postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
+        Following following = new Following(db, null);
+        String userid = "103530917496859003701"; // Our subzer0.cse216 email
+        String samid = "117017900165252299426"; //Sam's ID
+        boolean followingSamBool = false;
+        boolean followingSamBool2 = false;
+
+        try {
+            PreparedStatement clearFollowing = db.Connection.prepareStatement("DELETE FROM following where usera = ?");
+            clearFollowing.setString(1, userid);
+            clearFollowing.executeUpdate();
+
+            PreparedStatement followingSam = db.Connection.prepareStatement("SELECT * FROM following where usera = ? and userb = ?");
+            followingSam.setString(1, userid);
+            followingSam.setString(2, samid);
+
+            following.newFollow(userid, samid);
+            ResultSet rs = followingSam.executeQuery();
+            if (rs.next()) {
+                followingSamBool = true;
+            }
+            following.deleteFollow(userid, samid);
+            rs = followingSam.executeQuery();
+            if (rs.next()) {
+                followingSamBool2 = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        assertEquals(followingSamBool, true);
+        assertEquals(followingSamBool2, false);
+    }
+
     /**
      * These tests no longer work with the refactoring from Phase 4
      */
