@@ -6,15 +6,39 @@ import java.sql.SQLException;
 
 public class Following {
 
+    /**
+     * Inherit the database object
+     */
     final Database db;
 
-    PreparedStatement createTable;
-    PreparedStatement selectAll;
-    PreparedStatement selectFollowers;
-    PreparedStatement selectFollowing;
-    PreparedStatement newFollow;
-    PreparedStatement dropTable;
+    /**
+     * Create following table
+     */
+    final PreparedStatement createTable;
+    /**
+     * Select all info from following table
+     */
+    final PreparedStatement selectAll;
+    /**
+     * View all followers of a user
+     */
+    final PreparedStatement selectFollowers;
+    /**
+     * View all users a user is following
+     */
+    final PreparedStatement selectFollowing;
+    /**
+     * Add a new follow relationship
+     */
+    final PreparedStatement newFollow;
+    /**
+     * Drop the following table
+     */
+    final PreparedStatement dropTable;
 
+    /**
+     * Create a Following object and set up all PreparedStatements
+     */
     public Following(Database db) {
         this.db = db;
         try {
@@ -30,6 +54,9 @@ public class Following {
         }
     }
 
+    /**
+     * Create the table
+     */
     public void createTable() {
         try {
             createTable.execute();
@@ -38,6 +65,9 @@ public class Following {
         }
     }
 
+    /**
+     * Select all rows of the table
+     */
     public void selectAll() {
         try {
             ResultSet rs = selectAll.executeQuery();
@@ -53,6 +83,9 @@ public class Following {
         }
     }
 
+    /**
+     * Select all followers of a particular user
+     */
     public void selectFollowers(String user) {
         try {
             selectFollowers.setString(1, user);
@@ -67,6 +100,9 @@ public class Following {
         }
     }
 
+    /**
+     * Select all the users a certain user is following
+     */
     public void selectFollowing(String user) {
         try {
             selectFollowing.setString(1, user);
@@ -81,7 +117,11 @@ public class Following {
         }
     }
 
-    public void newFollow(String usera, String userb) { // TODO
+    /**
+     * Add a new row to the table
+     * usera follows userb
+     */
+    public void newFollow(String usera, String userb) {
         try {
             newFollow.setString(1, usera);
             newFollow.setString(2, userb);
@@ -92,6 +132,9 @@ public class Following {
         }
     }
 
+    /**
+     * Get rid of the following table
+     */
     public void dropTable() {
         try {
             createTable.execute();
@@ -100,11 +143,17 @@ public class Following {
         }
     }
 
+    /**
+     * All options a user has to interact with this table
+     */
     public String options() {
         return "C*SG+D?";
     }
 
-    public void help() {
+    /**
+     * Print menu for following table
+     */
+    public void menu() {
         System.out.println("Following Menu");
         System.out.println("  [C] Create following table");
         System.out.println("  [*] Select all in following table");
