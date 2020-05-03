@@ -57,38 +57,6 @@ public class Database {
     private PreparedStatement lCreateTable;
 
 
-    // Comments
-    /**
-     * A prepared statement for getting all data in the database
-     */
-    private PreparedStatement cSelectAll;
-
-    /**
-     * A prepared statement for getting one row from the database
-     */
-    private PreparedStatement cSelectOne;
-
-    /**
-     * A prepared statement for deleting a row from the database
-     */
-    private PreparedStatement cDeleteOne;
-
-    /**
-     * A prepared statement for inserting into the database
-     */
-    private PreparedStatement cInsertOne;
-
-    /**
-     * A prepared statement for updating a single row in the database
-     */
-    private PreparedStatement cUpdateOne;
-
-    /**
-     * A prepared statement for creating the table in our database
-     */
-    private PreparedStatement cCreateTable;
-
-
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow direct
      * access to its fields. In the context of this Database, RowData represents the
@@ -275,31 +243,6 @@ public class Database {
             db.lSelectOne = db.Connection.prepareStatement("SELECT * FROM likes WHERE userid=?;");
             db.lUpdateOne = db.Connection.prepareStatement("UPDATE likes SET like = ? WHERE mid = ?;");
 
-            // //Comments
-            // NB: we can easily get ourselves in trouble here by typing the
-            // SQL incorrectly. We really should have things like "tblData"
-            // as constants, and then build the strings for the statements
-            // from those constants.
-
-            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
-            // creation/deletion, so multiple executions will cause an exception
-            db.cCreateTable = db.Connection
-                    .prepareStatement("CREATE TABLE comments();" + "ALTER TABLE comments ADD COLUMN mid INT;"
-                            + "ALTER TABLE comments ADD CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES messages(msgid);"
-                            + "ALTER TABLE comments ADD COLUMN commentID SERIAL PRIMARY KEY;"
-                            + "ALTER TABLE comments ADD COLUMN userID VARCHAR(30);"
-                            + "ALTER TABLE comments ADD COLUMN datecreated TIMESTAMP;"
-                            + "ALTER TABLE comments ADD COLUMN comment VARCHAR(250);");
-
-            // Standard CRUD operations
-            db.cDeleteOne = db.Connection.prepareStatement("DELETE FROM comments WHERE commentID = ?");
-            // create sequence
-            db.cInsertOne = db.Connection.prepareStatement(
-                    "INSERT INTO comments(mid, commentID, userID, datecreated, comment) VALUES (default, default, ?, ?, ?);");
-            db.cSelectAll = db.Connection.prepareStatement("SELECT * FROM comments;");
-            db.cSelectOne = db.Connection.prepareStatement("SELECT * from comments WHERE comment=?;");
-            db.cUpdateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentID = ?;");
-
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -359,30 +302,6 @@ public class Database {
         return count;
     }
 
-    /**
-     * Insert a row into the database
-     * 
-     * @param subject The subject for this new row
-     * @param like    the value of the boolean like
-     * 
-     * 
-     * 
-     * @return The number of rows that were inserted
-     */
-    int insertRowComments(String userid, String comment) {
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
-        int count = 0;
-        try {
-            cInsertOne.setString(1, userid);
-            cInsertOne.setTimestamp(2, ts);
-            cInsertOne.setString(3, comment);
-            count += cInsertOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return count;
-    }
-
 
     // LIKES
     /**
@@ -396,22 +315,6 @@ public class Database {
             ResultSet rs = lSelectAll.executeQuery();
             while (rs.next()) {
                 res.add(new RowData(rs.getString("userid"), rs.getInt("likes"), rs.getInt("mid")));
-            }
-            rs.close();
-            return res;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    ArrayList<RowData> selectAllComments() {
-        ArrayList<RowData> res = new ArrayList<RowData>();
-        try {
-            ResultSet rs = cSelectAll.executeQuery();
-            while (rs.next()) {
-                res.add(new RowData(rs.getInt("mid"), rs.getInt("commentID"), rs.getString("userid"),
-                        rs.getString("datecreated"), rs.getString("comment")));
             }
             rs.close();
             return res;
@@ -444,28 +347,6 @@ public class Database {
     }
 
     /**
-     * Get all data for a specific row, by ID
-     * 
-     * @param id The id of the row being requested
-     * 
-     * @return The data for the requested row, or null if the ID was invalid
-     */
-    RowData selectOneComments(String id) {
-        RowData res = null;
-        try {
-            cSelectOne.setString(1, id);
-            ResultSet rs = cSelectOne.executeQuery();
-            if (rs.next()) {
-                res = new RowData(rs.getInt("mid"), rs.getInt("commentID"), rs.getString("userid"),
-                        rs.getString("datecreated"), rs.getString("comment"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    /**
      * Delete a row by ID
      * 
      * @param id The id of the row to delete
@@ -482,25 +363,6 @@ public class Database {
         }
         return res;
     }
-
-    /**
-     * Delete a row by ID
-     * 
-     * @param id The id of the row to delete
-     * 
-     * @return The number of rows that were deleted. -1 indicates an error.
-     */
-    int deleteRowComments(int id) {
-        int res = -1;
-        try {
-            cDeleteOne.setInt(1, id);
-            res = cDeleteOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
 
     /**
      * Update the Like for a row in the database
@@ -522,25 +384,6 @@ public class Database {
         return res;
     }
 
-    /**
-     * Update the Comments for a row in the database
-     * 
-     * @param id      The id of the row to update
-     * @param message The new message contents
-     * 
-     * @return The number of rows that were updated. -1 indicates an error.
-     */
-    int updateOneComments(String comment, int id) {
-        int res = -1;
-        try {
-            cUpdateOne.setString(1, comment);
-            cUpdateOne.setInt(2, id);
-            res = lUpdateOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
 
     /**
      * Create tblData. If it already exists, this will print an error
@@ -548,17 +391,6 @@ public class Database {
     void createTableLikes() {
         try {
             lCreateTable.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Create tblData. If it already exists, this will print an error
-     */
-    void createTableComments() {
-        try {
-            cCreateTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -154,7 +154,7 @@ public class App {
                     } else if (action == 'L') {
                         links.execute();
                     } else if (action == 'C') {
-                        db.createTableComments();
+                        comments.execute();
                     } else if (action == 'D') {
                         documents.execute();
                     } else if (action == 'P') {
@@ -173,15 +173,6 @@ public class App {
                                     "  [" + res.lMsgid + "] " + "user id: " + res.lUserid + " like: " + res.lLikes);
                             System.out.println("  --> " + res.lLikes);
                         }
-                    } else if (action == '3') {
-                        final String comment = getString(in, "Enter Comment");
-                        if (comment.equals(""))
-                            continue;
-                        final Database.RowData res = db.selectOneComments(comment);
-                        if (res != null) {
-                            System.out.println("  [" + res.cMsgid + "] " + res.cComment);
-                            System.out.println("  --> " + res.cComment);
-                        }
                     } else if (action == '&') {
                         final ArrayList<Database.RowData> res = db.selectAllLikes();
                         if (res == null)
@@ -192,31 +183,12 @@ public class App {
                             System.out.println(
                                     "  [" + rd.lMsgid + "] " + "user id: " + rd.lUserid + " like: " + rd.lLikes);
                         }
-                    } else if (action == '$') {
-                        final ArrayList<Database.RowData> res = db.selectAllComments();
-                        if (res == null)
-                            continue;
-                        System.out.println("  Current Comment Table Contents");
-                        System.out.println("  -------------------------");
-                        for (final Database.RowData rd : res) {
-                            System.out.println("  [" + rd.cMsgid + "] " + "comment: " + rd.cComment + " date: "
-                                    + rd.cDatecreated + " user id: " + rd.cUserid);
-                        }
                     } else if (action == '#') {
                         // ...same here
                         final int id = getInt(in, "Enter the row ID");
                         if (id == -1)
                             continue;
                         final int res = db.deleteRowLikes(id);
-                        if (res == -1)
-                            continue;
-                        System.out.println("  " + res + " rows deleted");
-                    } else if (action == '^') {
-                        // ...same here
-                        final int id = getInt(in, "Enter the row ID");
-                        if (id == -1)
-                            continue;
-                        final int res = db.deleteRowComments(id);
                         if (res == -1)
                             continue;
                         System.out.println("  " + res + " rows deleted");
@@ -227,15 +199,6 @@ public class App {
                         // int mid = getInt(in, "Enter Msg id");
                         final int res = db.insertRowLikes(id, like);
                         System.out.println(res + " row added");
-                    } else if (action == '!') {
-                        // insert new row in comments table
-                        final String id = getString(in, "Enter the userid");
-                        final String comment = getString(in, " Enter the Comment");
-                        if (comment.equals(""))
-                            continue;
-                        final int res = db.insertRowComments(id, comment);
-                        System.out.println(res + " row added");
-
                     } else if (action == 'X') {
                         // ...and here.
                         final int id = getInt(in, "Enter the row ID :> ");
@@ -243,16 +206,6 @@ public class App {
                             continue;
                         final int newLike = getInt(in, "Enter the new like");
                         final int res = db.updateOneLikes(id, newLike);
-                        if (res == -1)
-                            continue;
-                        System.out.println("  " + res + " rows updated");
-                    } else if (action == 'Z') {
-                        // ...and here.
-                        final int id = getInt(in, "Enter the row ID :> ");
-                        if (id == -1)
-                            continue;
-                        final String newComment = getString(in, "Enter the new comment");
-                        final int res = db.updateOneComments(newComment, id);
                         if (res == -1)
                             continue;
                         System.out.println("  " + res + " rows updated");

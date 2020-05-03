@@ -214,7 +214,7 @@ public class Messages {
                 break;
             case '~':
                 msgid = App.getInt(br, "Enter the message ID");
-                String newmsg = App.getString(br, "Enter your new ID");
+                String newmsg = App.getString(br, "Enter your new message");
                 updateOne(msgid, newmsg);
                 break;
             case 'D':
