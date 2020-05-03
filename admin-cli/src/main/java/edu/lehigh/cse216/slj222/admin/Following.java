@@ -184,7 +184,7 @@ public class Following {
         System.out.println("  [S] View all followers of a particular user");
         System.out.println("  [G] View all users a particular user is following");
         System.out.println("  [+] Add a new follow");
-        System.out.println("  [-] Delete a new follow");
+        System.out.println("  [-] Delete a follow");
         System.out.println("  [D] Drop following table");
         System.out.println("  [?] Help - this menu");
     }
