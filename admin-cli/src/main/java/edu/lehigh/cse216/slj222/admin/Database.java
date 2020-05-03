@@ -89,31 +89,6 @@ public class Database {
     private PreparedStatement cCreateTable;
 
 
-
-    // Links
-    /**
-     * A prepared statement for getting all data in the database
-     */
-    private PreparedStatement linkSelectAll;
-
-    /**
-     * A prepared statement for getting one row from the database
-     */
-    private PreparedStatement linkSelectOne;
-
-    /**
-     * A prepared statement for deleting a row from the database
-     */
-    private PreparedStatement linkDeleteOne;
-
-    private PreparedStatement linkDeleteChosen;
-
-    /**
-     * A prepared statement for creating the table in our database
-     */
-    private PreparedStatement linkCreateTable;
-
-
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow direct
      * access to its fields. In the context of this Database, RowData represents the
@@ -200,14 +175,6 @@ public class Database {
         String documentURL;
 
         /**
-         * For link table
-         */
-        long linkMsgid;
-        String linkUserid;
-        String linkDateCreated;
-        String linkUrl;
-
-        /**
          * Construct a RowData object by providing values for its fields likes---
          */
         public RowData(String userid, int likes, int mid) {
@@ -224,13 +191,6 @@ public class Database {
             cUserid = userid;
             cDatecreated = datecreated;
             cComment = comment;
-        }
-
-        public RowData(long msgid, String userid, String datecreated, String linkurl) {
-            linkMsgid = msgid;
-            linkUserid = userid;
-            linkDateCreated = datecreated;
-            linkUrl = linkurl;
         }
 
     }
@@ -340,14 +300,6 @@ public class Database {
             db.cSelectOne = db.Connection.prepareStatement("SELECT * from comments WHERE comment=?;");
             db.cUpdateOne = db.Connection.prepareStatement("UPDATE comments SET comment = ? WHERE commentID = ?;");
 
-            // Links
-            db.linkCreateTable = db.Connection
-                    .prepareStatement("CREATE TABLE links(msgid int PRIMARY KEY, url varchar(100))");
-            db.linkDeleteOne = db.Connection.prepareStatement(
-                    "delete from link where link.msgid in (select msgid  from (select msgid,  row_number() over (order by datecreated desc) as seqnum_desc from link ) e where e.seqnum_desc <= 1 );");
-            db.linkSelectAll = db.Connection.prepareStatement("SELECT * FROM link;");
-            db.linkSelectOne = db.Connection.prepareStatement("SELECT * from link WHERE msgid=?;");
-            db.linkDeleteChosen = db.Connection.prepareStatement("DELETE FROM link WHERE msgid = ?;");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -382,28 +334,6 @@ public class Database {
         return true;
     }
 
-    /**
-     * insert link
-     * 
-     * @param userid
-     * @param message
-     * @return
-     */
-    int insertRowLink(String userid, String link) {
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
-        int count = 0;
-        try {
-            mInsertOne.setString(1, userid);
-
-            mInsertOne.setTimestamp(2, ts);
-
-            mInsertOne.setString(3, link);
-            count += mInsertOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return count;
-    }
 
     /**
      * Insert a row into the database
@@ -454,23 +384,6 @@ public class Database {
     }
 
 
-
-    ArrayList<RowData> selectAllLinks() {
-        ArrayList<RowData> res = new ArrayList<RowData>();
-        try {
-            ResultSet rs = linkSelectAll.executeQuery();
-            while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
-                        rs.getString("linkurl")));
-            }
-            rs.close();
-            return res;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     // LIKES
     /**
      * Query the database for a list of all subjects and their IDs
@@ -508,26 +421,6 @@ public class Database {
         }
     }
 
-    /**
-     * select one link
-     * 
-     * @param id
-     * @return
-     */
-    RowData selectOneLink(int id) {
-        RowData res = null;
-        try {
-            linkSelectOne.setInt(1, id);
-            ResultSet rs = linkSelectOne.executeQuery();
-            if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
-                        rs.getString("link"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
 
     /**
      * Get all data for a specific row, by ID
@@ -608,27 +501,6 @@ public class Database {
         return res;
     }
 
-    int deleteRowLink() {
-        int res = -1;
-        try {
-            // dDeleteOne.setInt(1, id);
-            res = linkDeleteOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    int deleteRowLink(int id) {
-        int res = -1;
-        try {
-            linkDeleteChosen.setInt(1, id);
-            res = linkDeleteChosen.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
 
     /**
      * Update the Like for a row in the database
@@ -692,15 +564,4 @@ public class Database {
         }
     }
 
-    /**
-     * create link table
-     */
-    void createTableLink() {
-        try {
-            linkCreateTable.execute();
-            System.out.println("Link table created.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }

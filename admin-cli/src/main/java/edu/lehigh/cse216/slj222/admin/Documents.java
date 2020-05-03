@@ -69,10 +69,10 @@ public class Documents {
         try {
             ResultSet rs = selectAll.executeQuery();
             System.out.println("  Current Documents Table Contents");
-            System.out.printf("%-10s %-50s %-20s\n", "Message ID", "File ID (from Google Drive)", "MIME Type");
+            System.out.printf("%-5s %-50s %-20s\n", "ID", "File ID (from Google Drive)", "MIME Type");
             System.out.println("  -------------------------");
             while (rs.next()) {
-                System.out.printf("%10d %-50s %-20s\n", rs.getInt(1), rs.getString(2), rs.getString(3));
+                System.out.printf("[%3d] %-50s %-20s\n", rs.getInt(1), rs.getString(2), rs.getString(3));
             }
         } catch (SQLException e) {
             e.printStackTrace();

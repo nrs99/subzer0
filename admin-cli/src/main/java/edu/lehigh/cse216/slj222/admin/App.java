@@ -18,25 +18,18 @@ public class App {
     static void menu() {
         System.out.println("Main Menu");
         System.out.println("  [M] Messages Menu");
-        System.out.println("  [L] Create like table");
+        System.out.println("  [L] Links Menu");
         System.out.println("  [C] Create comments table");
         System.out.println("  [D] Documents Menu");
-        System.out.println("  [B] Create link table");
         System.out.println("  [P] Preferences Menu");
         System.out.println("  [F] Following menu");
         System.out.println("  [2] Query for a specific row from Likes");
         System.out.println("  [3] Query for a specific row from Comments");
         System.out.println("  [&] Query for all like rows");
         System.out.println("  [$] Query for all comment rows");
-        System.out.println("  [_] Query for all link rows");
         System.out.println("  [#] Delete a like row");
         System.out.println("  [^] Delete a comment row");
-        System.out.println("  [=] Delete the last link row");
-        System.out.println("  [K] Delete a link row");
-        System.out.println("  [@] Insert a new like row");
         System.out.println("  [!] Insert a new comment row");
-        System.out.println("  [I] Insert a new link row");
-        System.out.println("  [X] Update a like row");
         System.out.println("  [Z] Update a comment row");
         System.out.println("  [q] Quit Program");
         System.out.println("  [E] Send an email with SendGrid");
@@ -148,7 +141,7 @@ public class App {
                 // function call
                 try {
 
-                    final char action = prompt(in, "MLCDBPF234&$%#^(+@!)XZVqB5_KI=E?"); // get the option
+                    final char action = prompt(in, "MLCDPF23&$_#^!ZqE?"); // get the option
 
                     if (action == '?') {
                         menu();
@@ -157,13 +150,11 @@ public class App {
                     } else if (action == 'M') {
                         messages.execute();
                     } else if (action == 'L') {
-                        db.createTableLikes();
+                        links.execute();
                     } else if (action == 'C') {
                         db.createTableComments();
                     } else if (action == 'D') {
                         documents.execute();
-                    } else if (action == 'B') {
-                        db.createTableLink();
                     } else if (action == 'P') {
                         preferences.execute();
                     } else if (action == 'F') {
@@ -261,26 +252,6 @@ public class App {
                         if (res == -1)
                             continue;
                         System.out.println("  " + res + " rows updated");
-                    } else if (action == '_') { // Query for all link rows
-                        final ArrayList<Database.RowData> res = db.selectAllLinks();
-                        if (res == null)
-                            continue;
-                        System.out.println("  Current Link Table Contents");
-                        System.out.println("  -------------------------");
-                        for (final Database.RowData rd : res) {
-                            System.out.println("  [" + rd.linkMsgid + "] " + " date: " + rd.linkDateCreated
-                                    + " user id: " + rd.linkUserid + " document url: " + rd.linkUrl);
-                            // System.out.println(" [" + rd.mMsgid + "] " + " date: " + rd.mDatecreated + "
-                            // user id: " + rd.mUserid + " document url: " + rd.mMessage);
-                        }
-                    } else if (action == '=') { // Delete a link row
-                        // int id = getInt(in, "Enter the row ID");
-                        // if (id == -1)
-                        // continue;
-                        final int res = db.deleteRowLink();
-                        if (res == -1)
-                            continue;
-                        System.out.println("  " + res + " rows deleted");
                     } else if (action == 'E') {
                         final String email = getString(in, "Enter the email address you'd like to send to");
                         final String subject = getString(in, "Enter the subject of the message");
