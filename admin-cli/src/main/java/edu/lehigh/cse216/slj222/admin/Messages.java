@@ -60,7 +60,7 @@ public class Messages {
         this.br = br;
         try {
             createTable = db.Connection.prepareStatement(
-                    "CREATE TABLE IF NOT EXISTS messages(msgid SERIAL PRIMARY KEY, userid VARCHAR(30), datecreated TIMESTAMP, message VARCHAR(250))");
+                    "CREATE TABLE IF NOT EXISTS messages(msgid SERIAL PRIMARY KEY, userid VARCHAR(30) NOT NULL, datecreated TIMESTAMP, message VARCHAR(250) NOT NULL)");
             selectAll = db.Connection.prepareStatement("SELECT * from messages");
             selectOne = db.Connection.prepareStatement("SELECT * from messages where msgid = ?");
             addOne = db.Connection.prepareStatement(

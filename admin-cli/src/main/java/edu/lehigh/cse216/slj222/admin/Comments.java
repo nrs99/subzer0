@@ -56,7 +56,7 @@ public class Comments {
 
         try {
             createTable = db.Connection.prepareStatement(
-                    "CREATE TABLE IF NOT EXISTS comments(mid foreign key references messages(msgid), commentid SERIAL PRIMARY KEY, userid varchar(30) foreign key references users, datecreated timestamp, comment varchar(250))");
+                    "CREATE TABLE IF NOT EXISTS comments(mid foreign key references messages(msgid) ON DELETE CASCADE, commentid SERIAL PRIMARY KEY, userid varchar(30) foreign key references users, datecreated timestamp, comment varchar(250))");
             selectAll = db.Connection.prepareStatement("SELECT * FROM comments ORDER BY commentid");
             selectOne = db.Connection.prepareStatement("SELECT * FROM comments where commentid = ?");
             addOne = db.Connection.prepareStatement("INSERT INTO comments VALUES (?, default, ?, ?, ?)");

@@ -24,8 +24,12 @@ public class AppTest extends TestCase {
         return new TestSuite(AppTest.class);
     }
 
+    public void testEquality() {
+        assertTrue(2 == 2);
+    }
+
     /**
-     * Rigourous Test :-)
+     * These tests no longer work with the refactoring from Phase 4
      */
     /*public void test_Insert_Comment() {
         // test insert comment
