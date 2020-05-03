@@ -17,37 +17,31 @@ public class App {
      */
     static void menu() {
         System.out.println("Main Menu");
-        System.out.println("  [M] Create message table");
+        System.out.println("  [M] Messages Menu");
         System.out.println("  [L] Create like table");
         System.out.println("  [C] Create comments table");
         System.out.println("  [N] Create documents table");
         System.out.println("  [B] Create link table"); // B
         System.out.println("  [P] Create preferences table");
         System.out.println("  [F] Following menu");
-        System.out.println("  [D] Drop table is inactive");
-        System.out.println("  [1] Query for a specific row from Messages");
         System.out.println("  [2] Query for a specific row from Likes");
         System.out.println("  [3] Query for a specific row from Comments");
         System.out.println("  [4] Query for a specific row from Documents");
         System.out.println("  [5] Query for a specific row from Documents"); // 5
-        System.out.println("  [*] Messages Menu");
         System.out.println("  [&] Query for all like rows");
         System.out.println("  [$] Query for all comment rows");
         System.out.println("  [%] Query for all document rows");
         System.out.println("  [_] Query for all link rows"); // _
-        System.out.println("  [-] Delete a message row");
         System.out.println("  [#] Delete a like row");
         System.out.println("  [^] Delete a comment row");
         System.out.println("  [(] Delete the last document row");
         System.out.println("  [V] Delete a document row");
         System.out.println("  [=] Delete the last link row"); // =
         System.out.println("  [K] Delete a link row"); // K
-        System.out.println("  [+] Insert a new message row");
         System.out.println("  [@] Insert a new like row");
         System.out.println("  [!] Insert a new comment row");
         System.out.println("  [)] Insert a new document row");
         System.out.println("  [I] Insert a new link row"); // I
-        System.out.println("  [~] Update a message row");
         System.out.println("  [X] Update a like row");
         System.out.println("  [Z] Update a comment row");
         System.out.println("  [q] Quit Program");
@@ -157,14 +151,14 @@ public class App {
                 // function call
                 try {
 
-                    final char action = prompt(in, "MLCNDPF1234*&$%-#^(+@!)~XZVqB5_KI=?E"); // get the option
+                    final char action = prompt(in, "MLCNDPF234&$%#^(+@!)XZVqB5_KI=?E"); // get the option
 
                     if (action == '?') {
                         menu();
                     } else if (action == 'q') {
                         break;
                     } else if (action == 'M') {
-                        db.createTableMessages();
+                        messages.execute();
                     } else if (action == 'L') {
                         db.createTableLikes();
                     } else if (action == 'C') {
@@ -175,18 +169,6 @@ public class App {
                         db.createTablePreferences();
                     } else if (action == 'F') {
                         following.execute();
-                    } else if (action == 'D') {
-                        db.dropTable();
-                    } else if (action == '1') {
-                        final int id = getInt(in, "Enter the row ID");
-                        if (id == -1)
-                            continue;
-                        final Database.RowData res = db.selectOneMessages(id);
-
-                        if (res != null) {
-                            System.out.println("  [" + res.mMsgid + "] " + res.mMessage);
-                            System.out.println("  --> " + res.mMessage);
-                        }
                     } else if (action == '2') {
                         final String id = getString(in, "Enter the user ID");
                         if (id.equals(""))
@@ -216,8 +198,6 @@ public class App {
                             System.out.println("  [" + res.dMsgid + "] " + res.documentURL);
                             System.out.println("  --> " + res.documentURL);
                         }
-                    } else if (action == '*') {
-                        messages.execute();
                     } else if (action == '&') {
                         final ArrayList<Database.RowData> res = db.selectAllLikes();
                         if (res == null)
@@ -238,15 +218,6 @@ public class App {
                             System.out.println("  [" + rd.cMsgid + "] " + "comment: " + rd.cComment + " date: "
                                     + rd.cDatecreated + " user id: " + rd.cUserid);
                         }
-                    } else if (action == '-') {
-                        // ...same here
-                        final int id = getInt(in, "Enter the row ID");
-                        if (id == -1)
-                            continue;
-                        final int res = db.deleteRowMessages(id);
-                        if (res == -1)
-                            continue;
-                        System.out.println("  " + res + " rows deleted");
                     } else if (action == '#') {
                         // ...same here
                         final int id = getInt(in, "Enter the row ID");
@@ -288,16 +259,7 @@ public class App {
                             continue;
                         final int res = db.insertRowComments(id, comment);
                         System.out.println(res + " row added");
-                    } else if (action == '~') {
-                        // ...and here.
-                        final int id = getInt(in, "Enter the row ID :> ");
-                        if (id == -1)
-                            continue;
-                        final String newMessage = getString(in, "Enter the new message");
-                        final int res = db.updateOneMessages(id, newMessage);
-                        if (res == -1)
-                            continue;
-                        System.out.println("  " + res + " rows updated");
+                    
                     } else if (action == 'X') {
                         // ...and here.
                         final int id = getInt(in, "Enter the row ID :> ");

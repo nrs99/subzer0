@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public class Messages {
 
@@ -106,7 +107,12 @@ public class Messages {
      */
     public void selectOne(int msgid) {
         try {
-            selectOne.executeQuery();
+            selectOne.setInt(1, msgid);
+            ResultSet rs = selectOne.executeQuery();
+            System.out.printf("%-5s %-30s %-25s Message\n", "ID", "User ID", "Date Created");
+            while (rs.next()) {
+                System.out.printf("[%3d] %-30s %-25s %s\n", rs.getInt("msgid"), rs.getString("userid"), rs.getString("dateCreated"), rs.getString("message"));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -117,7 +123,11 @@ public class Messages {
      */
     public void addOne(String userid, String msg) {
         try {
-            createTable.executeQuery();
+            Timestamp ts = new Timestamp(System.currentTimeMillis());
+            addOne.setString(1, userid);
+            addOne.setTimestamp(2, ts);
+            addOne.setString(3, msg);
+            addOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -128,7 +138,8 @@ public class Messages {
      */
     public void deleteOne(int msgid) {
         try {
-            createTable.executeUpdate();
+            deleteOne.setInt(1, msgid);
+            deleteOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -148,9 +159,11 @@ public class Messages {
     /**
      * Update a row with given msgid with new msg
      */
-    public void updateOne(int msgid, String msg) {
+    public void updateOne(int msgid, String msg) { //TODO
         try {
-            dropTable.executeUpdate();
+            updateOne.setString(1, message);
+            updateOne.setInt(2, msgid);
+            updateOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -171,9 +184,12 @@ public class Messages {
         System.out.println("  [?] Help - this menu");
     }
 
+    /**
+     * User interface for Messages Menu
+     */
     public void execute() {
         char selection = App.prompt(br, options);
-        String message;
+        int msgid;
         switch (selection) {
             case 'C':
                 createTable();
@@ -182,16 +198,29 @@ public class Messages {
                 selectAll();
                 break;
             case '1':
+                msgid = App.getInt(br, "Enter the message ID");
+                selectOne(msgid);
                 break;
             case '+':
+                String user = App.getString(br, "Enter the user ID");
+                String message = App.getString(br, "Enter the new message");
+                addOne(user, message);
                 break;
             case '-':
+                msgid = App.getInt(br, "Enter the message ID");
+                deleteOne(msgid);
                 break;
             case '~':
+                msgid = App.getInt(br, "Enter the message ID");
+                String newmsg = App.getString(br, "Enter your new ID");
+                updateOne(msgid, newmsg);
                 break;
             case 'D':
+                dropTable();
                 break;
             case '?':
+                menu();
+                execute();
                 break;
             default:
                 System.out.println("Invalid");

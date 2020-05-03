@@ -191,7 +191,6 @@ public class Following {
 
     public void execute() {
         char selection = App.prompt(br, options);
-        String message;
         switch (selection) {
             case 'C':
                 createTable();

@@ -436,19 +436,8 @@ public class Database {
 
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
-            db.mCreateTable = db.Connection.prepareStatement(
-                    "CREATE TABLE messages(msgid SERIAL PRIMARY KEY, userid VARCHAR(30), datecreated TIMESTAMP, message VARCHAR(250));");
-            // db.mDropTable = db.Connection.prepareStatement("DROP TABLE messages;");
-
+            
             // Standard CRUD operations
-            db.mDeleteOne = db.Connection.prepareStatement("DELETE FROM messages WHERE msgid = ?;");
-            // create sequence
-            // db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
-            db.mInsertOne = db.Connection.prepareStatement(
-                    "INSERT INTO messages(msgid, userid, datecreated, message) VALUES (default,?, ?, ?);");
-            db.mSelectAll = db.Connection.prepareStatement("SELECT * FROM messages;");
-            db.mSelectOne = db.Connection.prepareStatement("SELECT * from messages WHERE msgid=?;");
-            db.mUpdateOne = db.Connection.prepareStatement("UPDATE messages SET message = ? WHERE msgid = ?;");
 
             // NB: we can easily get ourselves in trouble here by typing the
             // SQL incorrectly. We really should have things like "tblData"
@@ -528,8 +517,6 @@ public class Database {
             db.linkSelectAll = db.Connection.prepareStatement("SELECT * FROM link;");
             db.linkSelectOne = db.Connection.prepareStatement("SELECT * from link WHERE msgid=?;");
             db.linkDeleteChosen = db.Connection.prepareStatement("DELETE FROM link WHERE msgid = ?;");
-            db.createTableFollowing = db.Connection.prepareStatement(
-                    "CREATE TABLE following(usera varchar(30), userb varchar(30), FOREIGN KEY (usera) references users (userid), FOREIGN KEY (userb) references users (userid)) ");
             db.createTablePreferences = db.Connection.prepareStatement(
                     "CREATE TABLE preferences(userid varchar(30) primary key, followsMe boolean, commentsOnPost boolean, FOREIGN KEY (userid) references users (userid))");
 
@@ -675,27 +662,6 @@ public class Database {
             e.printStackTrace();
         }
         return count;
-    }
-
-    /**
-     * Query the database for a list of all subjects and their IDs
-     * 
-     * @return All rows, as an ArrayList
-     */
-    ArrayList<RowData> selectAllMessgaes() {
-        ArrayList<RowData> res = new ArrayList<RowData>();
-        try {
-            ResultSet rs = mSelectAll.executeQuery();
-            while (rs.next()) {
-                res.add(new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
-                        rs.getString("message")));
-            }
-            rs.close();
-            return res;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     ArrayList<RowData> selectAllLinks() {
@@ -1029,17 +995,6 @@ public class Database {
     /**
      * Create tblData. If it already exists, this will print an error
      */
-    void createTableMessages() {
-        try {
-            mCreateTable.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Create tblData. If it already exists, this will print an error
-     */
     void createTableLikes() {
         try {
             lCreateTable.execute();
@@ -1105,13 +1060,4 @@ public class Database {
         }
     }
 
-    void createTableFollowing() {
-        try {
-            createTableFollowing.execute();
-            System.out.println("Following table created");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
 }
