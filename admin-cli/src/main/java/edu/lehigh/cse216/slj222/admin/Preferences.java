@@ -72,6 +72,9 @@ public class Preferences {
         }
     }
 
+    /**
+     * Create preferences table
+     */
     public void createTable() {
         try {
             createTable.execute();
@@ -80,11 +83,15 @@ public class Preferences {
         }
     }
 
+    /**
+     * Select all rows from preferences table
+     */
     public void selectAll() {
         try {
             ResultSet rs = selectAll.executeQuery();
             System.out.println("  Current Preferences Table Contents");
-            System.out.printf("%-30s %-15s %-17s %-15s\n", "User ID", "Follows Me", "Comments on Post", "Following Posts");
+            System.out.printf("%-30s %-15s %-17s %-15s\n", "User ID", "Follows Me", "Comments on Post",
+                    "Following Posts");
             System.out.println("  -------------------------");
             while (rs.next()) {
                 System.out.printf("%-30s %-15b %-17b %-15b\n", rs.getString(1), rs.getBoolean(2), rs.getBoolean(3),
@@ -95,11 +102,17 @@ public class Preferences {
         }
     }
 
+    /**
+     * Select one row from Preferences table
+     * 
+     * @param userid User whose preferences you want to see
+     */
     public void selectOne(String userid) {
         try {
             selectOne.setString(1, userid);
             ResultSet rs = selectOne.executeQuery();
-            System.out.printf("%-30s %-15s %-17s %-15s\n", "User ID", "Follows Me", "Comments on Post", "Following Posts");
+            System.out.printf("%-30s %-15s %-17s %-15s\n", "User ID", "Follows Me", "Comments on Post",
+                    "Following Posts");
             System.out.println("  -------------------------");
             while (rs.next()) {
                 System.out.printf("%-30s %-15b %-17b %-15b\n", rs.getString(1), rs.getBoolean(2), rs.getBoolean(3),
@@ -110,6 +123,9 @@ public class Preferences {
         }
     }
 
+    /**
+     * Add a row with a given userID and preferences
+     */
     public void addOne(String userid, boolean followsMe, boolean commentsOnPost, boolean followingPosts) {
         try {
             addOne.setString(1, userid);
@@ -122,6 +138,9 @@ public class Preferences {
         }
     }
 
+    /**
+     * Update a row with a given userID and new preferences
+     */
     public void updateOne(String userid, boolean followsMe, boolean commentsOnPost, boolean followingPosts) {
         try {
             updateOne.setString(4, userid);
@@ -134,6 +153,9 @@ public class Preferences {
         }
     }
 
+    /**
+     * Delete a user from preferences table
+     */
     public void deleteOne(String userid) {
         try {
             deleteOne.setString(1, userid);
@@ -143,6 +165,9 @@ public class Preferences {
         }
     }
 
+    /**
+     * Drop preferences table
+     */
     public void dropTable() {
         try {
             dropTable.execute();
@@ -152,7 +177,7 @@ public class Preferences {
     }
 
     /**
-     * Print menu for messages table
+     * Print menu for Preferences table
      */
     public void menu() {
         System.out.println("Preferences Menu");
@@ -167,7 +192,7 @@ public class Preferences {
     }
 
     /**
-     * User interface for Messages Menu
+     * User interface for Preferences Menu
      */
     public void execute() {
         char selection = App.prompt(br, options);
@@ -199,7 +224,8 @@ public class Preferences {
                 followsMe = response.equals("Y");
                 valid = false;
                 while (!valid) {
-                    response = App.getString(br, "Notifications for someone commenting on their post? (y/n)").toUpperCase();
+                    response = App.getString(br, "Notifications for someone commenting on their post? (y/n)")
+                            .toUpperCase();
                     if (response.equals("Y") || response.equals("N")) {
                         valid = true;
                     }
@@ -230,7 +256,8 @@ public class Preferences {
                 followsMe = response.equals("Y");
                 valid = false;
                 while (!valid) {
-                    response = App.getString(br, "Notifications for someone commenting on their post? (y/n)").toUpperCase();
+                    response = App.getString(br, "Notifications for someone commenting on their post? (y/n)")
+                            .toUpperCase();
                     if (response.equals("Y") || response.equals("N")) {
                         valid = true;
                     }

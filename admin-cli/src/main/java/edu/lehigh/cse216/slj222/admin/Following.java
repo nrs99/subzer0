@@ -150,6 +150,9 @@ public class Following {
         }
     }
 
+    /**
+     * Delete a following relationship
+     */
     public void deleteFollow(String usera, String userb) {
         try {
             deleteFollow.setString(1, usera);

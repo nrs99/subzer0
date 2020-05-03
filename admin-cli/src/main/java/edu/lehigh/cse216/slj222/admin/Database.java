@@ -154,24 +154,11 @@ public class Database {
      * A prepared statement for inserting into the database
      */
     private PreparedStatement dInsertOne;
-    /**
-     * A prepared statemeting for trigger
-     */
-    // private PreparedStatmet mTrigger;
-    /**
-     * A prepared statement for updating a single row in the database
-     */
-    private PreparedStatement dUpdateOne;
 
     /**
      * A prepared statement for creating the table in our database
      */
     private PreparedStatement dCreateTable;
-
-    /**
-     * A prepared statement for dropping the table in our database
-     */
-    private PreparedStatement dDropTable;
 
     // Documents
     /**
@@ -192,37 +179,14 @@ public class Database {
     private PreparedStatement linkDeleteChosen;
 
     /**
-     * A prepared statement for inserting into the database
-     */
-    private PreparedStatement linkInsertOne;
-    /**
-     * A prepared statemeting for trigger
-     */
-    // private PreparedStatmet mTrigger;
-    /**
-     * A prepared statement for updating a single row in the database
-     */
-    private PreparedStatement linkUpdateOne;
-
-    /**
      * A prepared statement for creating the table in our database
      */
     private PreparedStatement linkCreateTable;
 
     /**
-     * A prepared statement for dropping the table in our database
-     */
-    private PreparedStatement linkDropTable;
-
-    /**
      * PreparedStatement to create preferences table
      */
     private PreparedStatement createTablePreferences;
-
-    /**
-     * PreparedStatement to create following table
-     */
-    private PreparedStatement createTableFollowing;
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow direct
@@ -316,16 +280,6 @@ public class Database {
         String linkUserid;
         String linkDateCreated;
         String linkUrl;
-
-        /**
-         * Construct a RowData object by providing values for its fields messages---
-         */
-        public RowData(int msgid, String userid, String datecreated, String message) {
-            mMsgid = msgid;
-            mUserid = userid;
-            mDatecreated = datecreated;
-            mMessage = message;
-        }
 
         /**
          * Construct a RowData object by providing values for its fields likes---
@@ -436,7 +390,7 @@ public class Database {
 
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
-            
+
             // Standard CRUD operations
 
             // NB: we can easily get ourselves in trouble here by typing the
@@ -450,13 +404,10 @@ public class Database {
             db.lCreateTable = db.Connection.prepareStatement(
                     "CREATE TABLE likes(userid VARCHAR(30), likes INT);" + "ALTER TABLE likes ADD COLUMN mid INT;"
                             + " ALTER TABLE likes ADD CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES messages(msgid);");
-            // db.mDropTable = db.Connection.prepareStatement("DROP TABLE like;");
 
             // Standard CRUD operations
             db.lDeleteOne = db.Connection.prepareStatement("DELETE FROM likes WHERE msgid = ?;");
             // create sequence
-
-            // db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
 
             db.lInsertOne = db.Connection
                     .prepareStatement("INSERT INTO likes(userid, likes, mid) VALUES (?, ?, default);");
@@ -479,12 +430,10 @@ public class Database {
                             + "ALTER TABLE comments ADD COLUMN userID VARCHAR(30);"
                             + "ALTER TABLE comments ADD COLUMN datecreated TIMESTAMP;"
                             + "ALTER TABLE comments ADD COLUMN comment VARCHAR(250);");
-            // db.mDropTable = db.Connection.prepareStatement("DROP TABLE messages;");
 
             // Standard CRUD operations
             db.cDeleteOne = db.Connection.prepareStatement("DELETE FROM comments WHERE commentID = ?");
             // create sequence
-            // db.mTrigger = db.Connection.prepareStatement("CREATE SEQUENCE seq_simple");
             db.cInsertOne = db.Connection.prepareStatement(
                     "INSERT INTO comments(mid, commentID, userID, datecreated, comment) VALUES (default, default, ?, ?, ?);");
             db.cSelectAll = db.Connection.prepareStatement("SELECT * FROM comments;");
@@ -501,8 +450,7 @@ public class Database {
                     "INSERT INTO documents(msgid, documentid, userid, datecreated, documenturl) VALUES (default, 100, ?, ?, ?);");
             db.dSelectAll = db.Connection.prepareStatement("SELECT * FROM documents;");
             db.dSelectOne = db.Connection.prepareStatement("SELECT * from documents WHERE msgid=?;");
-            // db.dUpdateOne = db.Connection.prepareStatement("UPDATE documents SET
-            // documentrul = ? WHERE msgid = ?;");
+
             db.dDeleteChosen = db.Connection.prepareStatement("DELETE FROM documents WHERE msgid = ?;");
 
             // Links
@@ -552,30 +500,6 @@ public class Database {
         }
         Connection = null;
         return true;
-    }
-
-    /**
-     * Insert a row into the database
-     * 
-     * @param subject The subject for this new row
-     * @param message The message body for this new row
-     * 
-     * @return The number of rows that were inserted
-     */
-    int insertRowMessages(String userid, String message) {
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
-        int count = 0;
-        try {
-            mInsertOne.setString(1, userid);
-
-            mInsertOne.setTimestamp(2, ts);
-
-            mInsertOne.setString(3, message);
-            count += mInsertOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return count;
     }
 
     /**
@@ -734,28 +658,6 @@ public class Database {
     }
 
     /**
-     * Get all data for a specific row, by ID
-     * 
-     * @param id The id of the row being requested
-     * 
-     * @return The data for the requested row, or null if the ID was invalid
-     */
-    RowData selectOneMessages(int id) {
-        RowData res = null;
-        try {
-            mSelectOne.setInt(1, id);
-            ResultSet rs = mSelectOne.executeQuery();
-            if (rs.next()) {
-                res = new RowData(rs.getInt("msgid"), rs.getString("userid"), rs.getString("datecreated"),
-                        rs.getString("message"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    /**
      * select one link
      * 
      * @param id
@@ -841,24 +743,6 @@ public class Database {
      * 
      * @return The number of rows that were deleted. -1 indicates an error.
      */
-    int deleteRowMessages(int id) {
-        int res = -1;
-        try {
-            mDeleteOne.setInt(1, id);
-            res = mDeleteOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    /**
-     * Delete a row by ID
-     * 
-     * @param id The id of the row to delete
-     * 
-     * @return The number of rows that were deleted. -1 indicates an error.
-     */
     int deleteRowLikes(int id) {
         int res = -1;
         try {
@@ -926,26 +810,6 @@ public class Database {
         try {
             linkDeleteChosen.setInt(1, id);
             res = linkDeleteChosen.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    /**
-     * Update the message for a row in the database
-     * 
-     * @param id      The id of the row to update
-     * @param message The new message contents
-     * 
-     * @return The number of rows that were updated. -1 indicates an error.
-     */
-    int updateOneMessages(int id, String message) {
-        int res = -1;
-        try {
-            mUpdateOne.setString(1, message);
-            mUpdateOne.setInt(2, id);
-            res = mUpdateOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -1037,14 +901,4 @@ public class Database {
             e.printStackTrace();
         }
     }
-
-    void createTablePreferences() {
-        try {
-            createTablePreferences.execute();
-            System.out.println("Preferences table created");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
