@@ -131,18 +131,10 @@ public class App {
      * The main routine runs a loop that gets a request from the user and processes
      * it
      * 
-     * @param argv Command-line options. Ignored by this program.tryna smashyes
-     *             should we leavr car at my house
+     * @param argv Command-line options. Ignored by this program.
      */
     public static void main(final String[] argv) {
-        // get the Postgres configuration from the environment
-        // Map<String, String> env = System.getenv();
-        // String ip = env.get("POSTGRES_IP");
-        // String port = env.get("POSTGRES_PORT");
-        // String user = env.get("POSTGRES_USER");
-        // String pass = env.get("POSTGRES_PASS");
-
-        // String db_url = env.get("DATABASE_URL");
+ 
         // Get a fully-configured connection to the database, or exit
         // immediately
         final Database db = Database.getDatabase(

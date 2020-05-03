@@ -13,7 +13,6 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class Database {
-    // messages
     /**
      * The connection to the database. When there is no connection, it should be
      * null. Otherwise, there is a valid open connection
@@ -39,12 +38,8 @@ public class Database {
      * A prepared statement for inserting into the database
      */
     private PreparedStatement mInsertOne;
-    /**
-     * A prepared statemeting for trigger
-     */
-    // private PreparedStatmet mTrigger;
-    /**
-     * A prepared statement for updating a single row in the database
+  
+     /* A prepared statement for updating a single row in the database
      */
     private PreparedStatement mUpdateOne;
 
