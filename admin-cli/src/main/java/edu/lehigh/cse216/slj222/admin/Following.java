@@ -206,7 +206,7 @@ public class Following {
                 selectFollowers(user);
                 break;
             case 'G':
-                String user2 = App.getString(br, "Enter the user whose followers you want to see");
+                String user2 = App.getString(br, "Enter the user to see who they are following");
                 selectFollowing(user2);
                 break;
             case '+':

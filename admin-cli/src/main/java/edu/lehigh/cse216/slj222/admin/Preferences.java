@@ -65,7 +65,7 @@ public class Preferences {
             addOne = db.Connection.prepareStatement("INSERT INTO preferences values (?, ?, ?, ?)");
             updateOne = db.Connection.prepareStatement(
                     "UPDATE preferences SET followsMe = ?, commentsOnPost = ?, followingPosts = ? WHERE userid = ?");
-            deleteOne = db.Connection.prepareStatement("DELETE from preferences where user id = ?");
+            deleteOne = db.Connection.prepareStatement("DELETE from preferences where userid = ?");
             dropTable = db.Connection.prepareStatement("DROP TABLE IF EXISTS preferences");
         } catch (SQLException e) {
             e.printStackTrace();

@@ -20,4 +20,8 @@ public class Likes {
         this.db = db;
         this.br = br;
     }
+
+    public void execute() {
+        
+    }
 }

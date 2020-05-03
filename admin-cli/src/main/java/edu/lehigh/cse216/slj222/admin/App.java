@@ -23,11 +23,8 @@ public class App {
         System.out.println("  [D] Documents Menu");
         System.out.println("  [P] Preferences Menu");
         System.out.println("  [F] Following Menu");
-        System.out.println("  [K] Likes Menu")
+        System.out.println("  [K] Likes Menu");
         System.out.println("  [U] Users menu");
-        System.out.println("  [2] Query for a specific row from Likes");
-        System.out.println("  [&] Query for all like rows");
-        System.out.println("  [#] Delete a like row");
         System.out.println("  [E] Send an email with SendGrid");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
