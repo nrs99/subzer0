@@ -38,6 +38,10 @@ public class Following {
      */
     PreparedStatement newFollow;
     /**
+     * Delete a follow relationship
+     */
+    PreparedStatement deleteFollow;
+    /**
      * Drop the following table
      */
     PreparedStatement dropTable;
@@ -45,7 +49,7 @@ public class Following {
     /**
      * Options that a user has to interact with following table
      */
-    final String options = "C*SG+D?";
+    final String options = "C*SG+-D?";
 
     /**
      * Create a Following object and set up all PreparedStatements
@@ -55,12 +59,13 @@ public class Following {
         this.br = br;
         try {
             createTable = db.Connection.prepareStatement(
-                    "CREATE TABLE if not exists following(usera varchar(30), userb varchar(30), FOREIGN KEY (usera) references users (userid), FOREIGN KEY (userb) references users (userid)) ");
+                    "CREATE TABLE if not exists following(usera varchar(30), userb varchar(30), FOREIGN KEY (usera) references users (userid), FOREIGN KEY (userb) references users (userid), PRIMARY KEY (usera, userb))");
             selectAll = db.Connection.prepareStatement("select * from following");
             selectFollowers = db.Connection.prepareStatement("select usera from following where userb = ?");
             selectFollowing = db.Connection.prepareStatement("select userb from following where usera = ?");
             newFollow = db.Connection.prepareStatement("insert into following values(?, ?)");
-            dropTable = db.Connection.prepareStatement("drop table following");
+            deleteFollow = db.Connection.prepareStatement("delete from following where usera = ? and userb = ?");
+            dropTable = db.Connection.prepareStatement("DROP TABLE IF EXISTS following");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -136,8 +141,23 @@ public class Following {
         try {
             newFollow.setString(1, usera);
             newFollow.setString(2, userb);
-            ResultSet rs = selectAll.executeQuery();
+            if (newFollow.executeUpdate() == 0) {
+                System.out.println("Invalid new row");
+            }
             System.out.println("Row added");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteFollow(String usera, String userb) {
+        try {
+            deleteFollow.setString(1, usera);
+            deleteFollow.setString(2, userb);
+            if (deleteFollow.executeUpdate() == 0) {
+                System.out.println("Invalid deletion");
+            }
+            System.out.printf("%s is no longer following %s\n", usera, uesrb);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -148,7 +168,7 @@ public class Following {
      */
     public void dropTable() {
         try {
-            createTable.execute();
+            dropTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -164,6 +184,7 @@ public class Following {
         System.out.println("  [S] View all followers of a particular user");
         System.out.println("  [G] View all users a particular user is following");
         System.out.println("  [+] Add a new follow");
+        System.out.println("  [-] Delete a new follow");
         System.out.println("  [D] Drop following table");
         System.out.println("  [?] Help - this menu");
     }
@@ -191,11 +212,17 @@ public class Following {
                 String userB = App.getString(br, "Enter the user ID of who they will be following");
                 newFollow(userA, userB);
                 break;
+            case '-':
+                String usera = App.getString(br, "Enter the user who will be unfollowing someone");
+                String userb = App.getString(br, "Enter the user ID of who they will no longer be following");
+                deleteFollow(usera, userb);
+                break;
             case 'D':
                 dropTable();
                 break;
             case '?':
                 menu();
+                execute();
                 break;
             default:
                 System.out.println("Invalid");

@@ -139,11 +139,13 @@ public class App {
         if (db == null)
             return;
 
-        Following following = new Following(db);
+        
 
         // Start our basic command-line interpreter:
         final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        // messages
+
+        // Add menus to the app
+        Following following = new Following(db, in);
         try {
 
             while (true) {
