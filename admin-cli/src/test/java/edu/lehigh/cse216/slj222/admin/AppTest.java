@@ -27,7 +27,7 @@ public class AppTest extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    public void test_Insert_Comment() {
+    /*public void test_Insert_Comment() {
         // test insert comment
         int count = 7;
         Database db1 = Database.getDatabase(
@@ -42,7 +42,7 @@ public class AppTest extends TestCase {
         System.out.println("-----------------------------------------------------");
         // Database.RowData res = db.selectOneComments(1);
         assertEquals("mama", rs.cComment);
-    }
+    }*/
 
     /* public void test_insert_Like() {
         Database db = Database.getDatabase(

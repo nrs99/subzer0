@@ -134,13 +134,15 @@ public class App {
      * @param argv Command-line options. Ignored by this program.
      */
     public static void main(final String[] argv) {
- 
+
         // Get a fully-configured connection to the database, or exit
         // immediately
         final Database db = Database.getDatabase(
                 "postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
         if (db == null)
             return;
+
+        Following following = new Following(db);
 
         // Start our basic command-line interpreter:
         final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -172,7 +174,7 @@ public class App {
                     } else if (action == 'P') {
                         db.createTablePreferences();
                     } else if (action == 'F') {
-                        db.createTableFollowing();
+                        following.createTable();
                     } else if (action == 'D') {
                         db.dropTable();
                     } else if (action == '1') {

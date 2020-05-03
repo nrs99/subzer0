@@ -17,7 +17,7 @@ public class Database {
      * The connection to the database. When there is no connection, it should be
      * null. Otherwise, there is a valid open connection
      */
-    private Connection Connection;
+    Connection Connection;
 
     /**
      * A prepared statement for getting all data in the database
@@ -38,8 +38,9 @@ public class Database {
      * A prepared statement for inserting into the database
      */
     private PreparedStatement mInsertOne;
-  
-     /* A prepared statement for updating a single row in the database
+
+    /*
+     * A prepared statement for updating a single row in the database
      */
     private PreparedStatement mUpdateOne;
 
