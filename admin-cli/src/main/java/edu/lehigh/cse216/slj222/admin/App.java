@@ -23,6 +23,7 @@ public class App {
         System.out.println("  [D] Documents Menu");
         System.out.println("  [P] Preferences Menu");
         System.out.println("  [F] Following menu");
+        System.out.println("  [U] Users menu");
         System.out.println("  [2] Query for a specific row from Likes");
         System.out.println("  [3] Query for a specific row from Comments");
         System.out.println("  [&] Query for all like rows");
@@ -130,6 +131,7 @@ public class App {
         Likes likes = new Likes(db, in);
         Links links = new Links(db, in);
         Messages messages = new Messages(db, in);
+        Users users = new Users(db, in);
         Preferences preferences = new Preferences(db, in);
         try {
 
@@ -141,7 +143,7 @@ public class App {
                 // function call
                 try {
 
-                    final char action = prompt(in, "MLCDPF23&$_#^!ZqE?"); // get the option
+                    final char action = prompt(in, "MLCDPFU23&$_#^!ZqE?"); // get the option
 
                     if (action == '?') {
                         menu();
@@ -159,6 +161,8 @@ public class App {
                         preferences.execute();
                     } else if (action == 'F') {
                         following.execute();
+                    } else if (action == 'U') {
+                        users.execute();
                     } else if (action == '2') {
                         final String id = getString(in, "Enter the user ID");
                         if (id.equals(""))

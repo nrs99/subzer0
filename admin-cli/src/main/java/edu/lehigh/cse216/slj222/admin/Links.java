@@ -66,7 +66,7 @@ public class Links {
     }
 
     /**
-     * Print menu for messages table
+     * Print menu for links table
      */
     public void menu() {
         System.out.println("Links Menu");
@@ -80,6 +80,9 @@ public class Links {
         System.out.println("  [?] Help - this menu");
     }
 
+    /**
+     * Create links table
+     */
     public void createTable() {
         try {
             createTable.execute();
@@ -87,7 +90,9 @@ public class Links {
             e.printStackTrace();
         }
     }
-
+/**
+ * Select all rows from links table
+ */
     public void selectAll() {
         try {
             ResultSet rs = selectAll.executeQuery();
@@ -101,7 +106,9 @@ public class Links {
             e.printStackTrace();
         }
     }
-
+/**
+ * Select a row from links table
+ */
     public void selectOne(int msgid) {
         try {
             selectOne.setInt(1, msgid);
@@ -115,6 +122,9 @@ public class Links {
         }
     }
 
+    /**
+     * Add a row to links table
+     */
     public void addOne(int msgid, String url) {
         try {
             addOne.setInt(1, msgid);
@@ -125,6 +135,9 @@ public class Links {
         }
     }
 
+    /**
+     * Delete a row from links table
+     */
     public void deleteOne(int msgid) {
         try {
             deleteOne.setInt(1, msgid);
@@ -134,6 +147,9 @@ public class Links {
         }
     }
 
+    /**
+     * Update a row from links table
+     */
     public void updateOne(int msgid, String url) {
         try {
             updateOne.setString(1, url);
@@ -144,6 +160,9 @@ public class Links {
         }
     }
 
+    /**
+     * Drop links table
+     */
     public void dropTable() {
         try {
             dropTable.execute();
@@ -153,7 +172,7 @@ public class Links {
     }
 
     /**
-     * User interface for Messages Menu
+     * User interface for Links Menu
      */
     public void execute() {
         char selection = App.prompt(br, options);
