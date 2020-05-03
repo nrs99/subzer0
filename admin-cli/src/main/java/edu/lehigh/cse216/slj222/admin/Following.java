@@ -88,7 +88,7 @@ public class Following {
     public void selectAll() {
         try {
             ResultSet rs = selectAll.executeQuery();
-            System.out.println("  Current Message Table Contents");
+            System.out.println("  Current Following Table Contents");
             System.out.printf("%-30s %-30s\n", "User A", "User B");
             System.out.println("  -------------------------");
 
@@ -157,7 +157,7 @@ public class Following {
             if (deleteFollow.executeUpdate() == 0) {
                 System.out.println("Invalid deletion");
             }
-            System.out.printf("%s is no longer following %s\n", usera, uesrb);
+            System.out.printf("%s is no longer following %s\n", usera, userb);
         } catch (SQLException e) {
             e.printStackTrace();
         }

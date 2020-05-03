@@ -23,14 +23,14 @@ public class App {
         System.out.println("  [N] Create documents table");
         System.out.println("  [B] Create link table"); // B
         System.out.println("  [P] Create preferences table");
-        System.out.println("  [F] Create following table");
+        System.out.println("  [F] Following menu");
         System.out.println("  [D] Drop table is inactive");
         System.out.println("  [1] Query for a specific row from Messages");
         System.out.println("  [2] Query for a specific row from Likes");
         System.out.println("  [3] Query for a specific row from Comments");
         System.out.println("  [4] Query for a specific row from Documents");
         System.out.println("  [5] Query for a specific row from Documents"); // 5
-        System.out.println("  [*] Query for all message rows");
+        System.out.println("  [*] Messages Menu");
         System.out.println("  [&] Query for all like rows");
         System.out.println("  [$] Query for all comment rows");
         System.out.println("  [%] Query for all document rows");
@@ -146,6 +146,7 @@ public class App {
 
         // Add menus to the app
         Following following = new Following(db, in);
+        Messages messages = new Messages(db, in);
         try {
 
             while (true) {
@@ -216,15 +217,7 @@ public class App {
                             System.out.println("  --> " + res.documentURL);
                         }
                     } else if (action == '*') {
-                        final ArrayList<Database.RowData> res = db.selectAllMessgaes();
-                        if (res == null)
-                            continue;
-                        System.out.println("  Current Message Table Contents");
-                        System.out.println("  -------------------------");
-                        for (final Database.RowData rd : res) {
-                            System.out.println("  [" + rd.mMsgid + "] " + "message: " + rd.mMessage + " date: "
-                                    + rd.mDatecreated + " user id: " + rd.mUserid);
-                        }
+                        messages.execute();
                     } else if (action == '&') {
                         final ArrayList<Database.RowData> res = db.selectAllLikes();
                         if (res == null)
