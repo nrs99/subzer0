@@ -59,7 +59,7 @@ public class Following {
         this.br = br;
         try {
             createTable = db.Connection.prepareStatement(
-                    "CREATE TABLE if not exists following(usera varchar(30), userb varchar(30), FOREIGN KEY (usera) references users (userid), FOREIGN KEY (userb) references users (userid), PRIMARY KEY (usera, userb))");
+                    "CREATE TABLE if not exists following(usera varchar(30), userb varchar(30), FOREIGN KEY (usera) references users (userid) ON DELETE CASCADE, FOREIGN KEY (userb) references users (userid) ON DELETE CASCADE, PRIMARY KEY (usera, userb))");
             selectAll = db.Connection.prepareStatement("select * from following");
             selectFollowers = db.Connection.prepareStatement("select usera from following where userb = ?");
             selectFollowing = db.Connection.prepareStatement("select userb from following where usera = ?");

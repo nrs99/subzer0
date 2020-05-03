@@ -95,7 +95,8 @@ public class Messages {
             System.out.println("  -------------------------");
 
             while (rs.next()) {
-                System.out.printf("[%3d] %-30s %-25s %s\n", rs.getInt("msgid"), rs.getString("userid"), rs.getString("dateCreated"), rs.getString("message"));
+                System.out.printf("[%3d] %-30s %-25s %s\n", rs.getInt("msgid"), rs.getString("userid"),
+                        rs.getString("dateCreated"), rs.getString("message"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -111,7 +112,8 @@ public class Messages {
             ResultSet rs = selectOne.executeQuery();
             System.out.printf("%-5s %-30s %-25s Message\n", "ID", "User ID", "Date Created");
             while (rs.next()) {
-                System.out.printf("[%3d] %-30s %-25s %s\n", rs.getInt("msgid"), rs.getString("userid"), rs.getString("dateCreated"), rs.getString("message"));
+                System.out.printf("[%3d] %-30s %-25s %s\n", rs.getInt("msgid"), rs.getString("userid"),
+                        rs.getString("dateCreated"), rs.getString("message"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
