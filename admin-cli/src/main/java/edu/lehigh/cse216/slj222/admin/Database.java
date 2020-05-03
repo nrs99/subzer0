@@ -1038,19 +1038,6 @@ public class Database {
         }
     }
 
-    /**
-     * Remove tblData from the database. If it does not exist, this will print an
-     * error.
-     */
-    void dropTable() {
-        try {
-            dDropTable.execute();
-            System.out.println("Table dropped");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     void createTablePreferences() {
         try {
             createTablePreferences.execute();

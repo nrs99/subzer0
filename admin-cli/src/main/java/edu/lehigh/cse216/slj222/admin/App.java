@@ -141,6 +141,7 @@ public class App {
         // Add menus to the app
         Following following = new Following(db, in);
         Messages messages = new Messages(db, in);
+        Preferences preferences = new Preferences(db, in);
         try {
 
             while (true) {
@@ -166,7 +167,7 @@ public class App {
                     } else if (action == 'B') {
                         db.createTableLink();
                     } else if (action == 'P') {
-                        db.createTablePreferences();
+                        preferences.execute();
                     } else if (action == 'F') {
                         following.execute();
                     } else if (action == '2') {
