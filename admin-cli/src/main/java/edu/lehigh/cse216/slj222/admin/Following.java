@@ -1,5 +1,6 @@
 package edu.lehigh.cse216.slj222.admin;
 
+import java.io.BufferedReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,38 +10,49 @@ public class Following {
     /**
      * Inherit the database object
      */
-    final Database db;
+    Database db;
+
+    /**
+     * Inherit the BufferedReader
+     */
+    BufferedReader br;
 
     /**
      * Create following table
      */
-    final PreparedStatement createTable;
+    PreparedStatement createTable;
     /**
      * Select all info from following table
      */
-    final PreparedStatement selectAll;
+    PreparedStatement selectAll;
     /**
      * View all followers of a user
      */
-    final PreparedStatement selectFollowers;
+    PreparedStatement selectFollowers;
     /**
      * View all users a user is following
      */
-    final PreparedStatement selectFollowing;
+    PreparedStatement selectFollowing;
     /**
      * Add a new follow relationship
      */
-    final PreparedStatement newFollow;
+    PreparedStatement newFollow;
     /**
      * Drop the following table
      */
-    final PreparedStatement dropTable;
+    PreparedStatement dropTable;
+
+    /**
+     * Options that a user has to interact with following table
+     */
+    final String options = "C*SG+D?";
 
     /**
      * Create a Following object and set up all PreparedStatements
      */
-    public Following(Database db) {
+    public Following(Database db, BufferedReader br) {
         this.db = db;
+        this.br = br;
         try {
             createTable = db.Connection.prepareStatement(
                     "CREATE TABLE if not exists following(usera varchar(30), userb varchar(30), FOREIGN KEY (usera) references users (userid), FOREIGN KEY (userb) references users (userid)) ");
@@ -118,8 +130,7 @@ public class Following {
     }
 
     /**
-     * Add a new row to the table
-     * usera follows userb
+     * Add a new row to the table usera follows userb
      */
     public void newFollow(String usera, String userb) {
         try {
@@ -144,13 +155,6 @@ public class Following {
     }
 
     /**
-     * All options a user has to interact with this table
-     */
-    public String options() {
-        return "C*SG+D?";
-    }
-
-    /**
      * Print menu for following table
      */
     public void menu() {
@@ -162,6 +166,40 @@ public class Following {
         System.out.println("  [+] Add a new follow");
         System.out.println("  [D] Drop following table");
         System.out.println("  [?] Help - this menu");
+    }
+
+    public void execute() {
+        char selection = App.prompt(br, options);
+        String message;
+        switch (selection) {
+            case 'C':
+                createTable();
+                break;
+            case '*':
+                selectAll();
+                break;
+            case 'S':
+                String user = App.getString(br, "Enter the user whose followers you want to see");
+                selectFollowers(user);
+                break;
+            case 'G':
+                String user2 = App.getString(br, "Enter the user whose followers you want to see");
+                selectFollowing(user2);
+                break;
+            case '+':
+                String userA = App.getString(br, "Enter the user who will be following someone");
+                String userB = App.getString(br, "Enter the user ID of who they will be following");
+                newFollow(userA, userB);
+                break;
+            case 'D':
+                dropTable();
+                break;
+            case '?':
+                menu();
+                break;
+            default:
+                System.out.println("Invalid");
+        }
     }
 
 }

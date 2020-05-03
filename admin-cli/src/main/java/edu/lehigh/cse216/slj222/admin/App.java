@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 import java.util.ArrayList;
-//import java.util.Map;
 
 /**
  * App is our basic admin app. For now, it is a demonstration of the six key
@@ -63,9 +62,7 @@ public class App {
      * 
      * @return The character corresponding to the chosen menu option
      */
-    static char prompt(final BufferedReader in) {
-        // The valid actions:
-        final String actions = "MLCNDPF1234*&$%-#^(+@!)~XZVqB5_KI=?E";
+    static char prompt(final BufferedReader in, String actions) {
 
         // We repeat until a valid single-character option is selected
         while (true) {
@@ -157,7 +154,7 @@ public class App {
                 // function call
                 try {
 
-                    final char action = prompt(in); // get the option
+                    final char action = prompt(in, "MLCNDPF1234*&$%-#^(+@!)~XZVqB5_KI=?E"); // get the option
 
                     if (action == '?') {
                         menu();
@@ -174,7 +171,7 @@ public class App {
                     } else if (action == 'P') {
                         db.createTablePreferences();
                     } else if (action == 'F') {
-                        following.createTable();
+                        following.execute();
                     } else if (action == 'D') {
                         db.dropTable();
                     } else if (action == '1') {
