@@ -50,7 +50,6 @@ public class Preferences {
      */
     final String options = "C*1+-~D?";
 
-
     /**
      * Create a new Preferences object with given Database and BufferedReader
      */
@@ -84,6 +83,13 @@ public class Preferences {
     public void selectAll() {
         try {
             ResultSet rs = selectAll.executeQuery();
+            System.out.println("  Current Preferences Table Contents");
+            System.out.printf("%-30s %-15s %-17s %-15s\n", "User ID", "Follows Me", "Comments on Post", "Following Posts");
+            System.out.println("  -------------------------");
+            while (rs.next()) {
+                System.out.printf("%-30s %-15b %-17b %-15b\n", rs.getString(1), rs.getBoolean(2), rs.getBoolean(3),
+                        rs.getBoolean(4));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -91,7 +97,14 @@ public class Preferences {
 
     public void selectOne(String userid) {
         try {
+            selectOne.setString(1, userid);
             ResultSet rs = selectOne.executeQuery();
+            System.out.printf("%-30s %-15s %-17s %-15s\n", "User ID", "Follows Me", "Comments on Post", "Following Posts");
+            System.out.println("  -------------------------");
+            while (rs.next()) {
+                System.out.printf("%-30s %-15b %-17b %-15b\n", rs.getString(1), rs.getBoolean(2), rs.getBoolean(3),
+                        rs.getBoolean(4));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -99,6 +112,10 @@ public class Preferences {
 
     public void addOne(String userid, boolean followsMe, boolean commentsOnPost, boolean followingPosts) {
         try {
+            addOne.setString(1, userid);
+            addOne.setBoolean(2, followsMe);
+            addOne.setBoolean(3, commentsOnPost);
+            addOne.setBoolean(4, followingPosts);
             addOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,6 +124,10 @@ public class Preferences {
 
     public void updateOne(String userid, boolean followsMe, boolean commentsOnPost, boolean followingPosts) {
         try {
+            updateOne.setString(4, userid);
+            updateOne.setBoolean(1, followsMe);
+            updateOne.setBoolean(2, commentsOnPost);
+            updateOne.setBoolean(3, followingPosts);
             updateOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,6 +136,7 @@ public class Preferences {
 
     public void deleteOne(String userid) {
         try {
+            deleteOne.setString(1, userid);
             deleteOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -149,7 +171,12 @@ public class Preferences {
      */
     public void execute() {
         char selection = App.prompt(br, options);
-        int msgid;
+        String userid;
+        String response = "";
+        boolean valid = false;
+        boolean followsMe;
+        boolean commentsOnPost;
+        boolean followingPosts;
         switch (selection) {
             case 'C':
                 createTable();
@@ -158,12 +185,66 @@ public class Preferences {
                 selectAll();
                 break;
             case '1':
+                userid = App.getString(br, "Enter the userID");
+                selectOne(userid);
                 break;
             case '+':
+                userid = App.getString(br, "Enter the userID");
+                while (!valid) {
+                    response = App.getString(br, "Notifications for someone following them? (y/n)").toUpperCase();
+                    if (response.equals("Y") || response.equals("N")) {
+                        valid = true;
+                    }
+                }
+                followsMe = response.equals("Y");
+                valid = false;
+                while (!valid) {
+                    response = App.getString(br, "Notifications for someone commenting on their post? (y/n)").toUpperCase();
+                    if (response.equals("Y") || response.equals("N")) {
+                        valid = true;
+                    }
+                }
+                commentsOnPost = response.equals("Y");
+                valid = false;
+                while (!valid) {
+                    response = App.getString(br, "Notifications for someone they follow posting? (y/n)").toUpperCase();
+                    if (response.equals("Y") || response.equals("N")) {
+                        valid = true;
+                    }
+                }
+                followingPosts = response.equals("Y");
+                addOne(userid, followsMe, commentsOnPost, followingPosts);
                 break;
             case '-':
+                userid = App.getString(br, "Enter the userID");
+                deleteOne(userid);
                 break;
             case '~':
+                userid = App.getString(br, "Enter the userID");
+                while (!valid) {
+                    response = App.getString(br, "Notifications for someone following them? (y/n)").toUpperCase();
+                    if (response.equals("Y") || response.equals("N")) {
+                        valid = true;
+                    }
+                }
+                followsMe = response.equals("Y");
+                valid = false;
+                while (!valid) {
+                    response = App.getString(br, "Notifications for someone commenting on their post? (y/n)").toUpperCase();
+                    if (response.equals("Y") || response.equals("N")) {
+                        valid = true;
+                    }
+                }
+                commentsOnPost = response.equals("Y");
+                valid = false;
+                while (!valid) {
+                    response = App.getString(br, "Notifications for someone they follow posting? (y/n)").toUpperCase();
+                    if (response.equals("Y") || response.equals("N")) {
+                        valid = true;
+                    }
+                }
+                followingPosts = response.equals("Y");
+                updateOne(userid, followsMe, commentsOnPost, followingPosts);
                 break;
             case 'D':
                 dropTable();
