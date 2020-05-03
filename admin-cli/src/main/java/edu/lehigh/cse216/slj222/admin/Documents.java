@@ -25,6 +25,10 @@ public class Documents {
      */
     PreparedStatement selectAll;
     /**
+     * Select one row from documents table
+     */
+    PreparedStatement selectOne;
+    /**
      * Delete a row from documents table
      */
     PreparedStatement deleteOne;
@@ -36,7 +40,7 @@ public class Documents {
     /**
      * Options that a user has to interact with messages table
      */
-    final String options = "C*-D?";
+    final String options = "C*1-D?";
 
     public Documents(Database db, BufferedReader br) {
         this.db = db;
@@ -45,6 +49,7 @@ public class Documents {
             createTable = db.Connection.prepareStatement(
                     "create table if not exists documents(msgid int primary key, fileid varchar(50), mime varchar(20), foreign key (msgid) references messages on delete cascade)");
             selectAll = db.Connection.prepareStatement("SELECT * FROM documents");
+            selectOne = db.Connection.prepareStatement("SELECT * FROM documents where msgid = ?");
             deleteOne = db.Connection.prepareStatement("DELETE FROM documents where msgid = ?");
             dropTable = db.Connection.prepareStatement("DROP TABLE if exists documents");
         } catch (SQLException e) {
@@ -66,6 +71,19 @@ public class Documents {
             System.out.println("  Current Documents Table Contents");
             System.out.printf("%-10s %-50s %-20s\n", "Message ID", "File ID (from Google Drive)", "MIME Type");
             System.out.println("  -------------------------");
+            while (rs.next()) {
+                System.out.printf("%10d %-50s %-20s\n", rs.getInt(1), rs.getString(2), rs.getString(3));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void selectOne(int msgid) {
+        try {
+            selectOne.setInt(1, msgid);
+            ResultSet rs = selectOne.executeQuery();
+            System.out.printf("%-10s %-50s %-20s\n", "Message ID", "File ID (from Google Drive)", "MIME Type");
             while (rs.next()) {
                 System.out.printf("%10d %-50s %-20s\n", rs.getInt(1), rs.getString(2), rs.getString(3));
             }
@@ -98,6 +116,7 @@ public class Documents {
         System.out.println("Documents Menu");
         System.out.println("  [C] Create documents table");
         System.out.println("  [*] Select all rows");
+        System.out.println("  [1] Select one row");
         System.out.println("  [-] Delete a message");
         System.out.println("  [D] Drop documents table");
         System.out.println("  [?] Help - this menu");
@@ -116,6 +135,9 @@ public class Documents {
             case '*':
                 selectAll();
                 break;
+            case '1':
+                msgid = App.getInt(br, "Enter the message ID");
+                selectOne(msgid);
             case '-':
                 msgid = App.getInt(br, "Enter the message ID");
                 deleteOne(msgid);
