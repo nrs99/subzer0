@@ -198,7 +198,7 @@ public class App {
             response.type("application/json");
             // NB: createEntry checks for null title and message
             int newId = db.insertRow(req.message, req.userID);
-            ArrayList<String> emails = db.followingPostsEmail(req.userID);
+            ArrayList<String> emails = db.followingPostsEmails(req.userID);
             String displayName = db.getDisplayName(req.userID);
             for (int i = 0; i < emails.size(); i++) {
                 SendGridEmail.sendEmail(emails.get(i), displayName + " posted a new message!", req.message);
