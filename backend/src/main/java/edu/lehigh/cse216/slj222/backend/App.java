@@ -350,7 +350,7 @@ public class App {
             response.status(200);
             response.type("application/json");
             // NB: createEntry checks for null title and message
-            int newId = db.insertUser(req.userID, req.displayName, req.photoURL);
+            int newId = db.insertUser(req.userID, req.displayName, req.photoURL, req.email);
             if (newId == 0) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {

@@ -49,26 +49,32 @@
       <version>1.30.4</version>
     </dependency>
     <dependency>
-    <groupId>com.google.oauth-client</groupId>
-    <artifactId>google-oauth-client-jetty</artifactId>
-    <version>1.23.0</version>
-  </dependency>
+      <groupId>com.google.oauth-client</groupId>
+      <artifactId>google-oauth-client-jetty</artifactId>
+      <version>1.23.0</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client -->
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-jackson2</artifactId>
       <version>1.15.0-rc</version>
-  </dependency>
+    </dependency>
     <dependency>
-  <groupId>com.googlecode.xmemcached</groupId>
-  <artifactId>xmemcached</artifactId>
-  <version>2.4.3</version>
-</dependency>
+      <groupId>com.googlecode.xmemcached</groupId>
+      <artifactId>xmemcached</artifactId>
+      <version>2.4.3</version>
+    </dependency>
 <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 <dependency>
   <groupId>com.google.guava</groupId>
   <artifactId>guava</artifactId>
   <version>19.0</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/com.sendgrid/sendgrid-java -->
+<dependency>
+  <groupId>com.sendgrid</groupId>
+  <artifactId>sendgrid-java</artifactId>
+  <version>4.0.1</version>
 </dependency>
   </dependencies>
   <build>
