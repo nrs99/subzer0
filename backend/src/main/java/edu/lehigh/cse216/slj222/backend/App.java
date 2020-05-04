@@ -349,7 +349,6 @@ public class App {
             NewUserRequest req = gson.fromJson(request.body(), NewUserRequest.class);
             response.status(200);
             response.type("application/json");
-            // NB: createEntry checks for null title and message
             int newId = db.insertUser(req.userID, req.displayName, req.photoURL, req.email);
             if (newId == 0) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
@@ -358,7 +357,32 @@ public class App {
             }
  
         });
- 
+
+        
+        Spark.put("/follow", (request, response) -> {
+            FollowRequest req = gson.fromJson(request.body(), FollowRequest.class);
+            response.status(200);
+            response.type("application/json");
+            int attemptFollow = db.follow(req.userA, req.userB);
+            if (attemptFollow == 0) {
+                return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + attemptFollow, null));
+            }
+        });
+
+        Spark.put("/preferences", (request, response) -> {
+            PreferencesRequest req = gson.fromJson(request.body(), PreferencesRequest.class);
+            response.status(200);
+            response.type("application/json");
+            int newPrefs = db.changePreferences(req.userID, req.followsMe, req.commentsOnPost, req.followingPost);
+            if (newPrefs == 0) {
+                return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + newPrefs, null));
+            }
+        });
+
     }
  
     static int getIntFromEnv(String envar, int defaultVal) {

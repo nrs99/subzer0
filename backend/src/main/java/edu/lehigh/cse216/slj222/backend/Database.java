@@ -71,6 +71,16 @@ public class Database {
     private PreparedStatement mInsertDocument;
 
     private PreparedStatement mInsertLink;
+
+    private PreparedStatement checkFollow;
+
+    private PreparedStatement newFollow;
+
+    private PreparedStatement deleteFollow;
+
+    private PreparedStatement deletePreferences;
+
+    private PreparedStatement insertPreferences;
  
     /**
      * The Database constructor is private: we only create Database objects through
@@ -144,6 +154,11 @@ public class Database {
             db.mCommentAuthor = db.mConnection.prepareStatement("SELECT userid FROM comments WHERE commentid=?");
             db.mInsertDocument =  db.mConnection.prepareStatement("INSERT INTO documents VALUES (?,?)");
             db.mInsertLink = db.mConnection.prepareStatement("INSERT INTO links VALUES (?, ?)");
+            db.checkFollow = db.mConnection.prepareStatement("SELECT * FROM following where usera = ? and userb = ?");
+            db.newFollow = db.mConnection.prepareStatement("INSERT INTO following VALUES (?, ?)");
+            db.deleteFollow = db.mConnection.prepareStatement("DELETE FROM following WHERE usera = ? and userb = ?");
+            db.deletePreferences = db.mConnection.prepareStatement("DELETE FROM preferences where userid = ?");
+            db.insertPreferences = db.mConnection.prepareStatement("INSERT INTO preferences VALUES(?, ?, ?, ?)");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -486,6 +501,46 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
+        }
+        return count;
+    }
+
+    int follow(String userA, String userB) {
+        int count = 0;
+        try {
+            checkFollow.setString(1, userA);
+            checkFollow.setString(2, userB);
+            ResultSet rs = checkFollow.executeQuery();
+            if (rs.next()) { // Already there
+                deleteFollow.setString(1, userA);
+                deleteFollow.setString(2, userB);
+                deleteFollow.executeUpdate();
+                count = 1;
+            } else { // Not there
+                newFollow.setString(1, userA);
+                newFollow.setString(2, userB);
+                deleteFollow.executeUpdate();
+                count = 2;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    int changePreferences(String userid, boolean followsMe, boolean commentsOnPost, boolean followingPosts) {
+        int count = 0;
+        try {
+            deletePreferences.setString(1, userid);
+            deletePreferences.executeUpdate();
+            insertPreferences.setString(1, userid);
+            insertPreferences.setBoolean(2, followsMe);
+            insertPreferences.setBoolean(3, commentsOnPost);
+            insertPreferences.setBoolean(4, followingPosts);
+            insertPreferences.executeUpdate();
+            count = 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return count;
     }
