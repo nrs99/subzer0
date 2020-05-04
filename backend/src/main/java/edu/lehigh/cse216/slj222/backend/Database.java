@@ -94,6 +94,8 @@ public class Database {
 
     private PreparedStatement checkFollowPostPref;
 
+    private PreparedStatement getFollowing;
+
     /**
      * The Database constructor is private: we only create Database objects through
      * the getDatabase() method.
@@ -187,6 +189,7 @@ public class Database {
                     .prepareStatement("SELECT followsme FROM preferences WHERE userid = ?");
             db.checkFollowPostPref = db.mConnection
                     .prepareStatement("SELECT usera FROM following left join preferences on usera = userid where followingposts = true and userb = ?");
+            db.getFollowing = db.mConnection.prepareStatement("SELECT userb FROM following where usera = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -654,5 +657,19 @@ public class Database {
             e.printStackTrace();
         }
         return null;
+    }
+
+    ArrayList<String> getFollowing(String usera) {
+        ArrayList<String> ids = new ArrayList<>();
+        try {
+            getFollowing.setString(1, usera);
+            ResultSet rs = getFollowing.executeQuery();
+            while (rs.next()) {
+                ids.add(rs.getString(1));
+            }    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ids;
     }
 }

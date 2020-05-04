@@ -316,6 +316,13 @@ public class App {
             response.type("applicaiton/json");
             return gson.toJson(new StructuredResponse("ok", null, db.getMyLikes(userID)));
         });
+
+        Spark.get("/users/:id/following", (request, response) -> {
+            String userID = request.params("id");
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.getFollowing(userID)));
+        });
  
         Spark.post("/login/:token", (request, response) -> {
             final String CLIENT_ID = "363085709256-vl89523mj1pv792ngp4sin2e717motg7.apps.googleusercontent.com";
