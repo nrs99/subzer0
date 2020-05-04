@@ -627,7 +627,7 @@ public class Database {
         ArrayList<String> emails = new ArrayList<>();
         ArrayList<String> ids = new ArrayList<>();
         try {
-            checkFollowPostPref.setString(1, userid);
+            checkFollowPostPref.setString(1, userB);
             ResultSet rs = checkFollowPostPref.executeQuery();
             while (rs.next()) {
                 ids.add(rs.getString(1));
