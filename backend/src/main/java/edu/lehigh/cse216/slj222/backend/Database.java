@@ -635,6 +635,7 @@ public class Database {
             for (int i = 0; i < ids.size(); i++) {
                 getUserEmail.setString(1, ids.get(i));
                 rs = getUserEmail.executeQuery();
+                rs.next();
                 emails.add(rs.getString(1));
             }
         } catch (SQLException e) {
