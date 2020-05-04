@@ -374,7 +374,7 @@ public class App {
             response.type("application/json");
             int attemptFollow = db.follow(req.userA, req.userB);
             String email = db.newFollowEmail(req.userB);
-            if (email != null) {
+            if (email != null && attemptFollow == 2) {
                 String displayName = db.getDisplayName(req.userA);
                 SendGridEmail.sendEmail(email, displayName + " is now following you", displayName + " is now following you");
             }
