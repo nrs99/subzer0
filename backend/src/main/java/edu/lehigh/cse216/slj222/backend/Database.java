@@ -557,7 +557,7 @@ public class Database {
             } else { // Not there
                 newFollow.setString(1, userA);
                 newFollow.setString(2, userB);
-                deleteFollow.executeUpdate();
+                newFollow.executeUpdate();
                 count = 2;
             }
         } catch (SQLException e) {
