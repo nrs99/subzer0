@@ -90,6 +90,10 @@ public class Database {
 
     private PreparedStatement getDisplayName;
 
+    private PreparedStatement checkNewFollowPref;
+
+    private PreparedStatement checkFollowPostPref;
+
     /**
      * The Database constructor is private: we only create Database objects through
      * the getDatabase() method.
@@ -179,6 +183,10 @@ public class Database {
                     .prepareStatement("SELECT commentsonpost FROM preferences WHERE userid = ?");
             db.getUserEmail = db.mConnection.prepareStatement("SELECT email FROM users where userid = ?");
             db.getDisplayName = db.mConnection.prepareStatement("SELECT displayname FROM users where userid = ?");
+            db.checkNewFollowPref = db.mConnection
+                    .prepareStatement("SELECT followsme FROM preferences WHERE userid = ?");
+            db.checkFollowPostPref = db.mConnection
+                    .prepareStatement("SELECT usera FROM following left join preferences on usera = userid where followingposts = true and userb = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -595,6 +603,44 @@ public class Database {
             e.printStackTrace();
         }
         return null;
+    }
+
+    String newFollowEmail(String userB) {
+        try {
+            checkNewFollowPref.setString(1, userB);
+            ResultSet rs = checkNewFollowPref.executeQuery();
+            if (rs.next()) {
+                if (rs.getBoolean(1)) {
+                    getUserEmail.setString(1, userB);
+                    rs = getUserEmail.executeQuery();
+                    rs.next();
+                    return rs.getString(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    ArrayList<String> followingPostsEmails(String userB) {
+        ArrayList<String> emails = new ArrayList<>();
+        ArrayList<String> ids = new ArrayList<>();
+        try {
+            checkFollowPostPref.setString(1, userid);
+            ResultSet rs = checkFollowPostPref.executeQuery();
+            while (rs.next()) {
+                ids.add(rs.getString(1));
+            }
+            for (int i = 0; i < ids.size(); i++) {
+                getUserEmail.setString(1, ids.get(i));
+                rs = getUserEmail.executeQuery();
+                emails.add(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return emails;
     }
 
     String getDisplayName(String userid) {

@@ -198,6 +198,11 @@ public class App {
             response.type("application/json");
             // NB: createEntry checks for null title and message
             int newId = db.insertRow(req.message, req.userID);
+            ArrayList<String> emails = db.followingPostsEmail(req.userID);
+            String displayName = db.getDisplayName(req.userID);
+            for (int i = 0; i < emails.size(); i++) {
+                SendGridEmail.sendEmail(emails.get(i), displayName + " posted a new message!", req.message);
+            }
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
@@ -368,6 +373,11 @@ public class App {
             response.status(200);
             response.type("application/json");
             int attemptFollow = db.follow(req.userA, req.userB);
+            String email = db.newFollowEmail(req.userB);
+            if (email != null) {
+                String displayName = db.getDisplayName(req.userA);
+                SendGridEmail.sendEmail(email, displayName + " is now following you", displayName + " is now following you");
+            }
             if (attemptFollow == 0) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
