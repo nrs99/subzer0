@@ -681,7 +681,7 @@ public class Database {
             getPreferences.setString(1, userid);
             ResultSet rs = getPreferences.executeQuery();
             if (rs.next()) {
-                return new Preference(rs.getBoolean(2), rs.getboolean(3), rs.getBoolean(4));
+                return new Preference(rs.getBoolean(2), rs.getBoolean(3), rs.getBoolean(4));
             }
         } catch (SQLException e) {
             e.printStackTrace();
