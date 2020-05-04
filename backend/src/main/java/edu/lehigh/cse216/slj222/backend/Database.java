@@ -139,7 +139,7 @@ public class Database {
             db.mGetComments = db.mConnection.prepareStatement("SELECT * from comments natural join users WHERE mid=? ORDER BY datecreated ASC");
             db.mMessagesByUser = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid WHERE userid = ? ORDER BY datecreated DESC");
             db.mUserLikes = db.mConnection.prepareStatement("SELECT mid, likes from likes where userid =?");
-            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
+            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO users VALUES(?, ?, ?, ?)");
             db.mUserExists = db.mConnection.prepareStatement("SELECT * FROM users where userID = ?");
             db.mCommentAuthor = db.mConnection.prepareStatement("SELECT userid FROM comments WHERE commentid=?");
             db.mInsertDocument =  db.mConnection.prepareStatement("INSERT INTO documents VALUES (?,?)");
@@ -468,7 +468,7 @@ public class Database {
         }
     }
 
-    int insertUser(String userID, String displayName, String photoURL) {
+    int insertUser(String userID, String displayName, String photoURL, String email) {
         int count = 0;
         try {
             mUserExists.setString(1, userID);
@@ -479,6 +479,7 @@ public class Database {
                 mInsertUser.setString(1, userID);
                 mInsertUser.setString(2, displayName);
                 mInsertUser.setString(3, photoURL);
+                mInsertUser.setString(4, email);
                 mInsertUser.executeUpdate();
                 count = 1;
             }
