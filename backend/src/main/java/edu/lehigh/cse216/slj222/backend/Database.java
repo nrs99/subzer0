@@ -1,5 +1,5 @@
 package edu.lehigh.cse216.slj222.backend;
- 
+
 import java.net.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,58 +8,58 @@ import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
- 
+
 import java.util.ArrayList;
- 
+
 public class Database {
     /**
      * The connection to the database. When there is no connection, it should be
      * null. Otherwise, there is a valid open connection
      */
     private Connection mConnection;
- 
+
     /**
      * A prepared statement for getting all data in the database Newest messages
      * first
      */
     private PreparedStatement mSelectAllNewest;
- 
+
     /**
      * A prepared statement for getting all data in the database Oldest messages
      * first
      */
     private PreparedStatement mSelectAllOldest;
- 
+
     /**
      * A prepared statement for getting all data in the database Oldest messages
      * first
      */
     private PreparedStatement mSelectAllPopular;
- 
+
     /**
      * A prepared statement for getting one row from the database
      */
     private PreparedStatement mSelectOne;
- 
+
     /**
      * A prepared statement for inserting into the database
      */
     private PreparedStatement mInsertOne;
- 
+
     private PreparedStatement mInsertVote;
- 
+
     private PreparedStatement mRemoveVote;
- 
+
     private PreparedStatement mGetVote;
- 
+
     private PreparedStatement mInsertComment;
- 
+
     private PreparedStatement mEditComment;
- 
+
     private PreparedStatement mGetComments;
- 
+
     private PreparedStatement mMessagesByUser;
- 
+
     private PreparedStatement mUserLikes;
 
     private PreparedStatement mInsertUser;
@@ -81,14 +81,22 @@ public class Database {
     private PreparedStatement deletePreferences;
 
     private PreparedStatement insertPreferences;
- 
+
+    private PreparedStatement getUserFromMsg;
+
+    private PreparedStatement checkCommentPref;
+
+    private PreparedStatement getUserEmail;
+
+    private PreparedStatement getDisplayName;
+
     /**
      * The Database constructor is private: we only create Database objects through
      * the getDatabase() method.
      */
     private Database() {
     }
- 
+
     /**
      * Get a fully-configured connection to the database
      *
@@ -103,14 +111,15 @@ public class Database {
     static Database getDatabase(String db_url) {
         // Create an un-configured Database object
         Database db = new Database();
- 
+
         // Give the Database object a connection, fail if we cannot get one
         try {
             Class.forName("org.postgresql.Driver");
             URI dbUri = new URI(db_url);
             String username = dbUri.getUserInfo().split(":")[0];
             String password = dbUri.getUserInfo().split(":")[1];
-            String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
+            String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath()
+                    + "?sslmode=require";
             Connection conn = DriverManager.getConnection(dbUrl, username, password);
             if (conn == null) {
                 System.err.println("Error: DriverManager.getConnection() returned a null object");
@@ -128,37 +137,48 @@ public class Database {
             System.out.println("URI Syntax Error");
             return null;
         }
- 
+
         // Attempt to create all of our prepared statements. If any of these
         // fail, the whole getDatabase() call should fail
         try {
- 
+
             // Standard CRUD operations
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO messages VALUES (default, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
-            db.mSelectOne = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid where messages.msgid = ?");
-            db.mSelectAllNewest = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid ORDER BY datecreated DESC");
-            db.mSelectAllOldest = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid ORDER BY datecreated ASC");
-            db.mSelectAllPopular = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users ORDER BY (likes - dislikes) DESC");
+            db.mSelectOne = db.mConnection.prepareStatement(
+                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid where messages.msgid = ?");
+            db.mSelectAllNewest = db.mConnection.prepareStatement(
+                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid ORDER BY datecreated DESC");
+            db.mSelectAllOldest = db.mConnection.prepareStatement(
+                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid ORDER BY datecreated ASC");
+            db.mSelectAllPopular = db.mConnection.prepareStatement(
+                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl from messages natural join users ORDER BY (likes - dislikes) DESC");
             db.mInsertVote = db.mConnection.prepareStatement("INSERT INTO likes VALUES(?, ?, ?)");
             db.mRemoveVote = db.mConnection.prepareStatement("DELETE FROM likes where mid = ? and userid = ?");
             db.mGetVote = db.mConnection.prepareStatement("SELECT likes FROM likes WHERE userid = ? and mid = ?");
             db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO comments VALUES (?, default, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             db.mEditComment = db.mConnection.prepareStatement("UPDATE comments SET comment = ? WHERE commentid = ?");
-            db.mGetComments = db.mConnection.prepareStatement("SELECT * from comments natural join users WHERE mid=? ORDER BY datecreated ASC");
-            db.mMessagesByUser = db.mConnection.prepareStatement("select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid WHERE userid = ? ORDER BY datecreated DESC");
+            db.mGetComments = db.mConnection
+                    .prepareStatement("SELECT * from comments natural join users WHERE mid=? ORDER BY datecreated ASC");
+            db.mMessagesByUser = db.mConnection.prepareStatement(
+                    "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link from messages natural join users left join links on messages.msgid = links.msgid WHERE userid = ? ORDER BY datecreated DESC");
             db.mUserLikes = db.mConnection.prepareStatement("SELECT mid, likes from likes where userid =?");
             db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO users VALUES(?, ?, ?, ?)");
             db.mUserExists = db.mConnection.prepareStatement("SELECT * FROM users where userID = ?");
             db.mCommentAuthor = db.mConnection.prepareStatement("SELECT userid FROM comments WHERE commentid=?");
-            db.mInsertDocument =  db.mConnection.prepareStatement("INSERT INTO documents VALUES (?,?)");
+            db.mInsertDocument = db.mConnection.prepareStatement("INSERT INTO documents VALUES (?,?)");
             db.mInsertLink = db.mConnection.prepareStatement("INSERT INTO links VALUES (?, ?)");
             db.checkFollow = db.mConnection.prepareStatement("SELECT * FROM following where usera = ? and userb = ?");
             db.newFollow = db.mConnection.prepareStatement("INSERT INTO following VALUES (?, ?)");
             db.deleteFollow = db.mConnection.prepareStatement("DELETE FROM following WHERE usera = ? and userb = ?");
             db.deletePreferences = db.mConnection.prepareStatement("DELETE FROM preferences where userid = ?");
             db.insertPreferences = db.mConnection.prepareStatement("INSERT INTO preferences VALUES(?, ?, ?, ?)");
+            db.getUserFromMsg = db.mConnection.prepareStatement("SELECT userid FROM messages WHERE msgid = ?");
+            db.checkCommentPref = db.mConnection
+                    .prepareStatement("SELECT commentsonpost FROM preferences WHERE userid = ?");
+            db.getUserEmail = db.mConnection.prepareStatement("SELECT email FROM users where userid = ?");
+            db.getDisplayName = db.mConnection.prepareStatement("SELECT displayname FROM users where userid = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -167,11 +187,11 @@ public class Database {
         }
         return db;
     }
- 
+
     Connection getConnection() {
         return mConnection;
     }
- 
+
     /**
      * Close the current connection to the database, if one exists.
      *
@@ -196,7 +216,7 @@ public class Database {
         mConnection = null;
         return true;
     }
- 
+
     /**
      * Insert a row into the database
      *
@@ -222,7 +242,7 @@ public class Database {
         return count;
     }
 
-        /**
+    /**
      * Insert a row into the database
      *
      * @param message The message body in the new row
@@ -255,7 +275,7 @@ public class Database {
         }
         return count;
     }
- 
+
     /**
      * Query the database for a list of all rows from newest to oldest
      *
@@ -267,7 +287,9 @@ public class Database {
             ResultSet rs = mSelectAllNewest.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"), rs.getString("link")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"),
+                        rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
+                        rs.getString("link")));
             }
             rs.close();
             return res;
@@ -276,7 +298,7 @@ public class Database {
             return null;
         }
     }
- 
+
     /**
      * Query the database for a list of all rows from oldest to newest
      *
@@ -288,7 +310,9 @@ public class Database {
             ResultSet rs = mSelectAllOldest.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"), rs.getString("link")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"),
+                        rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
+                        rs.getString("link")));
             }
             rs.close();
             return res;
@@ -297,7 +321,7 @@ public class Database {
             return null;
         }
     }
- 
+
     /**
      * Query the database for a list of all rows from most likes to least likes
      *
@@ -309,7 +333,9 @@ public class Database {
             ResultSet rs = mSelectAllPopular.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"), rs.getString("link")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"),
+                        rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
+                        rs.getString("link")));
             }
             rs.close();
             return res;
@@ -318,7 +344,7 @@ public class Database {
             return null;
         }
     }
- 
+
     /**
      * Get all data for a specific row, by ID
      *
@@ -333,15 +359,16 @@ public class Database {
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
                 res = new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"), rs.getString("link"));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"),
+                        rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
+                        rs.getString("link"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
     }
- 
- 
+
     int vote(int msgid, String userid, int like) {
         int val = 0;
         try {
@@ -366,7 +393,7 @@ public class Database {
         }
         return 0;
     }
- 
+
     int insertVote(int msgid, String userid) {
         int count = 0;
         try {
@@ -382,7 +409,7 @@ public class Database {
         }
         return count;
     }
- 
+
     int removeVote(int msgid, String userid) {
         try {
             mRemoveVote.setInt(1, msgid);
@@ -393,7 +420,7 @@ public class Database {
         }
         return 0;
     }
- 
+
     int insertComment(int msgid, String comment, String userid) {
         int count = 0;
         try {
@@ -411,7 +438,7 @@ public class Database {
         }
         return count;
     }
- 
+
     int editComment(int commentid, String comment, String userid) {
         int count = 0;
         try {
@@ -431,15 +458,16 @@ public class Database {
         }
         return count;
     }
-   
+
     ArrayList<Comment> getComments(int msgId) {
         ArrayList<Comment> comments = new ArrayList<Comment>();
         try {
             mGetComments.setInt(1, msgId);
             ResultSet rs = mGetComments.executeQuery();
-            while(rs.next()) {
-                comments.add(new Comment(rs.getInt("commentId"), rs.getInt("mid"),
-                    rs.getString("comment"), rs.getString("userId"), rs.getTimestamp("dateCreated"), rs.getString("displayName"), rs.getString("photoURL")));
+            while (rs.next()) {
+                comments.add(new Comment(rs.getInt("commentId"), rs.getInt("mid"), rs.getString("comment"),
+                        rs.getString("userId"), rs.getTimestamp("dateCreated"), rs.getString("displayName"),
+                        rs.getString("photoURL")));
             }
             rs.close();
             return comments;
@@ -447,9 +475,9 @@ public class Database {
             e.printStackTrace();
             return null;
         }
- 
+
     }
- 
+
     ArrayList<Message> selectAllByUser(String userID) {
         ArrayList<Message> res = new ArrayList<Message>();
         try {
@@ -457,7 +485,9 @@ public class Database {
             ResultSet rs = mMessagesByUser.executeQuery();
             while (rs.next()) {
                 res.add(new Message(rs.getInt("msgId"), rs.getString("message"), rs.getString("userId"),
-                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"), rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"), rs.getString("link")));
+                        rs.getTimestamp("dateCreated"), rs.getInt("likes"), rs.getInt("dislikes"),
+                        rs.getInt("comments"), rs.getString("displayName"), rs.getString("photoURL"),
+                        rs.getString("link")));
             }
             rs.close();
             return res;
@@ -466,7 +496,7 @@ public class Database {
             return null;
         }
     }
- 
+
     ArrayList<MyLikes> getMyLikes(String userID) {
         ArrayList<MyLikes> res = new ArrayList<MyLikes>();
         try {
@@ -543,5 +573,39 @@ public class Database {
             e.printStackTrace();
         }
         return count;
+    }
+
+    String newCommentEmail(int msgid) {
+        try {
+            getUserFromMsg.setInt(1, msgid);
+            ResultSet rs = getUserFromMsg.executeQuery();
+            rs.next();
+            String userid = rs.getString(1);
+            checkCommentPref.setString(1, userid);
+            rs = checkCommentPref.executeQuery();
+            if (rs.next()) {
+                if (rs.getBoolean(1)) {
+                    getUserEmail.setString(1, userid);
+                    rs = getUserEmail.executeQuery();
+                    rs.next();
+                    return rs.getString(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    String getDisplayName(String userid) {
+        try {
+            getDisplayName.setString(1, userid);
+            ResultSet rs = getDisplayName.executeQuery();
+            rs.next();
+            return rs.getString(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

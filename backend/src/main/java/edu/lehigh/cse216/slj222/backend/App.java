@@ -269,7 +269,11 @@ public class App {
  
             // NB: createEntry checks for null title and message
             int newId = db.insertComment(req.msgId, req.comment, req.userId);// would i do something here?
- 
+            String email = db.newCommentEmail(req.msgId);
+            if (email != null) {
+                String displayName = db.getDisplayName(req.userId);
+                SendGridEmail.sendEmail(email, displayName + " Commented On Your Post!", req.comment);
+            }
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
@@ -382,7 +386,6 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", "" + newPrefs, null));
             }
         });
-
     }
  
     static int getIntFromEnv(String envar, int defaultVal) {
