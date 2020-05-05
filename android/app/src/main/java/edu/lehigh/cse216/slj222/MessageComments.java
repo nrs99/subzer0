@@ -108,7 +108,9 @@ public class MessageComments extends BaseActivity {
             String displayName = json.getString("displayName");
             String photoURL = json.getString("photoURL");
             String link = json.getString("link");
-            mData.add(new Message(msgId, message, userId, likes, dislikes, comments, displayName, photoURL, link));
+            String photoImage = json.getString("photoImage");
+            String mimeType = json.getString("mimeType");
+            mData.add(new Message(msgId, message, userId, likes, dislikes, comments, displayName, photoURL, link, photoImage, mimeType));
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
             e.printStackTrace();

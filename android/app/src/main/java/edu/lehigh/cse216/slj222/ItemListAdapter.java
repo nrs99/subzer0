@@ -2,6 +2,9 @@ package edu.lehigh.cse216.slj222;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -112,7 +115,9 @@ class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
             viewHolder.thumbdown.setBackgroundResource(R.drawable.ic_no_thumbdown);
         }
 
-
+        byte[] decodedString = Base64.decode(d.photoImage, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        viewHolder.imgView.setImageBitmap(decodedByte);
 
         viewHolder.thumbup.setOnClickListener(b -> {
             likeMessage(d.msgId); // Send the HTTP request

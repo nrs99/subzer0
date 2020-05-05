@@ -24,7 +24,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="LockedOrientationActivity">
-        <activity android:name=".NewMessage"></activity>
+        <activity android:name=".Preferences"></activity>
+        <activity android:name=".NewMessage" />
         <activity android:name=".EditActivity" />
         <activity
             android:name=".BaseActivity"
@@ -37,7 +38,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Camera"
-            android:label="Camera Core App"></activity>
+            android:label="Camera Core App" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"

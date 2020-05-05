@@ -30,16 +30,21 @@
             android:textColor="#000000"
             android:textSize="16sp" />
 
-        
+        <Button
+            android:id="@+id/message_addimg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Image" />
 
-
+        <ImageView
+            android:id="@+id/message_thumbnail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/message_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="0dp"
             android:text="Submit" />
 
     </LinearLayout>
