@@ -164,7 +164,7 @@ class Settings {
             type: "POST",
             url: backendUrl + "preferences",//change later
             dataType: "json",
-            data: JSON.stringify({userid: userid, followsme: tempfollow, commentsonpost: selected_Comment, followingposts: templike}),
+            data: JSON.stringify({userID: userid, followsMe: tempfollow, commentsOnPost: selected_Comment, followingPost: templike}),
             success: Settings.onSubmitResponse
         });
     }
