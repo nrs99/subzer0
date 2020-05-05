@@ -62,13 +62,15 @@ public class App {
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
     // private static final String CREDENTIALS_FILE_PATH =
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+
+    public static Drive service;
  
     public static void main(String[] args) throws IOException, GeneralSecurityException {// easy fix. probably not good
                                                                                          // long term.
  
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
  
-        Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+        service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME).build(); // Build a new authorized API client service
  
         // get the Postgres configuration from the environment
@@ -210,9 +212,8 @@ public class App {
                     db.insertLink(newId, req.link);
                 }
                 if (req.photoURL != null) {
- 
-                    String fileID = uploadImage(req.photoURL, service, newId);
-                    db.insertDocument(newId, fileID);
+                    String fileID = uploadImage(req.photoURL, service, newId, req.mimeType);
+                    db.insertDocument(newId, fileID, req.mimeType);
                 }
  
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
@@ -420,17 +421,15 @@ public class App {
         return defaultVal;
     }
  
-    private static String uploadImage(String encodedString, Drive service, int msgid) throws IOException {
- 
-        byte[] decodedImg = Base64.getDecoder().decode(encodedString.getBytes(StandardCharsets.UTF_8));
+    private static String uploadImage(String encodedString, Drive service, int msgid, String mime) throws IOException {
+        byte[] decodedImg = Base64.getDecoder().decode(encodedString);
         java.io.File thisFile = new java.io.File("image");
         Files.write(decodedImg, thisFile);
         File fileMetadata = new File();
-        fileMetadata.setName(msgid + "");
-        FileContent mediaContent = new FileContent("image/jpeg", thisFile);
+        fileMetadata.setName(msgid + ".jpeg");
+        FileContent mediaContent = new FileContent(mime, thisFile);
         File file = service.files().create(fileMetadata, mediaContent).setFields("id").execute();
         return file.getId();
- 
     }
  
     private static String downloadImage(String file_ID, Drive service) throws IOException {
@@ -481,8 +480,23 @@ public class App {
  
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
  
-        java.io.InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);// getting null here
-        return GoogleCredential.fromStream(in);
+        java.io.InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        return GoogleCredential.fromStream(in).createScoped(Collections.singleton(DriveScopes.DRIVE));
+    }
+
+    public static String getFileEncoding(String fileID) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            service.files().get(fileID).executeMediaAndDownloadTo(outputStream);
+            byte[] bytes = outputStream.toByteArray();
+            outputStream.flush();
+            outputStream.close();
+            String encoded = Base64.getEncoder().encodeToString(bytes);
+            return encoded;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
  
 }

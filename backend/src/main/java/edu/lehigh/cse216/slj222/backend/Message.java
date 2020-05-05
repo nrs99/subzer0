@@ -38,6 +38,10 @@ public class Message {
         String photoURL;
 
         String link;
+
+        String photoString;
+
+        String mimeType;
         /**
          * Construct a Message object by providing values for its fields
          */
@@ -52,6 +56,8 @@ public class Message {
             this.displayName = displayName;
             this.photoURL = photoURL;
             this.link = link;
+            this.photoString = null;
+            this.mimeType = null;
         }
  
         /**
@@ -61,6 +67,11 @@ public class Message {
             String str;
             str = "ID: " + msgId + ", Message: " + message;
             return str;
+        }
+
+        public void setPhotoString(String photoString, String mimeType) {
+            this.photoString = photoString;
+            this.mimeType = mimeType;
         }
  
 }
