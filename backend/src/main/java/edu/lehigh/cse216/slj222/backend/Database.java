@@ -72,6 +72,35 @@ public class Database {
 
     private PreparedStatement mInsertLink;
 
+<<<<<<< HEAD
+=======
+    private PreparedStatement checkFollow;
+
+    private PreparedStatement newFollow;
+
+    private PreparedStatement deleteFollow;
+
+    private PreparedStatement deletePreferences;
+
+    private PreparedStatement insertPreferences;
+
+    private PreparedStatement getUserFromMsg;
+
+    private PreparedStatement checkCommentPref;
+
+    private PreparedStatement getUserEmail;
+
+    private PreparedStatement getDisplayName;
+
+    private PreparedStatement checkNewFollowPref;
+
+    private PreparedStatement checkFollowPostPref;
+
+    private PreparedStatement getFollowing;
+
+    private PreparedStatement getPreferences;
+
+>>>>>>> backend
     /**
      * The Database constructor is private: we only create Database objects through
      * the getDatabase() method.
@@ -146,11 +175,27 @@ public class Database {
             db.mMessagesByUser = db.mConnection.prepareStatement(
                     "select messages.msgid, messages.userid, messages.datecreated, (select count(*) from likes where likes.mid = messages.msgid and likes = 1) as likes, (select count(*) from likes where likes.mid = messages.msgid and likes = -1) as dislikes, messages.message, (select count(*) from comments where comments.mid = messages.msgid) as comments, displayname, photourl, links.url as link, documents.fileid as fileid, documents.mime as mimetype from messages natural join users left join links on messages.msgid = links.msgid left join documents on messages.msgid = documents.msgid WHERE userid = ? ORDER BY datecreated DESC");
             db.mUserLikes = db.mConnection.prepareStatement("SELECT mid, likes from likes where userid =?");
-            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
+            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO users VALUES(?, ?, ?, ?)");
             db.mUserExists = db.mConnection.prepareStatement("SELECT * FROM users where userID = ?");
             db.mCommentAuthor = db.mConnection.prepareStatement("SELECT userid FROM comments WHERE commentid=?");
             db.mInsertDocument = db.mConnection.prepareStatement("INSERT INTO documents VALUES (?,?, ?)");
             db.mInsertLink = db.mConnection.prepareStatement("INSERT INTO links VALUES (?, ?)");
+            db.checkFollow = db.mConnection.prepareStatement("SELECT * FROM following where usera = ? and userb = ?");
+            db.newFollow = db.mConnection.prepareStatement("INSERT INTO following VALUES (?, ?)");
+            db.deleteFollow = db.mConnection.prepareStatement("DELETE FROM following WHERE usera = ? and userb = ?");
+            db.deletePreferences = db.mConnection.prepareStatement("DELETE FROM preferences where userid = ?");
+            db.insertPreferences = db.mConnection.prepareStatement("INSERT INTO preferences VALUES(?, ?, ?, ?)");
+            db.getUserFromMsg = db.mConnection.prepareStatement("SELECT userid FROM messages WHERE msgid = ?");
+            db.checkCommentPref = db.mConnection
+                    .prepareStatement("SELECT commentsonpost FROM preferences WHERE userid = ?");
+            db.getUserEmail = db.mConnection.prepareStatement("SELECT email FROM users where userid = ?");
+            db.getDisplayName = db.mConnection.prepareStatement("SELECT displayname FROM users where userid = ?");
+            db.checkNewFollowPref = db.mConnection
+                    .prepareStatement("SELECT followsme FROM preferences WHERE userid = ?");
+            db.checkFollowPostPref = db.mConnection.prepareStatement(
+                    "SELECT usera FROM following left join preferences on usera = userid where followingposts = true and userb = ?");
+            db.getFollowing = db.mConnection.prepareStatement("SELECT userb FROM following where usera = ?");
+            db.getPreferences = db.mConnection.prepareStatement("SELECT * FROM preferences where userid = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -511,7 +556,7 @@ public class Database {
         }
     }
 
-    int insertUser(String userID, String displayName, String photoURL) {
+    int insertUser(String userID, String displayName, String photoURL, String email) {
         int count = 0;
         try {
             mUserExists.setString(1, userID);
@@ -522,6 +567,7 @@ public class Database {
                 mInsertUser.setString(1, userID);
                 mInsertUser.setString(2, displayName);
                 mInsertUser.setString(3, photoURL);
+                mInsertUser.setString(4, email);
                 mInsertUser.executeUpdate();
                 count = 1;
             }
@@ -530,5 +576,145 @@ public class Database {
             return 0;
         }
         return count;
+    }
+
+    int follow(String userA, String userB) {
+        int count = 0;
+        try {
+            checkFollow.setString(1, userA);
+            checkFollow.setString(2, userB);
+            ResultSet rs = checkFollow.executeQuery();
+            if (rs.next()) { // Already there
+                deleteFollow.setString(1, userA);
+                deleteFollow.setString(2, userB);
+                deleteFollow.executeUpdate();
+                count = 1;
+            } else { // Not there
+                newFollow.setString(1, userA);
+                newFollow.setString(2, userB);
+                newFollow.executeUpdate();
+                count = 2;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    int changePreferences(String userid, boolean followsMe, boolean commentsOnPost, boolean followingPosts) {
+        int count = 0;
+        try {
+            deletePreferences.setString(1, userid);
+            deletePreferences.executeUpdate();
+            insertPreferences.setString(1, userid);
+            insertPreferences.setBoolean(2, followsMe);
+            insertPreferences.setBoolean(3, commentsOnPost);
+            insertPreferences.setBoolean(4, followingPosts);
+            insertPreferences.executeUpdate();
+            count = 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    String newCommentEmail(int msgid) {
+        try {
+            getUserFromMsg.setInt(1, msgid);
+            ResultSet rs = getUserFromMsg.executeQuery();
+            rs.next();
+            String userid = rs.getString(1);
+            checkCommentPref.setString(1, userid);
+            rs = checkCommentPref.executeQuery();
+            if (rs.next()) {
+                if (rs.getBoolean(1)) {
+                    getUserEmail.setString(1, userid);
+                    rs = getUserEmail.executeQuery();
+                    rs.next();
+                    return rs.getString(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    String newFollowEmail(String userB) {
+        try {
+            checkNewFollowPref.setString(1, userB);
+            ResultSet rs = checkNewFollowPref.executeQuery();
+            if (rs.next()) {
+                if (rs.getBoolean(1)) {
+                    getUserEmail.setString(1, userB);
+                    rs = getUserEmail.executeQuery();
+                    rs.next();
+                    return rs.getString(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    ArrayList<String> followingPostsEmails(String userB) {
+        ArrayList<String> emails = new ArrayList<>();
+        ArrayList<String> ids = new ArrayList<>();
+        try {
+            checkFollowPostPref.setString(1, userB);
+            ResultSet rs = checkFollowPostPref.executeQuery();
+            while (rs.next()) {
+                ids.add(rs.getString(1));
+            }
+            for (int i = 0; i < ids.size(); i++) {
+                getUserEmail.setString(1, ids.get(i));
+                rs = getUserEmail.executeQuery();
+                rs.next();
+                emails.add(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return emails;
+    }
+
+    String getDisplayName(String userid) {
+        try {
+            getDisplayName.setString(1, userid);
+            ResultSet rs = getDisplayName.executeQuery();
+            rs.next();
+            return rs.getString(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    ArrayList<String> getFollowing(String usera) {
+        ArrayList<String> ids = new ArrayList<>();
+        try {
+            getFollowing.setString(1, usera);
+            ResultSet rs = getFollowing.executeQuery();
+            while (rs.next()) {
+                ids.add(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ids;
+    }
+
+    Preference getPreferences(String userid) {
+        try {
+            getPreferences.setString(1, userid);
+            ResultSet rs = getPreferences.executeQuery();
+            if (rs.next()) {
+                return new Preference(rs.getBoolean(2), rs.getBoolean(3), rs.getBoolean(4));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

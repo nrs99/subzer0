@@ -5,5 +5,6 @@ public class NewUserRequest {
     String userID;
     String displayName;
     String photoURL;
+    String email;
     
 }
