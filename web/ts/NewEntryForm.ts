@@ -8,6 +8,8 @@ class NewEntryForm {
      */
     private static readonly NAME = "NewEntryForm";
 
+    const backendUrl = "http://subzer0.herokuapp.com";
+
     /**
      * Track if the Singleton has been initialized
      */
@@ -41,6 +43,8 @@ class NewEntryForm {
      */
     private static hide() {
         $("#" + NewEntryForm.NAME + "-message").val("");
+        $("#" + NewEntryForm.NAME + "-link").val("");
+        $("#" + NewEntryForm.NAME + "-file").val("");
         $("#" + NewEntryForm.NAME).modal("hide");
     }
 
@@ -61,24 +65,54 @@ class NewEntryForm {
      * Immediately hide the form when we send data, so that the user knows that 
      * their click was received.
      */
-    private static submitForm() {
+    private static async submitForm() {
         // get the values of the two fields, force them to be strings, and check 
         // that neither is empty
         let msg = "" + $("#" + NewEntryForm.NAME + "-message").val();
+        let url = "" + $("#" + NewEntryForm.NAME + "-link").val();
+        let file = $("#" + NewEntryForm.NAME + "-file")[0].files[0];
+        let fileStr = null;
+        let mime = null;
+
+        if (url === "") {
+            url = null;
+        } else {
+            if (!NewEntryForm.validURL(url)) {
+                window.alert("Error: Invalid URL")
+                return;
+            }
+        }
+
+        if ($("#" + NewEntryForm.NAME + "-file").val() !== "") {
+
+            fileStr = await NewEntryForm.toBase64(file);
+
+            let splitStr = fileStr.split(",");
+            fileStr = splitStr[1];
+            mime = file.type;
+        }
+
+        if (mime !== null && mime !== "application/pdf" && !mime.startsWith("image/")) {
+            window.alert("Error: Invalid file type");
+            return;
+        }
+
         if (msg === "") {
             window.alert("Error: message is empty");
             return;
         } else if (msg.length > 250) {
             window.alert("Error: message longer than 250 characters");
+            return;
         }
         NewEntryForm.hide();
+
         // set up an AJAX post.  When the server replies, the result will go to
         // onSubmitResponse
         $.ajax({
             type: "POST",
-            url: "/messages",
+            url: backendUrl + "/messages",
             dataType: "json",
-            data: JSON.stringify({ message: msg }),
+            data: JSON.stringify({ message: msg, userID: localStorage.getItem("ID"), link: url, photoURL: fileStr, mimeType: mime }),
             success: NewEntryForm.onSubmitResponse
         });
     }
@@ -94,6 +128,8 @@ class NewEntryForm {
         // listing of messages
         if (data.mStatus === "ok") {
             ElementList.refresh();
+            ViewComments.hide();
+            Profile.hide();
         }
         // Handle explicit errors with a detailed popup message
         else if (data.mStatus === "error") {
@@ -103,5 +139,33 @@ class NewEntryForm {
         else {
             window.alert("Unspecified error");
         }
+    }
+
+    /**
+     * Regex found on StackOverflow to say whether a given URL is valid
+     * @param str The string that will be tested
+     */
+    private static validURL(str) {
+        var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+            '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+        return !!pattern.test(str);
+    }
+
+    // Adapted from https://simon-schraeder.de/posts/filereader-async/
+    private static toBase64(file) {
+        return new Promise((resolve, reject) => {
+            let reader = new FileReader();
+
+            reader.onload = () => {
+                resolve(reader.result);
+            };
+
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        })
     }
 }

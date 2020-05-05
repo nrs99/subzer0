@@ -23,7 +23,9 @@ class Navbar {
     private static init() {
         if (!Navbar.isInit) {
             $("body").prepend(Handlebars.templates[Navbar.NAME + ".hb"]());
-            $("#"+Navbar.NAME+"-add").click(NewEntryForm.show);
+            $("#"+ Navbar.NAME+ "-add").click(NewEntryForm.show);
+            $("#"+ Navbar.NAME+ "-myProfile").click(Navbar.goToProfile);
+            $("#"+ Navbar.NAME+ "-signOut").click(NewLogin.signOut);
             Navbar.isInit = true;
         }
     }
@@ -36,5 +38,21 @@ class Navbar {
      */
     public static refresh() {
         Navbar.init();
+        $("#"+ Navbar.NAME+ "-myProfile").text(localStorage.getItem("givenName"));
+        $("#"+ Navbar.NAME+ "-myProfile").val(localStorage.getItem("ID"));
+    }
+
+    public static hide() {
+        $(".navbar").hide();
+    }
+
+    public static show() {
+        $(".navbar").show();
+    }
+
+    private static goToProfile() {
+        ElementList.hide();
+        Profile.setID(localStorage.getItem("ID"));
+        Profile.refresh();
     }
 }

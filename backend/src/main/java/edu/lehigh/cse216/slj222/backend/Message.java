@@ -1,9 +1,9 @@
 package edu.lehigh.cse216.slj222.backend;
-
+ 
 import java.sql.Timestamp;
-
+ 
 public class Message {
-
+ 
     /**
          * The ID of this row of the database
          */
@@ -15,7 +15,7 @@ public class Message {
         /**
          * The ID of the user who posted the message
          */
-        int userId;
+        String userId;
         /**
          * The time the message was originally created
          */
@@ -27,19 +27,39 @@ public class Message {
         /**
          * The number of dislikes the message contains
          */
-        int dislikes;
+        int dislikes;   
+        /**
+         *
+         */
+        int comments;
+
+        String displayName;
+
+        String photoURL;
+
+        String link;
+
+        String photoString;
+
+        String mimeType;
         /**
          * Construct a Message object by providing values for its fields
          */
-        public Message(int msgId, String message, int userId, Timestamp dateCreated, int likes, int dislikes) {
+        public Message(int msgId, String message, String userId, Timestamp dateCreated, int likes, int dislikes, int comments, String displayName, String photoURL, String link) {
             this.msgId = msgId;
             this.message = message;
             this.userId = userId;
             this.dateCreated = dateCreated;
             this.likes = likes;
             this.dislikes = dislikes;
+            this.comments = comments;
+            this.displayName = displayName;
+            this.photoURL = photoURL;
+            this.link = link;
+            this.photoString = null;
+            this.mimeType = null;
         }
-
+ 
         /**
          * String for testing purposes
          */
@@ -49,4 +69,9 @@ public class Message {
             return str;
         }
 
+        public void setPhotoString(String photoString, String mimeType) {
+            this.photoString = photoString;
+            this.mimeType = mimeType;
+        }
+ 
 }

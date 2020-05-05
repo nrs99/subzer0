@@ -5,10 +5,9 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 import java.util.ArrayList;
-//import java.util.Map;
 
 /**
- * App is our basic admin app.  For now, it is a demonstration of the six key 
+ * App is our basic admin app. For now, it is a demonstration of the six key
  * operations on a database: connect, insert, update, query, delete, disconnect
  */
 public class App {
@@ -18,13 +17,15 @@ public class App {
      */
     static void menu() {
         System.out.println("Main Menu");
-        System.out.println("  [T] Create message table");
-        System.out.println("  [D] Drop table is inactive");
-        System.out.println("  [1] Query for a specific row");
-        System.out.println("  [*] Query for all rows");
-        System.out.println("  [-] Delete a row");
-        System.out.println("  [+] Insert a new row");
-        System.out.println("  [~] Update a row");
+        System.out.println("  [M] Messages Menu");
+        System.out.println("  [L] Links Menu");
+        System.out.println("  [C] Comments Menu");
+        System.out.println("  [D] Documents Menu");
+        System.out.println("  [P] Preferences Menu");
+        System.out.println("  [F] Following Menu");
+        System.out.println("  [K] Likes Menu");
+        System.out.println("  [U] Users menu");
+        System.out.println("  [E] Send an email with SendGrid");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }
@@ -36,17 +37,15 @@ public class App {
      * 
      * @return The character corresponding to the chosen menu option
      */
-    static char prompt(BufferedReader in) {
-        // The valid actions:
-        String actions = "TD1*-+~q?";
+    static char prompt(final BufferedReader in, String actions) {
 
-        // We repeat until a valid single-character option is selected        
+        // We repeat until a valid single-character option is selected
         while (true) {
             System.out.print("[" + actions + "] :> ");
             String action;
             try {
                 action = in.readLine();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
                 continue;
             }
@@ -60,19 +59,19 @@ public class App {
     }
 
     /**
-     * Ask the user to enter a String message
+     * x Ask the user to enter a String message
      * 
-     * @param in A BufferedReader, for reading from the keyboard
+     * @param in      A BufferedReader, for reading from the keyboard
      * @param message A message to display when asking for input
      * 
-     * @return The string that the user provided.  May be "".
+     * @return The string that the user provided. May be "".
      */
-    static String getString(BufferedReader in, String message) {
+    static String getString(final BufferedReader in, final String message) {
         String s;
         try {
             System.out.print(message + " :> ");
             s = in.readLine();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             return "";
         }
@@ -82,125 +81,103 @@ public class App {
     /**
      * Ask the user to enter an integer
      * 
-     * @param in A BufferedReader, for reading from the keyboard
+     * @param in      A BufferedReader, for reading from the keyboard
      * @param message A message to display when asking for input
      * 
-     * @return The integer that the user provided.  On error, it will be -1
+     * @return The integer that the user provided. On error, it will be -1
      */
-    static int getInt(BufferedReader in, String message) {
+    static int getInt(final BufferedReader in, final String message) {
         int i = -1;
         try {
             System.out.print(message + " :> ");
             i = Integer.parseInt(in.readLine());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             e.printStackTrace();
         }
         return i;
     }
 
     /**
-     * The main routine runs a loop that gets a request from the user and
-     * processes it
+     * The main routine runs a loop that gets a request from the user and processes
+     * it
      * 
-     * @param argv Command-line options.  Ignored by this program.tryna smashyes should we leavr car at my house
+     * @param argv Command-line options. Ignored by this program.
      */
-    public static void main(String[] argv) {
-        // get the Postgres configuration from the environment
-        //Map<String, String> env = System.getenv();
-        // String ip = env.get("POSTGRES_IP");
-        // String port = env.get("POSTGRES_PORT");
-        // String user = env.get("POSTGRES_USER");
-        // String pass = env.get("POSTGRES_PASS");
+    public static void main(final String[] argv) {
 
-        //String db_url = env.get("DATABASE_URL"); 
-        // Get a fully-configured connection to the database, or exit 
+        // Get a fully-configured connection to the database, or exit
         // immediately
-        Database db = Database.getDatabase("postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
+        final Database db = Database.getDatabase(
+                "postgres://wbobgqxniofljr:0feb75c4741735e14f18ab72f07b94562d59741b2db3aae7ffbddbf2d4dd3e43@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d7uf5dueelngct");
         if (db == null)
             return;
 
         // Start our basic command-line interpreter:
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in)); 
-try {
+        final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
+        // Add menus to the app
+        Comments comments = new Comments(db, in);
+        Documents documents = new Documents(db, in);
+        Following following = new Following(db, in);
+        Likes likes = new Likes(db, in);
+        Links links = new Links(db, in);
+        Messages messages = new Messages(db, in);
+        Users users = new Users(db, in);
+        Preferences preferences = new Preferences(db, in);
+        try {
 
-        while (true) {
-            // Get the user's request, and do it
-            //
-            // NB: for better testability, each action should be a separate
-            //     function call
-            try {
-                
-            char action = prompt(in);
-            if (action == '?') {
-                menu();
-            } else if (action == 'q') {
-                break;
-            } else if (action == 'T') {
-                db.createTable();
-            } else if (action == 'D') {
-                //db.dropTable();
-            } else if (action == '1') {
-                int id = getInt(in, "Enter the row ID");
-                if (id == -1)
-                    continue;
-                Database.RowData res = db.selectOne(id);
-                if (res != null) {
-                    System.out.println("  [" + res.mMsgid + "] " + res.mMessage);
-                    System.out.println("  --> " + res.mMessage);
+            while (true) {
+
+                // Get the user's request, and do it
+                //
+                // NB: for better testability, each action should be a separate
+                // function call
+                try {
+
+                    final char action = prompt(in, "MLCDPFUKEq?"); // get the option
+
+                    if (action == '?') {
+                        menu();
+                    } else if (action == 'q') {
+                        break;
+                    } else if (action == 'M') {
+                        messages.execute();
+                    } else if (action == 'L') {
+                        links.execute();
+                    } else if (action == 'C') {
+                        comments.execute();
+                    } else if (action == 'D') {
+                        documents.execute();
+                    } else if (action == 'P') {
+                        preferences.execute();
+                    } else if (action == 'F') {
+                        following.execute();
+                    } else if (action == 'U') {
+                        users.execute();
+                    } else if (action == 'K') {
+                        likes.execute();
+                    } else if (action == 'E') {
+                        final String email = getString(in, "Enter the email address you'd like to send to");
+                        final String subject = getString(in, "Enter the subject of the message");
+                        final String content = getString(in, "Enter the content of the message");
+                        SendGridEmail.sendEmail(email, subject, content);
+                    } else {
+                        System.out.println("Invalid");
+                    }
+                } catch (final Exception e) {
+                    System.out.println(e);
                 }
-            } else if (action == '*') {
-                ArrayList<Database.RowData> res = db.selectAll();
-                if (res == null)
-                    continue;
-                System.out.println("  Current Database Contents");
-                System.out.println("  -------------------------");
-                for (Database.RowData rd : res) {
-                    System.out.println("  [" + rd.mMsgid + "] " + "message: " + rd.mMessage + " date: " + rd.mDatecreated + " user id: " + rd.mUserid + " likes: " +  rd.mLikes + " dislikes: " +  rd.mLikes);
-                }
-            } else if (action == '-') {
-                int id = getInt(in, "Enter the row ID");
-                if (id == -1)
-                    continue;
-                int res = db.deleteRow(id);
-                if (res == -1)
-                    continue;
-                System.out.println("  " + res + " rows deleted");
-            } else if (action == '+') {
-                int id = getInt(in, "Enter the userid");
-                int likes = getInt(in, "how many likes");
-                int dislikes = getInt(in, "how many dislikes ");
-                String message = getString(in, "Enter the message");
-                if (message.equals(""))
-                    continue;
-                int res = db.insertRow(id, likes,dislikes,  message);
-                System.out.println(res + " row added");
-            } else if (action == '~') {
-                int id = getInt(in, "Enter the row ID :> ");
-                if (id == -1)
-                    continue;
-                String newMessage = getString(in, "Enter the new message");
-                int res = db.updateOne(id, newMessage);
-                if (res == -1)
-                    continue;
-                System.out.println("  " + res + " rows updated");
             }
-            else  {
-                System.out.println("Invalid");
-            }
-        } catch (Exception e ) {
+
+            // Always remember to disconnect from the database when the program
+            // exits
+            db.disconnect();
+        } catch (final Exception e) {
             System.out.println(e);
         }
-        }
 
-        // Always remember to disconnect from the database when the program 
-        // exits
-        db.disconnect();
-    } catch(Exception e) {
-    System.out.println(e);
     }
-}
 
 }

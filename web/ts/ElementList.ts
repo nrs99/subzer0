@@ -2,6 +2,7 @@
  * The ElementList Singleton provides a way of displaying all of the data 
  * stored on the server as an HTML table.
  */
+const backendUrl = "http://subzer0.herokuapp.com";
 class ElementList {
     /**
      * The name of the DOM entry associated with ElementList
@@ -10,6 +11,7 @@ class ElementList {
 
     /**
      * Track if the Singleton has been initialized
+     * 
      */
     private static isInit = false;
 
@@ -37,6 +39,10 @@ class ElementList {
         $("." + ElementList.NAME + "-likebtn").click(ElementList.clickLike);
         // Find all of the Dislike buttons, and set their behavior
         $("." + ElementList.NAME + "-dislikebtn").click(ElementList.clickDislike);
+        $("." + ElementList.NAME + "-commentbtn").click(ElementList.goToComments);
+        $("." + ElementList.NAME + "-photo").click(ElementList.goToProfile);
+        $("." + ElementList.NAME + "-displayName").click(ElementList.goToProfile);
+        $("." + ElementList.NAME + "-linkbtn").click(ElementList.openLink);
         // Refresh ElementList after the sort is updated
         $("#" + ElementList.NAME + "-sort").change(ElementList.refresh);
     }
@@ -49,40 +55,71 @@ class ElementList {
         ElementList.init();
         // Issue a GET, and then pass the result to update()
         let sort = "" + $("#" + ElementList.NAME + "-sort").val();
-        if(sort == "undefined") sort = "";
+        if (sort == "undefined") sort = "";
         $.ajax({
             type: "GET",
-            url: "/messages" + sort,
+            url: backendUrl + "/messages" + sort,
             dataType: "json",
             success: ElementList.update
-        });    
+        });
     }
 
     /**
      * clickLike is the code we run in response to a click of a like button
      */
     private static clickLike() {
-    	let id = $(this).data("value");
-	    $.ajax({
-		    type: "PUT",
-    		url: "/messages/" + id + "/like",
+        let id = $(this).data("value");
+        let userID = localStorage.getItem("ID");
+        $.ajax({
+            type: "PUT",
+            url: backendUrl + "/messages/" + id + "/like/" + userID,
             dataType: "json",
-            data: JSON.stringify({ msgID : id }),
-		    success: ElementList.refresh
-    	});
+            data: JSON.stringify({ msgID: id }),
+            success: ElementList.refresh
+        });
     }
     /** 
      * clickDislike is the code we run in response to a click of a like button
-     */ 
+     */
     private static clickDislike() {
         let id = $(this).data("value");
+        let userID = localStorage.getItem("ID");
         $.ajax({
             type: "PUT",
-            url: "/messages/" + id + "/dislike",
+            url: backendUrl + "/messages/" + id + "/dislike/" + userID,
             dataType: "json",
-            data: JSON.stringify({ msgID : id }),
+            data: JSON.stringify({ msgID: id }),
             success: ElementList.refresh
         });
+    }
+
+    public static hide() {
+        $("#" + ElementList.NAME).hide();
+    }
+
+    public static show() {
+        $("#" + ElementList.NAME).show();
+    }
+
+    private static goToProfile() {
+        let profiledID = $(this).data("value");
+        Profile.setID(profiledID);
+        Profile.refresh();
+        ElementList.hide();
+    }
+
+    private static goToComments() {
+        let msgId = $(this).data("value");
+        ViewComments.setMsgId(msgId);
+        ViewComments.refresh();
+        NewCommentForm.setID(msgId);
+        ViewComments.show();
+        ElementList.hide();
+    }
+
+    private static openLink() {
+        let url = $(this).data("value");
+        window.open(url, '_blank');
     }
 
 }

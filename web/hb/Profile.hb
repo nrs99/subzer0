@@ -1,32 +1,25 @@
-<div class="panel panel-default" id="ElementList">
+<div class="panel panel-default" id="Profile">
     <div class="panel-heading">
-        <h3 class="panel-title">Messages</h3>
+        <h3 class="panel-title">Profile</h3>
+        <button class="Profile-goBack">Go Back</button>
     </div>
-    <label for="ElementList-sort">Sort by:</label>
-    <select id="ElementList-sort">
-        <option value="">Newest</option>
-        <option value="/oldest">Oldest</option>
-        <option value="/popular">Popular</popular>
-    </select>
     <table class="table">
         <tbody>
             {{#each mData}}
             <tr>
-                <td><img class="ElementList-photo" data-value="{{this.userId}}" src={{this.photoURL}} width="50"></td>
-                <td>
-                    <p class="ElementList-displayName" data-value="{{this.userId}}">{{this.displayName}}</p>
-                </td>
+                <td><img src={{this.photoURL}} width="50"></td>
+                <td>{{this.displayName}}</td>
                 <td>{{breaklines this.message}}</td>
-                <td><button class="ElementList-likebtn" data-value="{{this.msgId}}">Like</button>
+                <td><button class="Profile-likebtn" data-value="{{this.msgId}}">Like</button>
                     <p>{{this.likes}}</p>
                 </td>
-                <td><button class="ElementList-dislikebtn" data-value="{{this.msgId}}">Dislike</button>
+                <td><button class="Profile-dislikebtn" data-value="{{this.msgId}}">Dislike</button>
                     <p>{{this.dislikes}}</p>
                 </td>
-                <td><button class="ElementList-commentbtn" data-value="{{this.msgId}}">{{this.comments}}
+                <td><button class="Profile-commentbtn" data-value="{{this.msgId}}">{{this.comments}}
                         comments</button></td>
                 {{#notNull this.link}}
-                <td><button class="ElementList-linkbtn" data-value="{{this.link}}">Link</button></td>
+                <td><button class="Profile-linkbtn" data-value="{{this.link}}">Link</button></td>
                 {{/notNull}}
             </tr>
             {{#notNull this.photoString}}

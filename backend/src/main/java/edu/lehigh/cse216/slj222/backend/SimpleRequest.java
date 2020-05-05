@@ -15,5 +15,11 @@ public class SimpleRequest {
     /**
      * The user ID of the client
      */
-    public int userID;
+    public String userID;
+    
+    public String link;
+
+    public String photoURL;
+
+    public String mimeType;
 }
