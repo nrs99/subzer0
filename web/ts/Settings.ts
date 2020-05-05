@@ -161,7 +161,7 @@ class Settings {
         //set up an AJAX post.  When the server replies, the result will go to
         //onSubmitResponse
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: backendUrl + "preferences",//change later
             dataType: "json",
             data: JSON.stringify({userid: userid, followsme: tempfollow, commentsonpost: selected_Comment, followingposts: templike}),
