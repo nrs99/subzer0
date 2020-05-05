@@ -15,6 +15,8 @@
         localStorage.setItem("givenName", profile.getGivenName());
         localStorage.setItem("fullName", profile.getName());
         localStorage.setItem("myURL", profile.getImageUrl());
+        localStorage.setItem("myURL", profile.getImageUrl());
+        localStorage.setItem("email", profile.getEmail());
         localStorage.setItem("state", "logged-in");
 
 
@@ -23,7 +25,7 @@
             url: backendUrl + "/user",
             dataType: "json",
             data: JSON.stringify({ userID: localStorage.getItem("ID"), displayName: localStorage.getItem("fullName"),
-            photoURL: localStorage.getItem("myURL")})
+            photoURL: localStorage.getItem("myURL"), email: localStorage.getItem("email")})
 
         });
 
