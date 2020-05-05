@@ -43,30 +43,18 @@ public class MainActivity extends BaseActivity {
      * mData holds the data we get from Volley
      */
     ArrayList<Message> mData = new ArrayList<>();
-    String message;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getMessages(); // Run the script to get messages
         Button postButton = findViewById(R.id.post_button);
 
-        final EditText textToSend = findViewById(R.id.textView);
-        textToSend.setCursorVisible(false); // Disable blinking cursor
-
         postButton.setOnClickListener(view -> {
-            if (!textToSend.getText().toString().equals("")) { // If it's blank, don't send anything
-                message = textToSend.getText().toString().trim();
-                postMessage();
-                textToSend.getText().clear(); //Remove whatever's in there
-                hideKeyboard(this); // Hides the keyboard if clicked
-                //Go to camera activity
-                moveToCameraActivity();
-            }
+            moveToNewMessageActivity();
         });
 
 
@@ -81,8 +69,8 @@ public class MainActivity extends BaseActivity {
 
 
     }
-    public void moveToCameraActivity() {
-        Intent intent = new Intent(MainActivity.this, Camera.class);
+    public void moveToNewMessageActivity() {
+        Intent intent = new Intent(MainActivity.this, NewMessage.class);
         startActivity(intent);
     }
 
@@ -133,7 +121,21 @@ public class MainActivity extends BaseActivity {
                 int comments = json.getJSONObject(i).getInt("comments");
                 String displayName = json.getJSONObject(i).getString("displayName");;
                 String photoURL = json.getJSONObject(i).getString("photoURL");
-                mData.add(new Message(msgId, message, userId, likes, dislikes, comments, displayName, photoURL));
+                String link = "";
+                try {
+                    link = json.getJSONObject(i).getString("link");
+                } catch(JSONException e) {
+                    link = "";
+                }
+                String photoImage, mimeType;
+                try {
+                    photoImage = json.getJSONObject(i).getString("photoImage");
+                    mimeType = json.getJSONObject(i).getString("mimeType");
+                } catch(JSONException e) {
+                    photoImage = "";
+                    mimeType = "";
+                }
+                mData.add(new Message(msgId, message, userId, likes, dislikes, comments, displayName, photoURL, link, photoImage, mimeType));
             }
         } catch (final JSONException e) {
             Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
@@ -152,39 +154,6 @@ public class MainActivity extends BaseActivity {
         rv.setHasFixedSize(true);
         ItemListAdapter adapter = new ItemListAdapter(this, mData, likes);
         rv.setAdapter(adapter);
-
-    }
-
-    /**
-     * HTTP POST a new message
-     */
-    public void postMessage() {
-        String url = "https://subzer0.herokuapp.com/messages";
-        Map<String, String> params = new HashMap<>();
-
-        params.put("message", message);
-        params.put("userID", userId);
-
-        JSONObject request = new JSONObject(params);
-
-        // Request a string response from the provided URL.
-        JsonObjectRequest getReq = new JsonObjectRequest(Request.Method.POST, url, request,
-                response -> {
-                    try {
-                        response.getString("mStatus");  //if its working or not
-                        mData.clear();
-                        getMessages();
-                    } catch (final JSONException e) {
-                        Log.d("slj222", "Error parsing JSON file: " + e.getMessage());
-                    }
-                },
-                error -> {
-                    // if there's an error
-                    Log.d("slj222", "error:" + error.getMessage());
-                    error.printStackTrace();
-                }) {
-        };
-        VolleySingleton.getInstance(this).addToRequestQueue(getReq);
     }
 
     /**

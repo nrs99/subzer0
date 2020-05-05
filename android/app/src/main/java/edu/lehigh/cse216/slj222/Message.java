@@ -43,10 +43,16 @@ public class Message {
 
     String photoURL;
 
+    String link;
+
+    String photoImage;
+
+    String mimeType;
+
     /**
      * Construct a Message object by providing values for its fields
      */
-    public Message(int msgId, String message, String userId, int likes, int dislikes, int commentCount, String displayName, String photoURL) {
+    public Message(int msgId, String message, String userId, int likes, int dislikes, int commentCount, String displayName, String photoURL, String link, String photoImage, String mimeType) {
         this.msgId = msgId;
         this.message = message;
         this.userId = userId;
@@ -57,6 +63,9 @@ public class Message {
         myLike = 0; // Set it to not be on creation, change later once route is updated
         this.displayName = displayName;
         this.photoURL = photoURL;
+        this.link = link;
+        this.photoImage = photoImage;
+        this.mimeType = mimeType;
     }
 
     public void setLike(int myLike) {

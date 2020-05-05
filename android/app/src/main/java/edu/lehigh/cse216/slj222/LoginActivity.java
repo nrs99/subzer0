@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
             // Send to login backend route
             String myToken = account.getIdToken(); // This is a post, backend responds that it is valid
 
-            String url = "http://subzer0.herokuapp.com/login/" + myToken;
+            String url = "https://subzer0.herokuapp.com/login/" + myToken;
 
             JSONObject request = new JSONObject();
 
@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
 
             // Post user info to users table, if not there already
-            newUser(account.getId(), account.getDisplayName(), account.getPhotoUrl().toString());
+            newUser(account.getId(), account.getDisplayName(), account.getPhotoUrl().toString(), account.getEmail());
 
             startActivity(intent); // Start the MainActivity!
         } catch (ApiException e) {
@@ -144,14 +144,16 @@ public class LoginActivity extends AppCompatActivity {
      * @param userID
      * @param displayName
      * @param photoURL
+     * @param email
      */
-    private void newUser(String userID, String displayName, String photoURL) {
+    private void newUser(String userID, String displayName, String photoURL, String email) {
         String url = "https://subzer0.herokuapp.com/user";
         Map<String, String> params = new HashMap<>();
 
         params.put("userID", userID);
         params.put("displayName", displayName);
         params.put("photoURL", photoURL);
+        params.put("email", email);
 
         JSONObject request = new JSONObject(params);
 
