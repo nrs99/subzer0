@@ -39,6 +39,45 @@ class Profile {
         $("." + Profile.NAME + "-goBack").click(Profile.goBack);
         $("." + Profile.NAME + "-commentbtn").click(Profile.goToComments);
         $("." + Profile.NAME + "-linkbtn").click(Profile.openLink);
+        $("#" + Profile.NAME + "-follow").click(Profile.follow);
+        $("#" + Profile.NAME + "-settings").click(Profile.goToSettings);
+
+    console.log("profile.getid: "+Profile.getID());
+    console.log("local storage"+localStorage.getItem("ID"));
+    // var localstor = "101723331302029401229";
+    if(Profile.getID() == localStorage.getItem("ID")){//hiding follow button...CHANGE LATER
+    // if(Profile.getID() ==localstor){//hiding follow button...CHANGE LATER
+
+                var x = document.getElementById("Profile-follow");
+                var y = document.getElementById("Profile-settings");
+                x.style.display = "none";
+                y.style.display = "block";
+
+
+        }else{
+            var x = document.getElementById("Profile-follow");
+            var y = document.getElementById("Profile-settings");
+            x.style.display = "block";
+            y.style.display = "none";
+
+        }
+    }
+
+
+    private static onSubmitResponse(data: any) {
+        // If we get an "ok" message, clear the form and refresh the main 
+        // listing 
+        if (data.mStatus === "ok") {
+            Profile.refresh();
+        }
+        // Handle explicit errors with a detailed popup message
+        else if (data.mStatus === "error") {
+            window.alert("You can't follow yourself.");
+        }
+        // Handle other errors with a less-detailed popup message
+        else {
+            window.alert("Unspecified error");
+        }
     }
 
     /**
@@ -102,8 +141,40 @@ class Profile {
         Profile.hide();
     }
 
+    private static goToSettings(){
+        Profile.hide();
+        Settings.refresh();
+        Settings.show();
+        
+    }
+
     private static openLink() {
         let url = $(this).data("value");
         window.open(url, '_blank');
+    }
+
+            /**
+     * Send data to submit the form only if the fields are both valid.  
+     * Immediately hide the form when we send data, so that the user knows that 
+     * their click was received.
+     */
+    private static follow() {//the hiding button needs to be added!!!
+
+
+        let useridB = Profile.getID();
+        let useridA = localStorage.getItem("ID");
+        console.log("useridA="+useridA+" useridB="+useridB);
+        var x = document.getElementById("Profile-follow");
+    
+        //set up an AJAX post.  When the server replies, the result will go to
+        //onSubmitResponse
+        $.ajax({
+            type: "PUT",
+            url: backendUrl + "follow",//change later
+            dataType: "json",
+            data: JSON.stringify({userA: useridA, userB: useridB}),
+            success: Profile.onSubmitResponse
+        });
+
     }
 }

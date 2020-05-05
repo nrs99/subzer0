@@ -3,6 +3,8 @@
         <h3 class="panel-title">Profile</h3>
         <button class="Profile-goBack">Go Back</button>
     </div>
+     <button class="btn btn-success" id="Profile-settings" data-toggle="button" aria-pressed="false" autocomplete="off">Settings </button>
+     <button class="btn btn-success" id="Profile-follow" data-toggle="button" aria-pressed="false" autocomplete="off">Follow! </button>
     <table class="table">
         <tbody>
             {{#each mData}}

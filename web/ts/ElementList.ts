@@ -117,6 +117,13 @@ class ElementList {
         ElementList.hide();
     }
 
+    private static goToSettings() {
+        let profiledID = $(this).data("value");
+        Settings.setID(profiledID);
+        Settings.refresh();
+        ElementList.hide();
+    }
+
     private static openLink() {
         let url = $(this).data("value");
         window.open(url, '_blank');
