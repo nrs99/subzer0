@@ -72,8 +72,6 @@ public class Database {
 
     private PreparedStatement mInsertLink;
 
-<<<<<<< HEAD
-=======
     private PreparedStatement checkFollow;
 
     private PreparedStatement newFollow;
@@ -100,7 +98,6 @@ public class Database {
 
     private PreparedStatement getPreferences;
 
->>>>>>> backend
     /**
      * The Database constructor is private: we only create Database objects through
      * the getDatabase() method.

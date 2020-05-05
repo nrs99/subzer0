@@ -59,20 +59,12 @@ public class App {
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
     public static Drive service;
-<<<<<<< HEAD
 
-=======
- 
->>>>>>> backend
     public static void main(String[] args) throws IOException, GeneralSecurityException {// easy fix. probably not good
                                                                                          // long term.
 
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-<<<<<<< HEAD
 
-=======
- 
->>>>>>> backend
         service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME).build(); // Build a new authorized API client service
 
@@ -215,10 +207,6 @@ public class App {
                     db.insertLink(newId, req.link);
                 }
                 if (req.photoURL != null) {
-<<<<<<< HEAD
-
-=======
->>>>>>> backend
                     String fileID = uploadImage(req.photoURL, service, newId, req.mimeType);
                     db.insertDocument(newId, fileID, req.mimeType);
                 }
@@ -282,15 +270,11 @@ public class App {
 
             // NB: createEntry checks for null title and message
             int newId = db.insertComment(req.msgId, req.comment, req.userId);// would i do something here?
-<<<<<<< HEAD
-
-=======
             String email = db.newCommentEmail(req.msgId);
             if (email != null) {
                 String displayName = db.getDisplayName(req.userId);
                 SendGridEmail.sendEmail(email, displayName + " Commented On Your Post!", req.comment);
             }
->>>>>>> backend
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
@@ -329,8 +313,6 @@ public class App {
             return gson.toJson(new StructuredResponse("ok", null, db.getMyLikes(userID)));
         });
 
-<<<<<<< HEAD
-=======
         Spark.get("/users/:id/following", (request, response) -> {
             String userID = request.params("id");
             response.status(200);
@@ -345,7 +327,6 @@ public class App {
             return gson.toJson(new StructuredResponse("ok", null, db.getPreferences(userID)));
         });
  
->>>>>>> backend
         Spark.post("/login/:token", (request, response) -> {
             final String CLIENT_ID = "363085709256-vl89523mj1pv792ngp4sin2e717motg7.apps.googleusercontent.com";
             // final String CLIENT_SECRET = "zXSIfOxfMUoHugSkfaPKdBtk";
@@ -395,9 +376,6 @@ public class App {
             }
 
         });
-
-<<<<<<< HEAD
-=======
         
         Spark.put("/follow", (request, response) -> {
             FollowRequest req = gson.fromJson(request.body(), FollowRequest.class);
@@ -427,7 +405,6 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", "" + newPrefs, null));
             }
         });
->>>>>>> backend
     }
 
     static int getIntFromEnv(String envar, int defaultVal) {
@@ -437,11 +414,7 @@ public class App {
         }
         return defaultVal;
     }
-<<<<<<< HEAD
 
-=======
- 
->>>>>>> backend
     private static String uploadImage(String encodedString, Drive service, int msgid, String mime) throws IOException {
         byte[] decodedImg = Base64.getDecoder().decode(encodedString);
         java.io.File thisFile = new java.io.File("image");
@@ -451,16 +424,12 @@ public class App {
         FileContent mediaContent = new FileContent(mime, thisFile);
         File file = service.files().create(fileMetadata, mediaContent).setFields("id").execute();
         return file.getId();
-<<<<<<< HEAD
-
-=======
     }
  
     private static String downloadImage(String file_ID, Drive service) throws IOException {
         OutputStream outputStream = new ByteArrayOutputStream();
         service.files().get(file_ID).executeMediaAndDownloadTo(outputStream);
         return outputStream.toString();
->>>>>>> backend
     }
 
     /**
@@ -504,11 +473,6 @@ public class App {
      */
 
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> backend
         java.io.InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         return GoogleCredential.fromStream(in).createScoped(Collections.singleton(DriveScopes.DRIVE));
     }
