@@ -12,7 +12,7 @@ class Settings {
 
     const backendUrl = "http://subzer0.herokuapp.com";
 
-    private static profiledID = "117017900165252299426";
+    private static profiledID = "110708943704983237771";
 
 
     private static msgid = 0;
@@ -126,17 +126,17 @@ class Settings {
         if(selected_Like[0].checked){
             templike = true;
 
-            console.log(" (YES) Like val: "+selected_Like[0]);
+            console.log(" (YES) Someone you followed made a post val: "+selected_Like[0]);
 
         }else if(selected_Like[1].checked){
             templike = false;
 
-            console.log("(NO) Like val: "+selected_Like[1]);
+            console.log("(NO) Someone you followed made a post val: "+selected_Like[1]);
 
 
         }else{
 
-            console.log("Error in Like option...");
+            console.log("Error in Someone you followed made a post option...");
 
         }
     
@@ -161,10 +161,10 @@ class Settings {
         //set up an AJAX post.  When the server replies, the result will go to
         //onSubmitResponse
         $.ajax({
-            type: "PUT",
+            type: "POST",
             url: backendUrl + "/preferences",//change later
             dataType: "json",
-            data: JSON.stringify({userid: userid, followsme: tempfollow, commentsonpost: selected_Comment}),
+            data: JSON.stringify({userid: userid, followsme: tempfollow, commentsonpost: selected_Comment, followingposts: templike}),
             success: Settings.onSubmitResponse
         });
     }

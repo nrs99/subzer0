@@ -6,7 +6,7 @@
 
     <span class="border border-primary"></span>
  <div id = settings_toggle_button>
- <p2>Like Notifications?</p2>
+ <p2>Post Notifications?</p2>
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
   <label class="btn btn-secondary active" for="Profile-options1">
     <input type="radio" name="Settings-options-like" id="Profile-options1" aria-pressed="false" autocomplete="off"  value="1" >Yes
