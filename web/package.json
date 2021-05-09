@@ -9,7 +9,7 @@
     "dependencies": {
         "@types/jquery": "^3.3.38",
         "bootstrap": "^3.4.1",
-        "handlebars": "^4.7.6",
+        "handlebars": "^4.7.7",
         "http-server": "^0.12.3",
         "jasmine-core": "^3.5.0",
         "jquery": "^3.5.1",
